@@ -6,29 +6,72 @@ Ce projet utilise un système de sub-agents spécialisés coordonnés par un orc
 
 ### Agents Disponibles
 
-| Agent | Rôle | Commande | MCP Tools |
-|-------|------|----------|-----------|
-| ORCHESTRATOR | Coordination générale, décomposition des tâches | `@orchestrator` | filesystem, git |
-| ARCHITECT | Standards, architecture, validation technique | `@architect` | filesystem, git |
-| DESIGNER | UI/UX, design system, accessibilité | `@designer` | filesystem |
-| FULLSTACK_DEV | Implémentation complète (frontend + backend) | `@dev` | filesystem, git, postgres |
-| TESTER | Tests unitaires, intégration, E2E, QA | `@tester` | filesystem |
-| REVIEWER | Code review, qualité, sécurité | `@reviewer` | filesystem, git |
-| DEVOPS | CI/CD, déploiement, infrastructure | `@devops` | filesystem, git |
+#### Agents de Développement
 
-### Workflow Standard
+| Agent | Rôle | Commande | MCP Tools | Proactive |
+|-------|------|----------|-----------|-----------|
+| ORCHESTRATOR | Coordination générale, décomposition des tâches | `@orchestrator` | filesystem, git | ✅ Always |
+| ARCHITECT | Standards, architecture, validation technique | `@architect` | filesystem, git, **WebFetch, WebSearch** | ✅ Technical decisions |
+| DESIGNER | UI/UX, design system, accessibilité | `@designer` | filesystem, **WebFetch, WebSearch** | ✅ UI/UX features |
+| FULLSTACK_DEV | Implémentation complète (frontend + backend) | `@dev` | filesystem, git, postgres, **WebFetch, WebSearch** | - |
+| TESTER | Tests unitaires, intégration, E2E, QA | `@tester` | filesystem | - |
+| REVIEWER | Code review, qualité, sécurité | `@reviewer` | filesystem, git | ✅ After implementation |
+| DEVOPS | CI/CD, déploiement, infrastructure | `@devops` | filesystem, git | - |
 
-**Toute demande suit ce pipeline :**
+#### Agents Spécialisés (Nouveaux + Améliorés)
 
-1. **ORCHESTRATOR** reçoit la demande et crée un plan d'exécution
-2. **ARCHITECT** valide l'approche technique et les standards
-3. **En parallèle :**
-   - **DESIGNER** conçoit les interfaces (si nécessaire)
-   - **TESTER** écrit les tests (TDD)
-4. **FULLSTACK_DEV** implémente le code
-5. **TESTER** exécute les tests
-6. **REVIEWER** valide le code produit
-7. **DEVOPS** déploie (si demandé)
+| Agent | Rôle | Commande | MCP Tools | Proactive |
+|-------|------|----------|-----------|-----------|
+| SECURITY_ENGINEER | Sécurité OWASP, audit, threat modeling | `@security` | filesystem, git | ✅ Auth/Payment/PII |
+| ERROR_COORDINATOR | Gestion des erreurs, recovery, resilience | `@error-coordinator` | filesystem | ✅ External API calls |
+| CONTEXT_MANAGER | Optimisation du contexte, summarization | `@context-manager` | filesystem | ✅ Auto (background) |
+| **DEBUGGER** | **Débogage avancé, root cause analysis** | `@debugger` | **filesystem, git** | **✅ Bugs/Tests failing** |
+| **PERFORMANCE_ENGINEER** | **Optimisation performances, profiling** | `@performance` | **filesystem, Bash** | **✅ Before production** |
+
+### Workflow Standard (3-Stage Pipeline)
+
+**Inspiré de awesome-claude-code-subagents - Pattern en 3 étapes**
+
+#### **Stage 1 : Specification & Design** (Validation ARCHITECT obligatoire)
+
+1. **ORCHESTRATOR** reçoit la demande et analyse
+2. **CONTEXT_MANAGER** optimise le contexte (automatique)
+3. **ARCHITECT** valide la faisabilité et l'approche technique ⚠️ **BLOQUANT**
+4. **SECURITY_ENGINEER** identifie les risques (si auth/payment/PII)
+5. **Output** : ADR créé avec décisions architecturales
+
+**Critères de passage** : ARCHITECT approuve → Stage 2
+
+---
+
+#### **Stage 2 : Design & Test Preparation** (Parallèle)
+
+**En parallèle** (démarrent simultanément) :
+- **DESIGNER** conçoit les interfaces (si UI nécessaire)
+- **TESTER** écrit les tests (TDD - tests échouent pour l'instant)
+- **ERROR_COORDINATOR** définit la stratégie de gestion d'erreurs
+- **PERFORMANCE_ENGINEER** définit les budgets de performance (si applicable)
+
+**Output** : Designs prêts, tests écrits (red state), stratégies définies
+
+**Critères de passage** : Tous les outputs validés → Stage 3
+
+---
+
+#### **Stage 3 : Implementation, Review & Deployment** (Séquentiel)
+
+**Séquentiel** (chaque agent attend le précédent) :
+1. **FULLSTACK_DEV** implémente le code
+2. **TESTER** exécute les tests (doivent passer au vert ✅)
+3. **DEBUGGER** intervient si bugs détectés 🐛
+4. **REVIEWER** valide le code produit
+5. **SECURITY_ENGINEER** security review (si code critique)
+6. **PERFORMANCE_ENGINEER** vérifie budgets respectés (si applicable)
+7. **DEVOPS** déploie en production
+
+**Output** : Code production-ready, déployé
+
+**Critères de complétion** : Tous les tests passent, reviews approuvées, déployé sans erreurs
 
 ### Standards Obligatoires
 
@@ -680,8 +723,57 @@ claude-code @designer "Créer un composant Card réutilisable avec variants"
 # Tests
 claude-code @tester "Créer les tests E2E pour le flow d'inscription"
 
+# Sécurité
+claude-code @security "Audit de sécurité du module authentication"
+
+# Gestion des erreurs
+claude-code @error-coordinator "Review la stratégie de gestion d'erreurs de l'API"
+
+# Débogage
+claude-code @debugger "Analyser pourquoi les tests de paiement échouent"
+
+# Performance
+claude-code @performance "Profiler l'application et identifier les bottlenecks"
+
 # DevOps
 claude-code @devops "Setup pipeline CI/CD GitHub Actions"
+```
+
+### Nouveaux Patterns et Améliorations
+
+#### 🔍 WebFetch/WebSearch Capability
+
+Les agents suivants peuvent maintenant rechercher en ligne :
+- **ARCHITECT** : Recherche les dernières best practices architecturales
+- **DESIGNER** : Consulte les design systems modernes (shadcn/ui, Material, etc.)
+- **FULLSTACK_DEV** : Accède à la documentation officielle des frameworks
+
+**Exemple** :
+```typescript
+// ARCHITECT peut maintenant :
+// 1. Rechercher "NestJS authentication best practices 2026"
+// 2. Consulter la doc officielle de Prisma
+// 3. Vérifier les patterns OWASP récents
+```
+
+#### ⚡ Proactive Invocation
+
+Certains agents s'activent maintenant **automatiquement** quand pertinent :
+- **ARCHITECT** : Décisions techniques, nouvelles features
+- **DESIGNER** : Features UI/UX, design system
+- **REVIEWER** : Après implémentation, avant déploiement
+- **SECURITY_ENGINEER** : Code auth/payment/données sensibles
+- **ERROR_COORDINATOR** : Appels API externes
+- **DEBUGGER** : Bugs reportés, tests qui échouent
+- **PERFORMANCE_ENGINEER** : Avant déploiement production
+
+#### 📊 Standardized Output Formats
+
+Les agents utilisent maintenant des formats de sortie standardisés :
+- **REVIEWER** : Format "praise/concerns/suggestions/must_fix/nice_to_have"
+- **DEBUGGER** : Format structuré de rapport de bug avec root cause
+- **PERFORMANCE_ENGINEER** : Métriques détaillées avec budgets
+
 ```
 
 ### Points Clés

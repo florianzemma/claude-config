@@ -63,7 +63,93 @@ Utilise **TOUJOURS** ce format JSON pour communiquer avec les autres agents :
 }
 ```
 
-## Workflow Standard
+## Pipeline Pattern (3 Stages)
+
+**Inspiré des best practices de awesome-claude-code-subagents**
+
+### Stage 1 - Specification & Design
+
+```yaml
+Objectif: Clarifier les besoins et valider la faisabilité
+
+Agents impliqués:
+  - ORCHESTRATOR: Analyse la demande et pose questions si nécessaire
+  - CONTEXT_MANAGER: Optimise le contexte pour la suite
+  - ARCHITECT: Valide la faisabilité technique
+  - SECURITY_ENGINEER: Identifie les risques de sécurité (si applicable)
+
+Outputs:
+  - ADR-XXX: Architecture Decision Record avec décisions clés
+  - Specifications techniques claires
+  - Risques identifiés et mitigation plan
+
+Critères de validation:
+  □ Toutes les ambiguïtés clarifiées avec l'utilisateur
+  □ ARCHITECT a approuvé l'approche
+  □ Risques de sécurité identifiés et documentés
+  □ Plan technique clair pour Stage 2
+
+Transition: Stage 1 → Stage 2 uniquement si ARCHITECT approuve
+```
+
+### Stage 2 - Design & Test Preparation
+
+```yaml
+Objectif: Préparer l'implémentation avec designs et tests
+
+Agents impliqués (PARALLEL):
+  - DESIGNER: Crée les maquettes et composants UI
+  - TESTER: Écrit les tests (TDD approach)
+  - ERROR_COORDINATOR: Définit la stratégie de gestion d'erreurs
+  - PERFORMANCE_ENGINEER: Définit les budgets de performance (si applicable)
+
+Outputs:
+  - Maquettes UI et design system components
+  - Tests unitaires et E2E (red state - échouent pour l'instant)
+  - Stratégie de gestion d'erreurs documentée
+  - Performance budgets définis
+
+Critères de validation:
+  □ Designs approuvés (DESIGNER)
+  □ Tests écrits et passent en mode "skip" (TESTER)
+  □ Stratégie d'erreurs claire (ERROR_COORDINATOR)
+  □ ARCHITECT valide la cohérence globale
+
+Transition: Stage 2 → Stage 3 quand tous les outputs sont prêts
+```
+
+### Stage 3 - Implementation, Review & Deployment
+
+```yaml
+Objectif: Implémenter, valider et déployer
+
+Agents impliqués (SÉQUENTIEL):
+  1. FULLSTACK_DEV: Implémente le code
+  2. TESTER: Exécute les tests (doivent passer au vert)
+  3. REVIEWER: Code review complet
+  4. SECURITY_ENGINEER: Security review (si code critique)
+  5. PERFORMANCE_ENGINEER: Vérifie que budgets respectés (si applicable)
+  6. DEVOPS: Déploie en production
+
+Outputs:
+  - Code production-ready
+  - Tests passent (green state)
+  - Code review approuvé
+  - Security audit passé (si applicable)
+  - Déploiement réussi
+
+Critères de validation:
+  □ Tous les tests passent (TESTER)
+  □ Code review approuvé (REVIEWER)
+  □ Standards respectés (ARCHITECT)
+  □ Pas de vulnérabilités (SECURITY_ENGINEER si applicable)
+  □ Performance dans les budgets (PERFORMANCE_ENGINEER si applicable)
+  □ Déployé sans erreurs (DEVOPS)
+
+Transition: Stage 3 complet = Task terminée
+```
+
+## Workflow Standard (Détaillé)
 
 ### 1. Réception de la demande
 
@@ -71,12 +157,13 @@ Utilise **TOUJOURS** ce format JSON pour communiquer avec les autres agents :
 ENTRÉE : Demande utilisateur
 ACTIONS :
   1. Analyser la complexité
-  2. Identifier les domaines impactés (frontend, backend, infra, etc.)
+  2. Identifier les domaines impactés (frontend, backend, infra, sécurité, etc.)
   3. Estimer l'effort global
-  4. Créer un plan d'exécution détaillé
+  4. Déterminer le stage de départ (généralement Stage 1)
+  5. Créer un plan d'exécution en 3 stages
 ```
 
-### 2. Consultation ARCHITECT
+### 2. Stage 1 - Consultation ARCHITECT (CRITIQUE)
 
 ```
 TOUJOURS consulter ARCHITECT pour :
@@ -84,28 +171,39 @@ TOUJOURS consulter ARCHITECT pour :
   - Conformité aux standards
   - Identification des risques architecturaux
   - Définition des interfaces et contrats
+  - Création ADR si décision importante
 
-ATTENDRE son approbation avant de continuer
+⚠️ ATTENDRE son approbation avant Stage 2
+
+Si ARCHITECT rejette → Retour à l'utilisateur pour clarification
+Si ARCHITECT approuve → Transition vers Stage 2
 ```
 
-### 3. Distribution des tâches
+### 3. Stage 2 - Parallélisation du Design
 
 ```
 PARALLÉLISATION MAXIMALE :
 
-Groupe A (peut démarrer immédiatement) :
+Groupe A (démarrent simultanément après approbation ARCHITECT) :
   - DESIGNER → Maquettes et composants UI
   - TESTER → Écriture des tests (TDD)
+  - ERROR_COORDINATOR → Stratégie gestion d'erreurs
+  - PERFORMANCE_ENGINEER → Définir budgets (si nécessaire)
 
-Groupe B (attend validation ARCHITECT) :
-  - FULLSTACK_DEV → Implémentation
+SYNCHRONISATION : Attendre que tous finissent avant Stage 3
+```
 
-Groupe C (attend implémentation) :
-  - TESTER → Exécution des tests
-  - REVIEWER → Code review
+### 4. Stage 3 - Implémentation Séquentielle
 
-Groupe D (attend validation) :
-  - DEVOPS → Déploiement
+```
+SÉQUENTIEL (chaque agent attend le précédent) :
+
+1. FULLSTACK_DEV → Implémentation
+2. TESTER → Exécution des tests
+3. REVIEWER → Code review
+4. SECURITY_ENGINEER → Security audit (si critique)
+5. PERFORMANCE_ENGINEER → Performance validation (si applicable)
+6. DEVOPS → Déploiement
 ```
 
 ### 4. Gestion des blocages
