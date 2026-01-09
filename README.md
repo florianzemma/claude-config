@@ -1,8 +1,8 @@
 # Claude Multi-Agent Configuration
 
-Configuration professionnelle pour Claude Code utilisant un système multi-agents spécialisés avec standards de qualité stricts.
+Configuration professionnelle de Claude Code avec système multi-agents spécialisés, standards architecturaux et principes de design moderne.
 
-## 📋 Table des Matières
+## Table des Matières
 
 - [Vue d'ensemble](#vue-densemble)
 - [Architecture](#architecture)
@@ -13,221 +13,171 @@ Configuration professionnelle pour Claude Code utilisant un système multi-agent
 - [Workflow Standard](#workflow-standard)
 - [Structure du Projet](#structure-du-projet)
 - [Classification des Projets](#classification-des-projets)
+- [Outils Configurés](#outils-configurés)
+- [Documentation](#documentation)
+- [Sécurité](#sécurité)
+- [Tests](#tests)
+- [Design System](#design-system)
 - [Contribution](#contribution)
+- [Exemples d'Usage](#exemples-dusage)
 
----
+## Vue d'ensemble
 
-## 🎯 Vue d'ensemble
+Ce projet fournit une configuration complète pour Claude Code avec :
 
-Ce repository contient une configuration avancée pour Claude Code permettant :
+- **12 agents spécialisés** coordonnés par un orchestrateur
+- **Standards architecturaux** (SOLID, DDD, TDD, Clean Code)
+- **Principes de design frontend** anti "AI slop"
+- **Workflow en 3 étapes** (Specification → Design → Implementation)
+- **Classification de projets** (Simple/Moyen/Complexe)
+- **Documentation stricte** (README, .env.example, guides)
 
-- **Système multi-agents** : 11 agents spécialisés travaillant en orchestration
-- **Standards de qualité élevés** : SOLID, DDD, TDD, Clean Code, design patterns
-- **Anti over-engineering** : Classification des projets (Simple, Moyen, Complexe) avec stacks adaptées
-- **Design distinctif** : Principes anti "AI slop" pour des frontends mémorables
-- **Workflow 3-stage** : Specification → Design → Implementation
-
-### Principes Fondamentaux
-
-1. **Qualité non négociable** : Standards de code stricts pour tous les projets
-2. **Stack adaptée** : Pas de sur-engineering, chaque outil doit être justifié
-3. **Collaboration agents** : Orchestration claire entre agents spécialisés
-4. **Documentation systématique** : ADR (Architecture Decision Records) pour chaque décision
-5. **Tests first** : TDD encouragé, coverage minimum requis
-
----
-
-## 🏗️ Architecture
-
-### Système Multi-Agents
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      ORCHESTRATOR                           │
-│           (Coordination & Décomposition des tâches)         │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-        ┌────────────────┼────────────────┐
-        ▼                ▼                ▼
-   ┌─────────┐     ┌──────────┐     ┌─────────┐
-   │ARCHITECT│────▶│ DESIGNER │────▶│FULLSTACK│
-   │  (Veto) │     │          │     │   DEV   │
-   └─────────┘     └──────────┘     └─────┬───┘
-        │                                  │
-        │           ┌──────────┐          │
-        └──────────▶│  TESTER  │◀─────────┘
-                    └─────┬────┘
-                          │
-                    ┌─────▼────┐
-                    │ REVIEWER │
-                    └─────┬────┘
-                          │
-                    ┌─────▼────┐
-                    │  DEVOPS  │
-                    └──────────┘
+┌─────────────────────────────────────────┐
+│           ORCHESTRATOR                  │
+│  (Coordination, décomposition tâches)   │
+└────────────┬────────────────────────────┘
+             │
+   ┌─────────┼──────────┬─────────────┐
+   │         │          │             │
+   ▼         ▼          ▼             ▼
+┌────────┐ ┌────────┐ ┌──────────┐ ┌──────────┐
+│ARCHITECT│→│DESIGNER│→│FULLSTACK │→│  TESTER  │
+│ (Veto) │ │        │ │   DEV    │ │          │
+└────────┘ └────────┘ └──────────┘ └──────────┘
+   │         │          │             │
+   ▼         ▼          ▼             ▼
+┌────────┐ ┌────────┐ ┌──────────┐ ┌──────────┐
+│REVIEWER│ │SECURITY│ │ DEBUGGER │ │  DEVOPS  │
+│        │ │        │ │          │ │          │
+└────────┘ └────────┘ └──────────┘ └──────────┘
 ```
 
-### Agents Spécialisés Additionnels
+**Principe clé** : L'ARCHITECT a un **droit de veto** - aucun code ne passe sans validation.
 
-- **SECURITY_ENGINEER** : Sécurité OWASP, audit, threat modeling
-- **ERROR_COORDINATOR** : Gestion des erreurs, recovery, resilience
-- **CONTEXT_MANAGER** : Optimisation du contexte (background)
-- **DEBUGGER** : Débogage avancé, root cause analysis
-- **PERFORMANCE_ENGINEER** : Optimisation performances, profiling
-
----
-
-## 🤖 Agents Disponibles
+## Agents Disponibles
 
 ### Agents de Développement
 
-| Agent | Rôle | Proactif | Droit de Veto |
-|-------|------|----------|---------------|
-| **ORCHESTRATOR** | Coordination générale, décomposition des tâches | ✅ Always | ❌ |
-| **ARCHITECT** | Standards, architecture, validation technique | ✅ Décisions techniques | ✅ Oui |
-| **DESIGNER** | UI/UX, design system, accessibilité | ✅ Features UI/UX | ❌ |
-| **FULLSTACK_DEV** | Implémentation complète (frontend + backend) | ❌ | ❌ |
-| **TESTER** | Tests unitaires, intégration, E2E, QA | ❌ | ❌ |
-| **REVIEWER** | Code review, qualité, sécurité | ✅ Après implémentation | ❌ |
-| **DEVOPS** | CI/CD, déploiement, infrastructure | ❌ | ❌ |
+| Agent             | Rôle                                            | Commande        | Proactif                |
+| ----------------- | ----------------------------------------------- | --------------- | ----------------------- |
+| **ORCHESTRATOR**  | Coordination générale, décomposition des tâches | `@orchestrator` | ✅ Toujours             |
+| **ARCHITECT**     | Standards, architecture, validation technique   | `@architect`    | ✅ Décisions techniques |
+| **DESIGNER**      | UI/UX, design system, accessibilité             | `@designer`     | ✅ Features UI/UX       |
+| **FULLSTACK_DEV** | Implémentation complète (frontend + backend)    | `@dev`          | -                       |
+| **TESTER**        | Tests unitaires, intégration, E2E, QA           | `@tester`       | -                       |
+| **REVIEWER**      | Code review, qualité, sécurité                  | `@reviewer`     | ✅ Après implémentation |
+| **DEVOPS**        | CI/CD, déploiement, infrastructure              | `@devops`       | -                       |
 
 ### Agents Spécialisés
 
-| Agent | Rôle | Proactif |
-|-------|------|----------|
-| **SECURITY_ENGINEER** | Audit sécurité, OWASP, threat modeling | ✅ Auth/Payment/PII |
-| **ERROR_COORDINATOR** | Stratégie gestion d'erreurs, resilience | ✅ API externes |
-| **CONTEXT_MANAGER** | Optimisation contexte, summarization | ✅ Auto (background) |
-| **DEBUGGER** | Débogage avancé, root cause analysis | ✅ Bugs/Tests failing |
-| **PERFORMANCE_ENGINEER** | Optimisation, profiling, budgets perf | ✅ Avant production |
+| Agent                    | Rôle                                      | Commande             | Proactif               |
+| ------------------------ | ----------------------------------------- | -------------------- | ---------------------- |
+| **SECURITY_ENGINEER**    | Sécurité OWASP, audit, threat modeling    | `@security`          | ✅ Auth/Payment/PII    |
+| **ERROR_COORDINATOR**    | Gestion des erreurs, recovery, resilience | `@error-coordinator` | ✅ Appels API externes |
+| **CONTEXT_MANAGER**      | Optimisation du contexte, summarization   | `@context-manager`   | ✅ Auto (background)   |
+| **DEBUGGER**             | Débogage avancé, root cause analysis      | `@debugger`          | ✅ Bugs/Tests failing  |
+| **PERFORMANCE_ENGINEER** | Optimisation performances, profiling      | `@performance`       | ✅ Avant production    |
+| **DOCUMENTALIST**        | Documentation technique, README, guides   | `@documentalist`     | ✅ Après changements   |
 
----
-
-## 📚 Standards et Principes
+## Standards et Principes
 
 ### Principes Architecturaux
 
-Tous définis dans [`claude/standards/architectural-principles.md`](claude/standards/architectural-principles.md) :
+Le code doit respecter les principes définis dans `.claude/standards/architectural-principles.md` :
 
-#### SOLID
-- **S**ingle Responsibility Principle
-- **O**pen/Closed Principle
-- **L**iskov Substitution Principle
-- **I**nterface Segregation Principle
-- **D**ependency Inversion Principle
+- **SOLID** : Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
+- **Domain-Driven Design** : Ubiquitous Language, Entities, Value Objects, Aggregates, Domain Events, Repositories, Bounded Contexts
+- **Test-Driven Development** : Red-Green-Refactor, tests first, FIRST principles
+- **Clean Code** : Fonctions courtes (<50 lignes), un niveau d'abstraction, Command-Query Separation, fail fast
+- **Design Patterns** : Factory, Builder, Adapter, Decorator, Strategy, Observer
+- **Architectural Patterns** : Layered Architecture, Hexagonal Architecture (Ports & Adapters), CQRS
 
-#### Domain-Driven Design (DDD)
-- Ubiquitous Language
-- Entities vs Value Objects
-- Aggregates & Aggregate Roots
-- Domain Events
-- Repositories
-- Bounded Contexts & Anti-Corruption Layer
+### Principes de Design Frontend
 
-#### Test-Driven Development (TDD)
-- Red-Green-Refactor cycle
-- Tests FIRST (Fast, Independent, Repeatable, Self-Validating, Timely)
-- Test Doubles (Stub, Mock, Fake)
+Le design doit éviter l'esthétique générique "AI slop" selon `.claude/standards/frontend-design-principles.md` :
 
-#### Clean Code
-- Fonctions font UNE chose
-- Niveau d'abstraction unique
-- ≤ 3 paramètres par fonction
-- Command Query Separation
-- Code auto-documenté
+**Typography** :
 
-#### Design Patterns
-- **Creational** : Factory, Builder
-- **Structural** : Adapter, Decorator
-- **Behavioral** : Strategy, Observer
+- ❌ Fonts interdites : Inter, Roboto, Arial, Space Grotesk
+- ✅ Fonts distinctives : Clash Display, DM Sans, Fraunces, Cabinet Grotesk
 
-#### Patterns Architecturaux
-- Layered Architecture
-- Hexagonal Architecture (Ports & Adapters)
-- CQRS (Command Query Responsibility Segregation)
+**Couleurs** :
 
-### Frontend Design Principles
+- ❌ Purple gradients génériques
+- ✅ Stratégie 70% dominant + 30% accents
+- ✅ Inspiration : IDE themes (Tokyo Night, Catppuccin, Dracula)
 
-Définis dans [`claude/standards/frontend-design-principles.md`](claude/standards/frontend-design-principles.md) :
+**Animations** :
 
-#### Anti "AI Slop" Aesthetic
-- ❌ **Fonts interdites** : Inter, Roboto, Arial, Space Grotesk
-- ✅ **Fonts distinctives** : Adaptées au contexte projet
-- ❌ **Éviter** : Purple gradients génériques, palettes équi-distribuées
-- ✅ **Stratégie** : Couleur dominante 70% + accents tranchants 30%
-- ✅ **Animations** : Orchestrées (staggered page load), pas partout
-- ✅ **Backgrounds** : Profondeur et atmosphère (pas fonds unis)
+- ❌ Micro-interactions partout
+- ✅ Animations orchestrées (staggered page load)
+- ✅ CSS-only priorité, Framer Motion pour complexité
 
-### Standards de Qualité
+**Backgrounds** :
 
-Tous définis dans [`claude/standards/code-quality-rules.md`](claude/standards/code-quality-rules.md) :
+- ❌ Solides plats
+- ✅ Layered gradients, geometric patterns, noise textures
+- ✅ Profondeur et atmosphère
 
-```yaml
-Complexité:
-  - Complexité cyclomatique ≤ 10 par fonction
-  - Complexité cognitive ≤ 15 par fonction
-  - Profondeur imbrication ≤ 4 niveaux
+### Règles de Documentation
 
-Taille:
-  - Fonctions ≤ 50 lignes (idéal ≤ 30)
-  - Fichiers ≤ 500 lignes (idéal ≤ 300)
-  - Paramètres ≤ 4 par fonction
+**Code auto-documenté** (DOCUMENTALIST) :
 
-Qualité:
-  - Duplication ≤ 3% du code
-  - Pas de bugs patterns
-  - Pas de code mort
-  - Early returns privilégiés
+- ❌ **PAS de commentaires dans le code** (sauf exceptions : logique métier complexe, workarounds temporaires)
+- ✅ Noms de fonctions/variables explicites
+- ✅ Abstractions claires
+- ✅ Types TypeScript stricts
 
-TypeScript:
-  - Strict mode activé
-  - Pas de 'any'
-  - Types explicites sur fonctions publiques
-```
+**Documentation externe** :
 
----
+- ✅ README.md **toujours à jour** après chaque changement
+- ✅ .env.example **synchronisé** avec les variables utilisées
+- ✅ Guide d'onboarding < 30 minutes
+- ✅ CHANGELOG.md (format Keep a Changelog)
+- ✅ Documentation API (OpenAPI/Swagger)
 
-## 🚀 Installation
+## Installation
 
 ### Prérequis
 
-- [Claude Code CLI](https://claude.ai/claude-code) installé
-- Git configuré
-- Node.js (pour projets JavaScript/TypeScript)
+- Claude Code CLI installé
+- Node.js 18+ (ou version requise par votre projet)
+- Git
 
-### Setup
+### Configuration
 
-1. **Cloner ce repository** :
-   ```bash
-   git clone <repository-url> claude-config
-   cd claude-config
-   ```
+1. **Cloner le repository**
 
-2. **Configurer Claude Code** :
+```bash
+git clone https://github.com/votre-repo/claude-config.git
+cd claude-config
+```
 
-   Copier le dossier `claude/` vers votre configuration Claude :
+2. **Copier la configuration Claude**
 
-   ```bash
-   # macOS/Linux
-   cp -r claude ~/.config/claude/
+```bash
+# La configuration est déjà dans le dossier ./claude
+# Claude Code la détectera automatiquement
+```
 
-   # Ou lien symbolique (recommandé pour dev)
-   ln -s $(pwd)/claude ~/.config/claude/
-   ```
+3. **Vérifier la configuration**
 
-3. **Vérifier la configuration** :
-   ```bash
-   claude-code --version
-   # Vérifier que les agents sont chargés
-   ```
+```bash
+# Tester l'orchestrateur
+claude-code @orchestrator "Analyser la structure du projet"
 
----
+# Tester l'architecte
+claude-code @architect "Vérifier les standards du projet"
+```
 
-## 💻 Utilisation
+## Utilisation
 
-### Commandes de Base
+### Workflow complet (via ORCHESTRATOR)
 
-#### Appeler l'Orchestrator (Point d'entrée recommandé)
+Pour une tâche complète avec validation automatique :
 
 ```bash
 claude-code @orchestrator "Créer un module de gestion d'utilisateurs avec:
@@ -237,20 +187,38 @@ claude-code @orchestrator "Créer un module de gestion d'utilisateurs avec:
 - Documentation"
 ```
 
-#### Appeler un Agent Spécifique
+L'ORCHESTRATOR va automatiquement :
+
+1. Décomposer la tâche
+2. Invoquer ARCHITECT pour validation
+3. Coordonner DESIGNER, TESTER, FULLSTACK_DEV
+4. Lancer REVIEWER pour validation finale
+
+### Invocation directe d'agents
+
+Pour des tâches spécifiques :
 
 ```bash
-# Validation architecture
+# Architecture et standards
 claude-code @architect "Review l'architecture du module payment"
 
-# Création de composants UI
+# Design UI/UX
 claude-code @designer "Créer un composant Card réutilisable avec variants"
+
+# Implémentation
+claude-code @dev "Implémenter l'API REST pour les utilisateurs"
 
 # Tests
 claude-code @tester "Créer les tests E2E pour le flow d'inscription"
 
+# Code review
+claude-code @reviewer "Review le code du module auth"
+
 # Sécurité
 claude-code @security "Audit de sécurité du module authentication"
+
+# Gestion des erreurs
+claude-code @error-coordinator "Review la stratégie de gestion d'erreurs de l'API"
 
 # Débogage
 claude-code @debugger "Analyser pourquoi les tests de paiement échouent"
@@ -258,429 +226,484 @@ claude-code @debugger "Analyser pourquoi les tests de paiement échouent"
 # Performance
 claude-code @performance "Profiler l'application et identifier les bottlenecks"
 
+# Documentation
+claude-code @documentalist "Mettre à jour le README et synchroniser le .env.example"
+
 # DevOps
 claude-code @devops "Setup pipeline CI/CD GitHub Actions"
 ```
 
----
+## Workflow Standard
 
-## 🔄 Workflow Standard (3-Stage Pipeline)
+### 3-Stage Pipeline
 
-### Stage 1 : Specification & Design ⚠️ BLOQUANT
+#### Stage 1 : Specification & Design
 
-```
+**Validation ARCHITECT obligatoire (BLOQUANT)**
+
 1. ORCHESTRATOR analyse la demande
-2. CONTEXT_MANAGER optimise le contexte (auto)
-3. ARCHITECT valide faisabilité et approche technique
+2. CONTEXT_MANAGER optimise le contexte (automatique)
+3. **ARCHITECT valide la faisabilité** ⚠️ Droit de veto
 4. SECURITY_ENGINEER identifie les risques (si auth/payment/PII)
-5. Output : ADR créé avec décisions architecturales
+5. **Output** : ADR créé avec décisions architecturales
 
-✅ Critère de passage : ARCHITECT approuve
-```
-
-### Stage 2 : Design & Test Preparation (Parallèle)
-
-```
-En parallèle :
-- DESIGNER conçoit les interfaces (si UI)
-- TESTER écrit les tests (TDD - red state)
-- ERROR_COORDINATOR définit stratégie erreurs
-- PERFORMANCE_ENGINEER définit budgets perf
-
-✅ Critère de passage : Tous les outputs validés
-```
-
-### Stage 3 : Implementation, Review & Deployment (Séquentiel)
-
-```
-Séquentiel :
-1. FULLSTACK_DEV implémente le code
-2. TESTER exécute les tests (doivent passer ✅)
-3. DEBUGGER intervient si bugs 🐛
-4. REVIEWER valide le code
-5. SECURITY_ENGINEER security review (si code critique)
-6. PERFORMANCE_ENGINEER vérifie budgets
-7. DEVOPS déploie en production
-
-✅ Critère de complétion : Tests passent, reviews OK, déployé
-```
+**Critères de passage** : ARCHITECT approuve → Stage 2
 
 ---
 
-## 📁 Structure du Projet
+#### Stage 2 : Design & Test Preparation
+
+**Exécution en parallèle**
+
+- DESIGNER conçoit les interfaces (si UI nécessaire)
+- TESTER écrit les tests (TDD - tests échouent pour l'instant)
+- ERROR_COORDINATOR définit la stratégie de gestion d'erreurs
+- PERFORMANCE_ENGINEER définit les budgets de performance (si applicable)
+
+**Output** : Designs prêts, tests écrits (red state), stratégies définies
+
+**Critères de passage** : Tous les outputs validés → Stage 3
+
+---
+
+#### Stage 3 : Implementation, Review & Deployment
+
+**Exécution séquentielle**
+
+1. FULLSTACK_DEV implémente le code
+2. TESTER exécute les tests (doivent passer au vert ✅)
+3. DEBUGGER intervient si bugs détectés 🐛
+4. REVIEWER valide le code produit
+5. SECURITY_ENGINEER security review (si code critique)
+6. PERFORMANCE_ENGINEER vérifie budgets respectés (si applicable)
+7. DOCUMENTALIST met à jour README et .env.example
+8. DEVOPS déploie en production
+
+**Output** : Code production-ready, déployé, documenté
+
+**Critères de complétion** : Tous les tests passent, reviews approuvées, déployé sans erreurs, documentation à jour
+
+## Structure du Projet
 
 ```
 claude-config/
-├── README.md                           # Ce fichier
 ├── claude/
-│   ├── CLAUDE.md                       # Documentation système multi-agents
-│   ├── config.yaml                     # Configuration Claude
-│   ├── settings.local.json             # Settings locaux
-│   │
-│   ├── agents/                         # Agents spécialisés
-│   │   ├── orchestrator.md             # Coordination générale
-│   │   ├── architect.md                # ⚠️ Garant qualité (VETO)
-│   │   ├── designer.md                 # UI/UX & Design system
-│   │   ├── fullstack-dev.md            # Développement full stack
-│   │   ├── tester.md                   # Tests & QA
-│   │   ├── reviewer.md                 # Code review
-│   │   ├── devops.md                   # CI/CD & Infrastructure
-│   │   ├── security-engineer.md        # Sécurité OWASP
-│   │   ├── error-coordinator.md        # Gestion erreurs
-│   │   ├── context-manager.md          # Optimisation contexte
-│   │   ├── debugger.md                 # Débogage avancé
-│   │   └── performance-engineer.md     # Optimisation performances
-│   │
-│   └── standards/                      # Standards de qualité
-│       ├── architectural-principles.md  # SOLID, DDD, TDD, Clean Code
-│       ├── frontend-design-principles.md # Anti "AI slop" aesthetic
-│       ├── code-quality-rules.md        # Standards qualité code
-│       ├── linting_formatting.md        # ESLint, Prettier config
-│       ├── logging_monitoring.md        # Sentry, Winston setup
-│       └── quality_sonarqube.md         # SonarQube configuration
-│
-└── .git/                               # Git repository
+│   ├── CLAUDE.md              # Instructions principales pour Claude
+│   ├── agents/                # Configuration des agents
+│   │   ├── orchestrator.md
+│   │   ├── architect.md
+│   │   ├── designer.md
+│   │   ├── fullstack-dev.md
+│   │   ├── tester.md
+│   │   ├── reviewer.md
+│   │   ├── devops.md
+│   │   ├── security-engineer.md
+│   │   ├── error-coordinator.md
+│   │   ├── context-manager.md
+│   │   ├── debugger.md
+│   │   ├── performance-engineer.md
+│   │   └── documentalist.md
+│   └── standards/             # Standards de code et design
+│       ├── architectural-principles.md
+│       ├── frontend-design-principles.md
+│       ├── linting_formatting.md
+│       ├── logging_monitoring.md
+│       └── code-quality-rules.md
+├── README.md                  # Ce fichier
+└── LICENSE                    # MIT License
 ```
 
----
+## Classification des Projets
 
-## 🎯 Classification des Projets
+L'ARCHITECT classifie chaque projet selon 3 niveaux pour **éviter l'over-engineering** :
 
-L'ARCHITECT classifie chaque nouveau projet selon 3 niveaux pour adapter la stack technique.
+### Niveau 1 - SIMPLE
 
-### Niveau 1 : SIMPLE (Stack Minimaliste)
-
-**Exemples** : Site vitrine, landing page, blog, portfolio
-
-**Caractéristiques** :
-- < 1000 visiteurs/jour
-- Contenu majoritairement statique
-- Pas de données sensibles
-- Durée de vie : 3-12 mois
+**Type** : Site vitrine, landing page, blog
 
 **Stack** :
-- Frontend : Next.js (SSG) ou Astro
-- Déploiement : Vercel / Netlify (gratuit)
-- Qualité : ESLint + Prettier + TypeScript strict
-- Monitoring : Logs plateforme (Vercel logs)
 
-**Non requis** : ❌ SonarQube, Sentry, Docker, K8s
+- Frontend : Vercel / Netlify
+- Monitoring : Logs plateforme
+- Qualité : ESLint + Prettier
 
-### Niveau 2 : MOYEN (Stack Standard)
+**Exemple** :
 
-**Exemples** : SaaS simple (< 10k users), app interne, e-commerce PME
+```bash
+✅ ESLint + Vercel logs pour un site vitrine (adapté)
+❌ SonarQube + Kubernetes pour un site vitrine (over-engineering)
+```
 
-**Caractéristiques** :
-- 1k - 50k utilisateurs
-- Données utilisateurs (auth, profils)
-- Features modérées (5-15 modules)
-- Durée de vie : > 1 an
+### Niveau 2 - MOYEN
+
+**Type** : SaaS simple, app interne, e-commerce PME
 
 **Stack** :
-- Frontend : Next.js + Tailwind + shadcn/ui
-- Backend : NestJS + PostgreSQL (Supabase/Railway)
-- Qualité : ESLint + SonarCloud + Tests (coverage ≥ 70%)
+
+- Backend : Railway / Render
 - Monitoring : Sentry + Winston
+- Qualité : SonarCloud + Tests 70%
 
-**Non requis** : ❌ K8s, Prometheus/Grafana, tests de charge
+**Exemple** :
 
-### Niveau 3 : COMPLEXE (Stack Complète)
+```bash
+✅ Sentry + Railway + SonarCloud pour un SaaS simple (adapté)
+```
 
-**Exemples** : SaaS multi-tenant (> 50k users), fintech, healthtech
+### Niveau 3 - COMPLEXE
 
-**Caractéristiques** :
-- > 50k utilisateurs actifs
-- Données sensibles (finance, santé)
-- Features complexes (> 20 modules)
-- SLA critiques (99.9%+ uptime)
+**Type** : SaaS multi-tenant, fintech, healthtech
 
 **Stack** :
-- Frontend : Next.js + Redux + Design System custom
-- Backend : NestJS + PostgreSQL (AWS RDS) + Redis + Queue
-- Qualité : ESLint + SonarQube + Tests (coverage ≥ 80%) + E2E
-- Monitoring : Sentry + ELK + APM + Datadog
-- Sécurité : WAF, DDoS protection, penetration testing
 
-**Obligatoire** : ✅ Tout
+- Infrastructure : AWS / GCP / Kubernetes
+- Monitoring : Sentry + ELK + APM
+- Qualité : SonarQube + Tests 80% + E2E
 
----
+**Exemple** :
 
-## 🔧 Outils Configurés
+```bash
+✅ Stack complète pour un SaaS fintech (justifié)
+```
 
-### Formatage et Linting (Tous Niveaux)
+**⚠️ L'ARCHITECT DOIT créer un ADR-000 "Classification du projet" au démarrage.**
 
-**Obligatoire pour TOUS les projets** :
-- **ESLint** : Avec plugins sonarjs + security
-- **Prettier** : Formatage automatique
-- **Husky** : Pre-commit hooks
-- **lint-staged** : Lint seulement fichiers modifiés
+## Outils Configurés
+
+### Formatage et Linting (OBLIGATOIRE tous niveaux)
+
+**JavaScript/TypeScript** :
+
+- ESLint + Prettier
+- eslint-plugin-sonarjs + eslint-plugin-security
+- husky + lint-staged (pre-commit hooks)
+
+**Python** :
+
+- Black + Ruff/Flake8 + isort
+- pre-commit
+
+**Configuration minimale requise** :
+
+```json
+{
+  "devDependencies": {
+    "eslint": "latest",
+    "prettier": "latest",
+    "lint-staged": "latest",
+    "husky": "latest",
+    "eslint-plugin-sonarjs": "latest",
+    "eslint-plugin-security": "latest"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "prepare": "husky install"
+  }
+}
+```
 
 ### Monitoring (Niveau 2 et 3)
 
-**Obligatoire pour projets moyens et complexes** :
-- **Sentry** : Error tracking + performance monitoring
-- **Winston/Pino** : Logger structuré
-- **Context enrichment** : User, requestId dans logs
+**Obligatoire** :
 
-### Qualité du Code (Niveau 2 et 3)
+- Sentry (error tracking & performance monitoring)
+- Winston / Pino (logging structuré)
 
-**Obligatoire pour projets moyens et complexes** :
-- **SonarCloud** (Niveau 2) : Scan qualité automatique
-- **SonarQube** (Niveau 3) : Self-hosted ou Enterprise
-- **Quality Gates** : 0 bugs, coverage minimum, 0 vulnérabilités
+**Niveau 3 uniquement** :
 
----
+- ELK Stack (logs centralisés)
+- APM (Application Performance Monitoring)
 
-## 📖 Documentation
+### Qualité du Code
 
-### ADR (Architecture Decision Records)
+**Tous niveaux** :
 
-Chaque décision technique importante doit être documentée dans un ADR :
+- Complexité cyclomatique ≤ 10
+- Fonctions ≤ 50 lignes
+- Pas de `any` en TypeScript
+- Pas de duplication > 3%
 
-**Format** :
+**Niveau 2 et 3** :
+
+- SonarCloud (N2) ou SonarQube (N3)
+- Coverage ≥ 70% (N2) ou ≥ 80% (N3)
+- Quality Gates configurés
+
+## Documentation
+
+### Architecture Decision Records (ADR)
+
+Toute décision architecturale significative doit être documentée :
+
 ```markdown
-# ADR-001: Choix du state management
+# ADR-001 : Choix de NestJS pour le Backend
 
-## Status
-Accepted
+**Date** : 2026-01-09
+**Statut** : Accepté
+**Contexte** : Besoin d'un framework backend TypeScript robuste
+**Décision** : Utilisation de NestJS avec architecture modulaire
+**Conséquences** :
 
-## Context
-[Pourquoi cette décision est nécessaire]
-
-## Decision
-[Quelle décision a été prise]
-
-## Consequences
-### Positive
-- [Avantage 1]
-### Negative
-- [Inconvénient 1]
-
-## Alternatives Considered
-- [Alternative 1]
-- [Alternative 2]
+- ✅ TypeScript strict
+- ✅ Dependency Injection native
+- ❌ Courbe d'apprentissage
 ```
 
-**ADR Obligatoires** :
-- **ADR-000** : Classification du projet (Niveau 1/2/3) + justification stack
+### README.md
 
-### Diagrammes C4
+**Sections obligatoires** :
 
-Maintenir des diagrammes C4 pour visualiser l'architecture :
-1. **Context** : Vue d'ensemble du système
-2. **Container** : Applications et bases de données
-3. **Component** : Composants principaux
-4. **Code** : Classes importantes (optionnel)
+- Installation (< 5 min)
+- Configuration (.env.example)
+- Démarrage rapide
+- Scripts disponibles
+- Architecture (C4 diagrams si applicable)
+- Contribution
 
----
+**DOCUMENTALIST vérifie** que le README est à jour après chaque changement.
 
-## 🛡️ Sécurité
+### .env.example
 
-### Checklist Sécurité (SECURITY_ENGINEER)
+**Synchronisation obligatoire** avec le code :
+
+```bash
+# =============================================================================
+# DATABASE
+# =============================================================================
+
+# PostgreSQL connection string
+# Format: postgresql://user:password@host:port/database
+# SECURITY: Generate with `openssl rand -base64 32`
+DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+
+# JWT secret key
+JWT_SECRET=your_jwt_secret_here
+```
+
+**DOCUMENTALIST valide** avec un script de vérification automatique.
+
+### Guide d'Onboarding
+
+**Objectif** : Nouveau développeur opérationnel en < 30 min
+
+**Checklist** :
+
+1. Installation (10 min)
+2. Vérification (5 min)
+3. Premier code (15 min)
+
+## Sécurité
+
+### SECURITY_ENGINEER
+
+S'active automatiquement sur :
+
+- Code d'authentification
+- Traitement de paiements
+- Données personnelles (PII)
+
+### Checklist Sécurité
 
 ```
-□ Pas de secrets en dur (credentials, API keys)
-□ Validation des inputs (backend ET frontend)
-□ Protection SQL injection (requêtes paramétrées)
-□ Protection XSS (échappement outputs)
-□ Protection CSRF (tokens)
-□ Authentification robuste (bcrypt, JWT)
+□ Pas de credentials hardcodés
+□ Validation des inputs (injection prevention)
 □ HTTPS obligatoire en production
-□ Headers sécurisés (Helmet.js)
-□ Rate limiting (prévention brute force)
-□ Audit dépendances (npm audit, Snyk)
+□ CORS configuré correctement
+□ Rate limiting sur les API
+□ Headers de sécurité (CSP, HSTS, etc.)
+□ Secrets en variables d'environnement
+□ Dépendances auditées (npm audit)
 ```
 
----
+### OWASP Top 10
 
-## 🧪 Tests
+Le code doit être protégé contre :
 
-### Stratégie de Tests
+- Injection (SQL, XSS, etc.)
+- Broken Authentication
+- Sensitive Data Exposure
+- XML External Entities (XXE)
+- Broken Access Control
+- Security Misconfiguration
+- Cross-Site Scripting (XSS)
+- Insecure Deserialization
+- Using Components with Known Vulnerabilities
+- Insufficient Logging & Monitoring
 
-**TDD (Test-Driven Development) encouragé** :
-1. **RED** : Écrire test qui échoue
-2. **GREEN** : Écrire minimum pour passer
-3. **REFACTOR** : Améliorer le code
+## Tests
 
-### Coverage Minimum
+### Stratégie TDD
 
-- **Niveau 1** : Tests basiques (pas de coverage minimum strict)
-- **Niveau 2** : Coverage ≥ 70% du nouveau code
-- **Niveau 3** : Coverage ≥ 80% + Tests E2E critiques
+**Red-Green-Refactor** :
+
+1. Écrire un test qui échoue (RED)
+2. Écrire le code minimum pour passer (GREEN)
+3. Refactorer en gardant les tests verts (REFACTOR)
+
+### Couverture Requise
+
+- **Niveau 1** : Tests de base
+- **Niveau 2** : Coverage ≥ 70%
+- **Niveau 3** : Coverage ≥ 80% + E2E
 
 ### Types de Tests
 
-```yaml
-Tests Unitaires:
-  - Responsabilité: TESTER
-  - Framework: Jest / Vitest
-  - Coverage: Fonctions, classes, services
+```typescript
+// Tests unitaires
+describe("Money", () => {
+  it("should add two money amounts with same currency", () => {
+    const fiveEuros = new Money(5, Currency.EUR);
+    const tenEuros = new Money(10, Currency.EUR);
 
-Tests Intégration:
-  - Responsabilité: TESTER
-  - Scope: API endpoints, DB queries
+    const result = fiveEuros.add(tenEuros);
 
-Tests E2E:
-  - Responsabilité: TESTER
-  - Framework: Playwright / Cypress
-  - Scope: Flows utilisateur critiques (Niveau 2/3)
+    expect(result.amount).toBe(15);
+  });
+});
+
+// Tests d'intégration
+describe("UserService", () => {
+  it("should create user and send welcome email", async () => {
+    const user = await userService.create({ email: "test@example.com" });
+    expect(emailService.send).toHaveBeenCalledWith(user.email);
+  });
+});
+
+// Tests E2E
+describe("Authentication Flow", () => {
+  it("should login user and redirect to dashboard", async () => {
+    await page.goto("/login");
+    await page.fill("[name=email]", "user@example.com");
+    await page.fill("[name=password]", "password");
+    await page.click("button[type=submit]");
+    await expect(page).toHaveURL("/dashboard");
+  });
+});
 ```
 
----
+## Design System
 
-## 🎨 Design System
+### Composants UI
 
-### Principes (DESIGNER)
+Structure recommandée :
 
-**Éviter l'esthétique "AI slop"** :
-- ❌ Pas de fonts génériques (Inter, Roboto, Arial, Space Grotesk)
-- ✅ Fonts distinctives adaptées au contexte
-- ❌ Pas de purple gradients sur blanc
-- ✅ Palette avec dominance 70% + accents 30%
-- ✅ Animations orchestrées (staggered page load)
-- ✅ Backgrounds avec profondeur (layered gradients, patterns)
-
-### Stack Recommandée
-
-```yaml
-Frontend:
-  - Framework: React / Next.js
-  - Styling: Tailwind CSS
-  - Components: shadcn/ui
-  - Animation: Framer Motion (complexe) ou CSS (simple)
-  - Icons: Lucide React
-
-Design Tokens:
-  - CSS Variables pour couleurs
-  - Système spacing 4px
-  - Typography scale modulaire
+```
+src/components/
+├── ui/              # Composants atomiques
+│   ├── Button.tsx
+│   ├── Input.tsx
+│   └── Card.tsx
+├── features/        # Composants métier
+│   ├── UserProfile.tsx
+│   └── ProductCard.tsx
+└── layouts/         # Layouts
+    ├── MainLayout.tsx
+    └── DashboardLayout.tsx
 ```
 
----
+### Accessibilité (A11y)
 
-## 🤝 Contribution
+**Checklist** :
 
-### Ajouter un Nouvel Agent
+- Contraste WCAG AA minimum (4.5:1)
+- Navigation clavier complète
+- ARIA labels sur éléments interactifs
+- Support lecteurs d'écran
+- Focus visible
+- prefers-reduced-motion respecté
 
-1. Créer `claude/agents/nouvel-agent.md`
-2. Suivre le template des agents existants
-3. Définir : Mission, Responsabilités, Tools Available, Format de livrable
-4. Ajouter dans `claude/CLAUDE.md` table des agents
-5. Documenter dans ce README
+## Contribution
 
-### Modifier les Standards
-
-1. Éditer le fichier approprié dans `claude/standards/`
-2. Ajouter exemples ✅ BON / ❌ MAUVAIS
-3. Mettre à jour checklist de validation
-4. Documenter le changement dans un commit clair
-
-### Proposer des Améliorations
-
-1. Créer une issue décrivant le problème/amélioration
-2. Soumettre une PR avec :
-   - Changements dans configuration
-   - Exemples concrets
-   - Documentation mise à jour
-3. Vérifier que tous les agents restent cohérents
-
----
-
-## 📝 Exemples d'Usage
-
-### Exemple 1 : Créer un Nouveau Feature
+### Workflow Git
 
 ```bash
-# Utiliser l'orchestrator pour workflow complet
-claude-code @orchestrator "Ajouter système de notifications en temps réel:
-- Backend: WebSocket avec Socket.io
-- Frontend: Composant NotificationCenter
-- Persistance des notifications
-- Tests complets"
+# 1. Créer une branche
+git checkout -b feat/nouvelle-fonctionnalite
 
-# Le workflow 3-stage s'exécute automatiquement:
-# Stage 1: ARCHITECT valide approche
-# Stage 2: DESIGNER + TESTER travaillent en parallèle
-# Stage 3: FULLSTACK_DEV implémente, REVIEWER valide
+# 2. Développer avec commits conventionnels
+git commit -m "feat(auth): add OAuth2 Google provider"
+
+# 3. Pousser et créer une PR
+git push origin feat/nouvelle-fonctionnalite
 ```
 
-### Exemple 2 : Review de Code Existant
+### Convention de Commits
+
+```
+<type>(<scope>): <subject>
+
+Types: feat, fix, docs, style, refactor, test, chore, perf
+```
+
+**Exemples** :
+
+```
+feat(auth): add OAuth2 Google provider
+fix(cart): resolve quantity update race condition
+refactor(api): extract validation middleware
+docs(readme): update installation steps
+test(user): add integration tests for registration
+```
+
+## Exemples d'Usage
+
+### Exemple 1 : Nouvelle Feature Complète
 
 ```bash
-# Appeler reviewer directement
-claude-code @reviewer "Review le code dans src/services/payment.service.ts"
-
-# Résultat: Rapport avec scores + issues blocker/critical/major/minor
+claude-code @orchestrator "Implémenter un système de notifications en temps réel avec:
+- WebSocket backend (Socket.io)
+- Composant React pour affichage notifications
+- Persistance en base de données
+- Tests unitaires et E2E
+- Documentation"
 ```
 
-### Exemple 3 : Debugging
+**Résultat** :
+
+1. ARCHITECT valide l'approche WebSocket vs SSE
+2. DESIGNER crée le composant de notification
+3. TESTER écrit les tests (TDD)
+4. FULLSTACK_DEV implémente backend + frontend
+5. REVIEWER valide le code
+6. SECURITY_ENGINEER vérifie la sécurité WebSocket
+7. DOCUMENTALIST met à jour le README
+8. DEVOPS configure le déploiement
+
+### Exemple 2 : Bug Fix
 
 ```bash
-# Appeler debugger pour analyse approfondie
-claude-code @debugger "Les tests d'intégration du module order échouent avec erreur 'Transaction timeout'"
-
-# Résultat: Root cause analysis + suggestions fixes
+claude-code @debugger "Les utilisateurs ne peuvent pas se déconnecter après 30 minutes de session"
 ```
 
-### Exemple 4 : Classification Nouveau Projet
+**Résultat** :
+
+1. DEBUGGER analyse les logs et reproduit le bug
+2. Identifie le problème (token expiration mal gérée)
+3. FULLSTACK_DEV corrige le code
+4. TESTER vérifie la correction
+5. REVIEWER valide
+
+### Exemple 3 : Optimisation Performance
 
 ```bash
-# Appeler architect au démarrage projet
-claude-code @architect "Classifier ce projet:
-- SaaS de gestion de tâches
-- 5000 utilisateurs prévus à 6 mois
-- Pas de données financières
-- Budget limité
-- Équipe de 2 devs"
-
-# Résultat: ADR-000 avec classification NIVEAU 2 + stack recommandée
+claude-code @performance "L'application est lente au chargement initial"
 ```
 
----
+**Résultat** :
 
-## 🔗 Ressources
+1. PERFORMANCE_ENGINEER profile l'application
+2. Identifie les bottlenecks (bundle trop gros, images non optimisées)
+3. FULLSTACK_DEV implémente code splitting et lazy loading
+4. PERFORMANCE_ENGINEER vérifie les budgets respectés
+5. DOCUMENTALIST met à jour la documentation des optimisations
 
-### Documentation Officielle
-- [Claude Code](https://claude.ai/claude-code)
-- [Next.js](https://nextjs.org/docs)
-- [NestJS](https://docs.nestjs.com/)
-- [Tailwind CSS](https://tailwindcss.com/docs)
+## Licence
 
-### Standards et Bonnes Pratiques
-- [SOLID Principles](https://en.wikipedia.org/wiki/SOLID)
-- [Domain-Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html)
-- [Test-Driven Development](https://martinfowler.com/bliki/TestDrivenDevelopment.html)
-- [Clean Code Principles](https://www.oreilly.com/library/view/clean-code-a/9780136083238/)
-
-### Outils
-- [SonarQube](https://www.sonarqube.org/)
-- [Sentry](https://sentry.io/)
-- [ESLint](https://eslint.org/)
-- [Prettier](https://prettier.io/)
+MIT License - voir [LICENSE](./LICENSE)
 
 ---
 
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
----
-
-## 👥 Auteurs
-
-Configuration créée et maintenue par l'équipe de développement.
-
----
-
-## 🙏 Remerciements
-
-Cette configuration s'inspire des meilleures pratiques de l'industrie, notamment :
-- Principes SOLID et Clean Code
-- Domain-Driven Design (DDD)
-- Test-Driven Development (TDD)
-- Extreme Programming (XP)
-- Patterns de conception éprouvés
-
----
-
-**Pour toute question, consulter [`claude/CLAUDE.md`](claude/CLAUDE.md) ou créer une issue.**
+**Configuration maintenue par** : Votre équipe
+**Dernière mise à jour** : 2026-01-09

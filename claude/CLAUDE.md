@@ -27,6 +27,7 @@ Ce projet utilise un système de sub-agents spécialisés coordonnés par un orc
 | CONTEXT_MANAGER | Optimisation du contexte, summarization | `@context-manager` | filesystem | ✅ Auto (background) |
 | **DEBUGGER** | **Débogage avancé, root cause analysis** | `@debugger` | **filesystem, git** | **✅ Bugs/Tests failing** |
 | **PERFORMANCE_ENGINEER** | **Optimisation performances, profiling** | `@performance` | **filesystem, Bash** | **✅ Before production** |
+| **DOCUMENTALIST** | **Documentation technique, README, guides** | `@documentalist` | **filesystem, git** | **✅ After changes** |
 
 ### Workflow Standard (3-Stage Pipeline)
 
@@ -734,6 +735,9 @@ claude-code @debugger "Analyser pourquoi les tests de paiement échouent"
 
 # Performance
 claude-code @performance "Profiler l'application et identifier les bottlenecks"
+
+# Documentation
+claude-code @documentalist "Mettre à jour le README et synchroniser le .env.example"
 
 # DevOps
 claude-code @devops "Setup pipeline CI/CD GitHub Actions"
