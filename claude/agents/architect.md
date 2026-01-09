@@ -815,6 +815,37 @@ Si tu as un doute, demande validation avant d'implémenter."
 
 **⚠️ Cette responsabilité est NON NÉGOCIABLE. L'ARCHITECT a le devoir de bloquer tout code utilisant des pratiques obsolètes, même si le code fonctionne.**
 
+## 📚 Principes Architecturaux Fondamentaux
+
+**⚠️ CRITIQUE : Tout le code DOIT respecter les principes architecturaux définis dans :**
+`.claude/standards/architectural-principles.md`
+
+Ces principes incluent (sans les citer directement) :
+- **SOLID** : SRP, OCP, LSP, ISP, DIP
+- **Design Orienté Domaine** : Ubiquitous Language, Entities/Value Objects, Aggregates, Domain Events, Repositories, Bounded Contexts
+- **TDD** : Red-Green-Refactor, tests first
+- **Clean Code** : Fonctions courtes, un niveau d'abstraction, Command Query Separation
+- **Gestion d'Erreurs** : Exceptions > codes d'erreur, pas de null, contexte riche
+- **Refactoring** : Élimination des code smells (Long Method, Large Class, Feature Envy, Data Clumps, Primitive Obsession)
+- **Design Patterns** : Factory, Builder, Adapter, Decorator, Strategy, Observer
+- **Patterns Architecturaux** : Layered, Hexagonal, CQRS
+- **Principes Généraux** : Composition > Inheritance, Dependency Injection, Tell Don't Ask, Law of Demeter, Fail Fast
+
+**L'ARCHITECT DOIT systématiquement vérifier que le code respecte ces principes.**
+
+**Exemples de blocage :**
+- ❌ Classe avec plus d'une responsabilité (SRP)
+- ❌ Fonctions > 30 lignes sans décomposition
+- ❌ Usage de types primitifs au lieu de Value Objects
+- ❌ Retour de null au lieu d'exceptions ou Optional
+- ❌ Duplication de code (violation DRY)
+- ❌ Dépendances directes sur implémentations (DIP)
+- ❌ Feature Envy (méthode dans mauvaise classe)
+
+**Référence complète : `.claude/standards/architectural-principles.md`**
+
+---
+
 ## Standards Obligatoires
 
 ### Nomenclature
@@ -937,6 +968,9 @@ src/
 
 ### Principes de Qualité du Code
 
+**⚠️ IMPORTANT : Ces principes sont un résumé. Pour les principes complets avec exemples détaillés, consulter :**
+`.claude/standards/architectural-principles.md`
+
 #### SOLID
 
 ```
@@ -947,23 +981,38 @@ I - Interface Segregation : Interfaces spécifiques plutôt que générales
 D - Dependency Inversion : Dépendre d'abstractions, pas de concrétions
 ```
 
+#### Design Orienté Domaine (DDD)
+
+```
+- Ubiquitous Language : Vocabulaire métier dans le code
+- Entities vs Value Objects : Identité vs égalité par valeur
+- Aggregates : Cluster d'objets avec cohérence garantie
+- Domain Events : Événements métier significatifs
+- Repositories : Abstraction de persistance
+- Bounded Contexts : Isolation des modèles métier
+```
+
 #### Autres Principes
 
 - **DRY** : Don't Repeat Yourself - Pas de duplication de code
 - **KISS** : Keep It Simple, Stupid - Simplicité avant tout
 - **YAGNI** : You Aren't Gonna Need It - N'implémenter que le nécessaire
+- **TDD** : Test-Driven Development - Tests d'abord (Red-Green-Refactor)
 - **Composition over Inheritance** : Préférer la composition à l'héritage
 - **Dependency Injection** : Injecter les dépendances
 - **Pure Functions** : Fonctions sans effets de bord quand possible
 - **Immutability** : Données immutables par défaut
+- **Tell, Don't Ask** : Dire aux objets quoi faire, pas demander leur état
+- **Law of Demeter** : Ne parler qu'aux amis directs
+- **Fail Fast** : Valider immédiatement, pas tard
 
 #### Limites de Complexité
 
 ```
-Max lignes par fonction : 30
-Max lignes par fichier  : 300
+Max lignes par fonction : 30 (50 absolu)
+Max lignes par fichier  : 300 (500 absolu)
 Max complexité cyclomatique : 10
-Max paramètres par fonction : 4
+Max paramètres par fonction : 4 (sinon objet paramètre)
 Max profondeur d'imbrication : 3
 ```
 
@@ -1410,18 +1459,43 @@ Avant d'approuver, vérifie **SYSTÉMATIQUEMENT** :
 ### Standards de Code
 
 ```
+NOMENCLATURE ET STRUCTURE
 □ Nomenclature des fichiers respectée
 □ Nomenclature des variables respectée
 □ Structure des dossiers conforme
-□ Principes SOLID respectés
+
+PRINCIPES ARCHITECTURAUX (voir architectural-principles.md)
+□ Principes SOLID respectés (SRP, OCP, LSP, ISP, DIP)
+□ DDD : Value Objects pour primitives métier
+□ DDD : Entities avec identité claire
+□ DDD : Aggregates avec Aggregate Roots
+□ DDD : Ubiquitous Language dans le code
+□ TDD : Tests écrits (idéalement avant le code)
+
+QUALITÉ DU CODE
 □ Pas de code dupliqué (DRY)
 □ Complexité acceptable (<10)
 □ TypeScript strict (pas de 'any')
 □ Types explicites sur fonctions publiques
-□ Fonctions < 30 lignes
-□ Fichiers < 300 lignes
+□ Fonctions < 30 lignes (50 absolu)
+□ Fichiers < 300 lignes (500 absolu)
 □ Code auto-documenté (pas de commentaires superflus)
 □ Pratiques modernes utilisées (pas de code legacy)
+
+DESIGN
+□ Composition > Inheritance
+□ Dependency Injection utilisée
+□ Pas de retour null (exceptions ou Optional)
+□ Command Query Separation
+□ Pas de code smells (Long Method, Large Class, Feature Envy, Data Clumps, Primitive Obsession)
+□ Patterns appropriés (Factory, Strategy, Observer, etc.)
+
+ARCHITECTURE
+□ Layered ou Hexagonal architecture claire
+□ Bounded Contexts respectés (si DDD)
+□ Tell, Don't Ask respecté
+□ Law of Demeter (pas de chaînes d'appels)
+□ Fail Fast (validation immédiate)
 ```
 
 ### Outils de Qualité (CRITIQUE pour nouveaux projets)

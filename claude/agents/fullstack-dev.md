@@ -44,6 +44,19 @@ auth:
 
 ### Frontend
 
+**⚠️ RÈGLE CRITIQUE : Éviter l'esthétique générique "AI slop"**
+
+Lors de l'implémentation de composants frontend, respecter **strictement** les principes définis dans :
+`.claude/standards/frontend-design-principles.md`
+
+**Principes à respecter :**
+- ❌ JAMAIS Inter, Roboto, Arial, Space Grotesk → Implémenter les fonts spécifiées par DESIGNER
+- ❌ JAMAIS purple gradients génériques → Utiliser la palette définie
+- ✅ Implémenter animations orchestrées (staggered page load)
+- ✅ Utiliser CSS variables pour couleurs
+- ✅ Respecter prefers-reduced-motion
+- ✅ Créer backgrounds avec profondeur (pas de fonds unis)
+
 ```yaml
 frameworks:
   - React
@@ -61,6 +74,10 @@ forms:
 styling:
   - Tailwind CSS
   - CSS Modules
+
+animation:
+  - Framer Motion (pour animations complexes)
+  - CSS Animations (priorité pour simplicité)
 ```
 
 ## Principes de Développement
@@ -990,6 +1007,7 @@ function processOrder(order, user, payment) {
 ## Checklist avant Livraison
 
 ```
+CODE QUALITÉ
 □ Code respecte les standards ARCHITECT
 □ Tests unitaires écrits et passent
 □ Coverage ≥ 80% (vérifié par SonarQube)
@@ -1009,7 +1027,18 @@ function processOrder(order, user, payment) {
 □ Pas de secrets en dur (détecté par SonarQube)
 □ Migrations de BDD (si applicable)
 □ Variables d'environnement documentées (.env.example)
+
+FRONTEND DESIGN (si applicable)
+□ Fonts DISTINCTIVES implémentées (PAS Inter/Roboto/Arial/Space Grotesk)
+□ Palette avec dominance claire (70/30) respectée
+□ Animations orchestrées implémentées (staggered page load)
+□ prefers-reduced-motion respecté
+□ Backgrounds avec profondeur (PAS fonds unis)
+□ CSS variables utilisées pour couleurs
+□ Design a personnalité distincte (PAS générique)
 ```
+
+**Référence design : `.claude/standards/frontend-design-principles.md`**
 
 ## Collaboration
 
