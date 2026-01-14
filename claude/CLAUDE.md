@@ -8,26 +8,26 @@ Ce projet utilise un système de sub-agents spécialisés coordonnés par un orc
 
 #### Agents de Développement
 
-| Agent | Rôle | Commande | MCP Tools | Proactive |
-|-------|------|----------|-----------|-----------|
-| ORCHESTRATOR | Coordination générale, décomposition des tâches | `@orchestrator` | filesystem, git | ✅ Always |
-| ARCHITECT | Standards, architecture, validation technique | `@architect` | filesystem, git, **WebFetch, WebSearch** | ✅ Technical decisions |
-| DESIGNER | UI/UX, design system, accessibilité | `@designer` | filesystem, **WebFetch, WebSearch** | ✅ UI/UX features |
-| FULLSTACK_DEV | Implémentation complète (frontend + backend) | `@dev` | filesystem, git, postgres, **WebFetch, WebSearch** | - |
-| TESTER | Tests unitaires, intégration, E2E, QA | `@tester` | filesystem | - |
-| REVIEWER | Code review, qualité, sécurité | `@reviewer` | filesystem, git | ✅ After implementation |
-| DEVOPS | CI/CD, déploiement, infrastructure | `@devops` | filesystem, git | - |
+| Agent         | Rôle                                                                           | Commande        | MCP Tools                                          | Proactive               |
+| ------------- | ------------------------------------------------------------------------------ | --------------- | -------------------------------------------------- | ----------------------- |
+| ORCHESTRATOR  | Coordination générale, décomposition des tâches, **Garant de la transparence** | `@orchestrator` | filesystem, git                                    | ✅ Always               |
+| ARCHITECT     | Standards, architecture, validation technique                                  | `@architect`    | filesystem, git, **WebFetch, WebSearch**           | ✅ Technical decisions  |
+| DESIGNER      | UI/UX, design system, accessibilité                                            | `@designer`     | filesystem, **WebFetch, WebSearch**                | ✅ UI/UX features       |
+| FULLSTACK_DEV | Implémentation complète (frontend + backend)                                   | `@dev`          | filesystem, git, postgres, **WebFetch, WebSearch** | -                       |
+| TESTER        | Tests unitaires, intégration, E2E, QA                                          | `@tester`       | filesystem                                         | -                       |
+| REVIEWER      | Code review, qualité, sécurité                                                 | `@reviewer`     | filesystem, git                                    | ✅ After implementation |
+| DEVOPS        | CI/CD, déploiement, infrastructure                                             | `@devops`       | filesystem, git                                    | -                       |
 
 #### Agents Spécialisés (Nouveaux + Améliorés)
 
-| Agent | Rôle | Commande | MCP Tools | Proactive |
-|-------|------|----------|-----------|-----------|
-| SECURITY_ENGINEER | Sécurité OWASP, audit, threat modeling | `@security` | filesystem, git | ✅ Auth/Payment/PII |
-| ERROR_COORDINATOR | Gestion des erreurs, recovery, resilience | `@error-coordinator` | filesystem | ✅ External API calls |
-| CONTEXT_MANAGER | Optimisation du contexte, summarization | `@context-manager` | filesystem | ✅ Auto (background) |
-| **DEBUGGER** | **Débogage avancé, root cause analysis** | `@debugger` | **filesystem, git** | **✅ Bugs/Tests failing** |
-| **PERFORMANCE_ENGINEER** | **Optimisation performances, profiling** | `@performance` | **filesystem, Bash** | **✅ Before production** |
-| **DOCUMENTALIST** | **Documentation technique, README, guides** | `@documentalist` | **filesystem, git** | **✅ After changes** |
+| Agent                    | Rôle                                        | Commande             | MCP Tools            | Proactive                 |
+| ------------------------ | ------------------------------------------- | -------------------- | -------------------- | ------------------------- |
+| SECURITY_ENGINEER        | Sécurité OWASP, audit, threat modeling      | `@security`          | filesystem, git      | ✅ Auth/Payment/PII       |
+| ERROR_COORDINATOR        | Gestion des erreurs, recovery, resilience   | `@error-coordinator` | filesystem           | ✅ External API calls     |
+| CONTEXT_MANAGER          | Optimisation du contexte, summarization     | `@context-manager`   | filesystem           | ✅ Auto (background)      |
+| **DEBUGGER**             | **Débogage avancé, root cause analysis**    | `@debugger`          | **filesystem, git**  | **✅ Bugs/Tests failing** |
+| **PERFORMANCE_ENGINEER** | **Optimisation performances, profiling**    | `@performance`       | **filesystem, Bash** | **✅ Before production**  |
+| **DOCUMENTALIST**        | **Documentation technique, README, guides** | `@documentalist`     | **filesystem, git**  | **✅ After changes**      |
 
 ### Workflow Standard (3-Stage Pipeline)
 
@@ -48,6 +48,7 @@ Ce projet utilise un système de sub-agents spécialisés coordonnés par un orc
 #### **Stage 2 : Design & Test Preparation** (Parallèle)
 
 **En parallèle** (démarrent simultanément) :
+
 - **DESIGNER** conçoit les interfaces (si UI nécessaire)
 - **TESTER** écrit les tests (TDD - tests échouent pour l'instant)
 - **ERROR_COORDINATOR** définit la stratégie de gestion d'erreurs
@@ -62,6 +63,7 @@ Ce projet utilise un système de sub-agents spécialisés coordonnés par un orc
 #### **Stage 3 : Implementation, Review & Deployment** (Séquentiel)
 
 **Séquentiel** (chaque agent attend le précédent) :
+
 1. **FULLSTACK_DEV** implémente le code
 2. **TESTER** exécute les tests (doivent passer au vert ✅)
 3. **DEBUGGER** intervient si bugs détectés 🐛
@@ -74,6 +76,14 @@ Ce projet utilise un système de sub-agents spécialisés coordonnés par un orc
 
 **Critères de complétion** : Tous les tests passent, reviews approuvées, déployé sans erreurs
 
+### Règles de Visibilité (OBLIGATOIRE)
+
+Pour assurer une transparence totale, chaque agent doit s'identifier au début de ses messages :
+
+1. **Identification** : Commencer chaque réponse par `[AGENT_NAME] - [STATUS]`
+2. **Transitions** : L'ORCHESTRATOR annonce chaque passage de relais avec `[TRANSITION]`
+3. **Task Board** : L'ORCHESTRATOR maintient un tableau de bord des tâches à jour
+
 ### Standards Obligatoires
 
 **⚠️ TOUT le code doit respecter les standards définis dans `.claude/standards/`**
@@ -84,15 +94,16 @@ Ce projet utilise un système de sub-agents spécialisés coordonnés par un orc
 
 L'ARCHITECT doit classifier chaque nouveau projet selon 3 niveaux :
 
-| Niveau | Type de Projet | Stack | Monitoring | Qualité |
-|--------|---------------|-------|------------|---------|
-| **1 - SIMPLE** | Site vitrine, landing page, blog | Minimaliste (Vercel/Netlify) | Logs plateforme | ESLint + Prettier |
-| **2 - MOYEN** | SaaS simple, app interne, e-commerce PME | Standard (Railway/Render) | Sentry + Winston | SonarCloud + Tests 70% |
-| **3 - COMPLEXE** | SaaS multi-tenant, fintech, healthtech | Complète (AWS/GCP/K8s) | Sentry + ELK + APM | SonarQube + Tests 80% + E2E |
+| Niveau           | Type de Projet                           | Stack                        | Monitoring         | Qualité                     |
+| ---------------- | ---------------------------------------- | ---------------------------- | ------------------ | --------------------------- |
+| **1 - SIMPLE**   | Site vitrine, landing page, blog         | Minimaliste (Vercel/Netlify) | Logs plateforme    | ESLint + Prettier           |
+| **2 - MOYEN**    | SaaS simple, app interne, e-commerce PME | Standard (Railway/Render)    | Sentry + Winston   | SonarCloud + Tests 70%      |
+| **3 - COMPLEXE** | SaaS multi-tenant, fintech, healthtech   | Complète (AWS/GCP/K8s)       | Sentry + ELK + APM | SonarQube + Tests 80% + E2E |
 
 **L'ARCHITECT DOIT créer un ADR-000 "Classification du projet" au démarrage de TOUT projet.**
 
 **Exemples :**
+
 - ❌ **BLOQUER** : SonarQube + Kubernetes pour un site vitrine (over-engineering)
 - ✅ **APPROUVER** : ESLint + Vercel logs pour un site vitrine (adapté)
 - ✅ **APPROUVER** : Stack complète pour un SaaS fintech (justifié)
@@ -103,6 +114,7 @@ L'ARCHITECT doit classifier chaque nouveau projet selon 3 niveaux :
 #### Nomenclature
 
 **Fichiers :**
+
 - Composants : `PascalCase.tsx`
 - Hooks : `use-kebab-case.ts`
 - Utils : `kebab-case.ts`
@@ -110,6 +122,7 @@ L'ARCHITECT doit classifier chaque nouveau projet selon 3 niveaux :
 - Types : `kebab-case.types.ts`
 
 **Variables :**
+
 - Constants : `SCREAMING_SNAKE_CASE`
 - Functions : `camelCase`
 - Classes : `PascalCase`
@@ -170,12 +183,15 @@ src/
 #### Outils Requis par Écosystème
 
 **JavaScript/TypeScript :**
+
 - ESLint + Prettier + lint-staged + husky
 
 **Python :**
+
 - Black + Ruff/Flake8 + isort + pre-commit
 
 **Autres :**
+
 - Rust: rustfmt + clippy
 - Go: gofmt + golangci-lint
 - Java: google-java-format + checkstyle
@@ -193,6 +209,7 @@ src/
 #### Pre-commit Hooks (Non Négociable)
 
 **Tout commit DOIT automatiquement :**
+
 - ✅ Exécuter le linter avec fix automatique
 - ✅ Formater le code avec Prettier/Black/etc
 - ✅ Bloquer le commit si erreurs critiques
@@ -202,21 +219,25 @@ src/
 #### Responsabilités
 
 **ARCHITECT :**
+
 - Vérifier présence des outils dans TOUT nouveau projet
 - Bloquer approbation si non configuré
 - Valider que les règles sont strictes
 
 **FULLSTACK_DEV :**
+
 - Installer et configurer automatiquement au démarrage
 - Ne jamais désactiver règles sans justification
 - Exécuter `lint:fix` avant chaque commit
 
 **DEVOPS :**
+
 - Configurer hooks Git
 - Intégrer vérification dans CI/CD
 - Fail la build si linting échoue
 
 **REVIEWER :**
+
 - Rejeter code non formaté
 - Vérifier qu'aucune règle n'est désactivée sans raison
 
@@ -275,6 +296,7 @@ src/
 **⚠️ RÈGLE : Standards de logging/monitoring ADAPTÉS selon le niveau du projet**
 
 **Application selon le niveau :**
+
 - **NIVEAU 1 (Simple)** : Logs plateforme (Vercel/Netlify) + Analytics basiques → Sentry/Winston NON REQUIS
 - **NIVEAU 2 (Moyen)** : Sentry (gratuit) + Winston → OBLIGATOIRE
 - **NIVEAU 3 (Complexe)** : Sentry + Winston + Logs centralisés (ELK) + APM → OBLIGATOIRE
@@ -282,14 +304,17 @@ src/
 #### Outils Requis
 
 **JavaScript/TypeScript :**
+
 - Sentry (error tracking & performance monitoring)
 - Winston ou Pino (logging structuré)
 
 **Python :**
+
 - Sentry
 - Structlog
 
 **Autres :**
+
 - Rust: Sentry + tracing
 - Go: Sentry + Zap/Logrus
 - Java: Sentry + SLF4J/Logback
@@ -308,21 +333,25 @@ src/
 #### Responsabilités
 
 **ARCHITECT :**
+
 - Vérifier présence de Sentry dans TOUT nouveau projet
 - Bloquer approbation si monitoring non configuré
 - Valider la stratégie de logging
 
 **FULLSTACK_DEV :**
+
 - Installer et configurer automatiquement au démarrage
 - Implémenter le logging structuré partout
 - Capturer les erreurs avec contexte riche
 
 **DEVOPS :**
+
 - Configurer variables d'environnement Sentry
 - Setup release tracking dans CI/CD
 - Configurer les alertes et webhooks
 
 **REVIEWER :**
+
 - Vérifier que les erreurs sont capturées avec Sentry
 - Valider le niveau de détail des logs
 - S'assurer qu'aucune donnée sensible n'est loggée
@@ -407,6 +436,7 @@ Sécurité:
 ```
 
 **Packages requis :**
+
 ```bash
 npm install --save-dev eslint-plugin-sonarjs eslint-plugin-security
 ```
@@ -470,6 +500,7 @@ npx husky install
 #### Responsabilités
 
 **ARCHITECT (TOUS NIVEAUX) :**
+
 - ✅ Vérifier configuration ESLint complète (plugins sonarjs + security)
 - ✅ Bloquer si standards de qualité non respectés (complexité, duplication, etc.)
 - ✅ Review manuel si NIVEAU 1 (pas de SonarQube)
@@ -477,6 +508,7 @@ npx husky install
 - ✅ Bloquer si Quality Gate échoue (N2/N3)
 
 **FULLSTACK_DEV (TOUS NIVEAUX) :**
+
 - ✅ Respecter les standards : fonctions < 50 lignes, complexité < 10, etc.
 - ✅ Exécuter `npm run lint` avant commit (0 erreurs requis)
 - ✅ Pas de 'any' en TypeScript
@@ -485,6 +517,7 @@ npx husky install
 - ✅ NIVEAU 2/3 : Maintenir coverage ≥ 70% (N2) ou ≥ 80% (N3)
 
 **DEVOPS (SELON NIVEAU) :**
+
 - ✅ TOUS : Configurer hooks Git (husky)
 - ✅ TOUS : Intégrer ESLint dans CI/CD
 - ✅ NIVEAU 2/3 : Configurer SonarQube dans CI/CD
@@ -492,6 +525,7 @@ npx husky install
 - ✅ NIVEAU 2/3 : Monitorer Technical Debt global
 
 **REVIEWER (TOUS NIVEAUX) :**
+
 - ✅ Vérifier que ESLint passe (0 erreurs)
 - ✅ NIVEAU 1 : Review manuel approfondi (complexité, duplication, longueur)
 - ✅ NIVEAU 2/3 : Vérifier SonarQube report dans la PR
@@ -501,6 +535,7 @@ npx husky install
 #### Checklist Nouveau Projet
 
 **TOUS LES NIVEAUX (OBLIGATOIRE) :**
+
 ```
 □ Configuration ESLint complète (plugins sonarjs + security) ?
 □ Prettier configuré ?
@@ -513,6 +548,7 @@ npx husky install
 ```
 
 **NIVEAU 2 et 3 UNIQUEMENT (OBLIGATOIRE) :**
+
 ```
 □ SonarCloud (N2) ou SonarQube (N3) configuré ?
 □ Token Sonar en secret CI/CD ?
@@ -543,6 +579,7 @@ Types: feat, fix, docs, style, refactor, test, chore, perf
 ```
 
 **Exemples :**
+
 ```
 feat(auth): add OAuth2 Google provider
 fix(cart): resolve quantity update race condition
@@ -558,6 +595,7 @@ refactor(api): extract validation middleware
 Pour tout nouveau projet, les agents **DOIVENT** :
 
 1. **Vérifier les versions** avant toute installation :
+
    ```bash
    npm view <package> version        # Dernière version stable
    npm view <package> versions       # Toutes les versions disponibles
@@ -565,6 +603,7 @@ Pour tout nouveau projet, les agents **DOIVENT** :
    ```
 
 2. **Utiliser les versions les plus récentes stables** :
+
    ```bash
    # ❌ MAUVAIS : Version obsolète
    npm install react@17.0.0
@@ -620,14 +659,17 @@ npm install typescript@^4.0.0  # Version obsolète
 #### Cas Particuliers
 
 **Dépendances avec breaking changes fréquents :**
+
 - Utiliser `^` pour les mises à jour mineures automatiques
 - Exemple : `"react": "^19.0.0"` accepte 19.0.x et 19.x.x
 
 **Projets en production :**
+
 - Utiliser des versions exactes si stabilité critique
 - Exemple : `"react": "19.0.2"` (sans `^`)
 
 **Dépendances beta/alpha :**
+
 - Éviter sauf si explicitement demandé
 - Préférer `@latest` (stable) à `@next` (beta)
 
@@ -748,11 +790,13 @@ claude-code @devops "Setup pipeline CI/CD GitHub Actions"
 #### 🔍 WebFetch/WebSearch Capability
 
 Les agents suivants peuvent maintenant rechercher en ligne :
+
 - **ARCHITECT** : Recherche les dernières best practices architecturales
 - **DESIGNER** : Consulte les design systems modernes (shadcn/ui, Material, etc.)
 - **FULLSTACK_DEV** : Accède à la documentation officielle des frameworks
 
 **Exemple** :
+
 ```typescript
 // ARCHITECT peut maintenant :
 // 1. Rechercher "NestJS authentication best practices 2026"
@@ -763,6 +807,7 @@ Les agents suivants peuvent maintenant rechercher en ligne :
 #### ⚡ Proactive Invocation
 
 Certains agents s'activent maintenant **automatiquement** quand pertinent :
+
 - **ARCHITECT** : Décisions techniques, nouvelles features
 - **DESIGNER** : Features UI/UX, design system
 - **REVIEWER** : Après implémentation, avant déploiement
@@ -774,6 +819,7 @@ Certains agents s'activent maintenant **automatiquement** quand pertinent :
 #### 📊 Standardized Output Formats
 
 Les agents utilisent maintenant des formats de sortie standardisés :
+
 - **REVIEWER** : Format "praise/concerns/suggestions/must_fix/nice_to_have"
 - **DEBUGGER** : Format structuré de rapport de bug avec root cause
 - **PERFORMANCE_ENGINEER** : Métriques détaillées avec budgets
@@ -808,3 +854,4 @@ En cas de désaccord entre agents :
 - `.claude/agents/` : Configuration détaillée de chaque agent
 - `.claude/standards/` : Standards complets
 - `docs/architecture.md` : Architecture globale du système
+```
