@@ -10,7 +10,8 @@ Specialized subagents in `.claude/agents/`. Main ones:
 
 | Agent | When to Use | Command |
 |-------|-------------|---------|
-| ORCHESTRATOR | Complex multi-step tasks | `@orchestrator` |
+| **PLANNER** | **FIRST STEP for non-trivial tasks. Plans before execution** | `@planner` |
+| ORCHESTRATOR | Executes planned multi-step tasks | `@orchestrator` |
 | ARCHITECT | Technical decisions, architecture validation | `@architect` |
 | FULLSTACK_DEV | Implementation | `@dev` |
 | REVIEWER | Code review before merge | `@reviewer` |
@@ -19,13 +20,24 @@ Specialized subagents in `.claude/agents/`. Main ones:
 
 **Why agents?** Each gets fresh 200K context. Keeps main conversation clean while handling complex subtasks.
 
-## 3-Stage Pipeline (Non-Negotiable)
+**⚠️ CRITICAL: PLANNER comes BEFORE ORCHESTRATOR.** Never code without a validated plan for non-trivial tasks.
 
-**Stage 1: Spec & Design** → ARCHITECT validates feasibility. Blocking gate.
+## 4-Stage Pipeline (Non-Negotiable)
+
+**Stage 0: Planning** → PLANNER analyzes, asks questions, proposes approaches, validates plan with user. **BLOCKING GATE.**
+**Stage 1: Spec & Design** → ORCHESTRATOR coordinates. ARCHITECT validates feasibility. Blocking gate.
 **Stage 2: Design & Test Prep** → DESIGNER + TESTER work parallel (TDD).
 **Stage 3: Implementation** → DEV → TESTER → REVIEWER → Deploy.
 
-**Why this order?** Planning first prevents hours of debugging. ARCHITECT veto exists because bad architecture = technical debt.
+**Why this order?** PLANNER ensures clarity before any work starts. Planning prevents hours of debugging. ARCHITECT veto exists because bad architecture = technical debt.
+
+**Workflow:**
+```
+User Request → PLANNER (understand + explore + architect + plan)
+           → User validates plan
+           → ORCHESTRATOR executes
+           → Agents implement
+```
 
 ## Project Classification (Prevent Over-Engineering)
 

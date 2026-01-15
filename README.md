@@ -25,37 +25,47 @@ Configuration professionnelle de Claude Code avec système multi-agents spécial
 
 Ce projet fournit une configuration complète pour Claude Code avec :
 
-- **12 agents spécialisés** coordonnés par un orchestrateur
+- **13 agents spécialisés** incluant un PLANNER prioritaire
+- **Workflow en 4 étapes** (Planning → Specification → Design → Implementation)
 - **Standards architecturaux** (SOLID, DDD, TDD, Clean Code)
 - **Principes de design frontend** anti "AI slop"
-- **Workflow en 3 étapes** (Specification → Design → Implementation)
 - **Classification de projets** (Simple/Moyen/Complexe)
 - **Documentation stricte** (README, .env.example, guides)
+
+**🧠 Nouveauté : PLANNER** - Point d'entrée obligatoire qui analyse, pose des questions, et produit un plan validé AVANT toute exécution.
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────┐
-│           ORCHESTRATOR                  │
-│  (Coordination, décomposition tâches)   │
-└────────────┬────────────────────────────┘
-             │
-   ┌─────────┼──────────┬─────────────┐
-   │         │          │             │
-   ▼         ▼          ▼             ▼
-┌────────┐ ┌────────┐ ┌──────────┐ ┌──────────┐
-│ARCHITECT│→│DESIGNER│→│FULLSTACK │→│  TESTER  │
-│ (Veto) │ │        │ │   DEV    │ │          │
-└────────┘ └────────┘ └──────────┘ └──────────┘
-   │         │          │             │
-   ▼         ▼          ▼             ▼
-┌────────┐ ┌────────┐ ┌──────────┐ ┌──────────┐
-│REVIEWER│ │SECURITY│ │ DEBUGGER │ │  DEVOPS  │
-│        │ │        │ │          │ │          │
-└────────┘ └────────┘ └──────────┘ └──────────┘
+                    ┌─────────────────────┐
+                    │      PLANNER        │
+                    │  (Think First)      │
+                    │  Plan validated     │
+                    └──────────┬──────────┘
+                               │
+                    ┌──────────▼──────────┐
+                    │   ORCHESTRATOR      │
+                    │  (Coordination)     │
+                    └──────────┬──────────┘
+                               │
+         ┌─────────────────────┼────────────────────┐
+         │                     │                    │
+         ▼                     ▼                    ▼
+    ┌────────┐            ┌────────┐          ┌──────────┐
+    │ARCHITECT│──────────→│DESIGNER│─────────→│FULLSTACK │
+    │ (Veto) │            │        │          │   DEV    │
+    └────────┘            └────────┘          └──────────┘
+         │                     │                    │
+         ▼                     ▼                    ▼
+    ┌────────┐            ┌────────┐          ┌──────────┐
+    │REVIEWER│            │SECURITY│          │ DEBUGGER │
+    │        │            │        │          │          │
+    └────────┘            └────────┘          └──────────┘
 ```
 
-**Principe clé** : L'ARCHITECT a un **droit de veto** - aucun code ne passe sans validation.
+**Principes clés** :
+- **PLANNER** : Point d'entrée OBLIGATOIRE pour tâches non-triviales. Planifie avant d'agir.
+- **ARCHITECT** : Droit de **veto** - aucun code ne passe sans validation.
 
 ## Agents Disponibles
 
@@ -63,7 +73,8 @@ Ce projet fournit une configuration complète pour Claude Code avec :
 
 | Agent             | Rôle                                            | Commande        | Proactif                |
 | ----------------- | ----------------------------------------------- | --------------- | ----------------------- |
-| **ORCHESTRATOR**  | Coordination générale, décomposition des tâches | `@orchestrator` | ✅ Toujours             |
+| **PLANNER** 🧠    | **Point d'entrée pour tâches non-triviales. Analyse, planifie, valide AVANT exécution** | `@planner` | ✅ **OBLIGATOIRE avant code** |
+| **ORCHESTRATOR**  | Coordination générale, décomposition des tâches | `@orchestrator` | ✅ Après plan validé    |
 | **ARCHITECT**     | Standards, architecture, validation technique   | `@architect`    | ✅ Décisions techniques |
 | **DESIGNER**      | UI/UX, design system, accessibilité             | `@designer`     | ✅ Features UI/UX       |
 | **FULLSTACK_DEV** | Implémentation complète (frontend + backend)    | `@dev`          | -                       |
@@ -194,9 +205,35 @@ L'ORCHESTRATOR va automatiquement :
 3. Coordonner DESIGNER, TESTER, FULLSTACK_DEV
 4. Lancer REVIEWER pour validation finale
 
+### Utilisation du PLANNER (Recommandé)
+
+Pour toute tâche non-triviale, **commencez par le PLANNER** :
+
+```bash
+# Le PLANNER va analyser, poser des questions, explorer le code,
+# proposer des approches, et produire un plan validé
+claude-code @planner "Créer un système de notifications en temps réel"
+
+# Le PLANNER va:
+# 1. Comprendre vos besoins (poser des questions si nécessaire)
+# 2. Explorer le contexte technique existant
+# 3. Proposer 2-3 approches (WebSocket vs SSE vs Polling)
+# 4. Créer un plan détaillé avec sous-tâches
+# 5. Passer la main à @orchestrator une fois validé
+```
+
+**Quand utiliser PLANNER ?**
+- ✅ Nouvelles features (> 30min de travail)
+- ✅ Refactoring architectural
+- ✅ Plusieurs approches possibles
+- ✅ Impacts multi-fichiers
+- ❌ Corrections triviales (typos, one-liners)
+
+---
+
 ### Invocation directe d'agents
 
-Pour des tâches spécifiques :
+Pour des tâches spécifiques ou après planification :
 
 ```bash
 # Architecture et standards
@@ -235,7 +272,28 @@ claude-code @devops "Setup pipeline CI/CD GitHub Actions"
 
 ## Workflow Standard
 
-### 3-Stage Pipeline
+### 4-Stage Pipeline
+
+#### Stage 0 : Planning (PLANNER)
+
+**Point d'entrée OBLIGATOIRE pour tâches non-triviales**
+
+1. **UNDERSTAND** : Reformule la demande, pose des questions critiques
+2. **EXPLORE** : Scanne le contexte technique existant (patterns, tests, configs)
+3. **ARCHITECT** : Propose 2-3 approches avec avantages/inconvénients
+4. **PLAN** : Produit un plan détaillé avec sous-tâches, estimations, risques
+
+**Critères de passage** : Utilisateur valide le plan → Handoff à ORCHESTRATOR
+
+**Output** : Plan validé (fichier `plan.md` ou structuré dans la conversation)
+
+**Complexité** :
+- **TRIVIAL** : Skip PLANNER, direct ORCHESTRATOR
+- **SIMPLE** : Phase UNDERSTAND + PLAN rapide
+- **MEDIUM** : Toutes les phases
+- **COMPLEX** : Toutes les phases + fichier plan.md
+
+---
 
 #### Stage 1 : Specification & Design
 
@@ -649,25 +707,162 @@ test(user): add integration tests for registration
 
 ## Exemples d'Usage
 
-### Exemple 1 : Nouvelle Feature Complète
+### Exemple 1 : Nouvelle Feature Complète (avec PLANNER)
 
 ```bash
-claude-code @orchestrator "Implémenter un système de notifications en temps réel avec:
-- WebSocket backend (Socket.io)
-- Composant React pour affichage notifications
-- Persistance en base de données
-- Tests unitaires et E2E
-- Documentation"
+# Étape 1 : PLANNER analyse et planifie
+claude-code @planner "Implémenter un système de notifications en temps réel"
 ```
 
-**Résultat** :
+**Ce qui se passe :**
 
-1. ARCHITECT valide l'approche WebSocket vs SSE
-2. DESIGNER crée le composant de notification
+**[PLANNER] - [UNDERSTAND]**
+```
+Je comprends que vous voulez un système de notifications temps réel.
+Avant de planifier, j'ai besoin de clarifier:
+
+1. Type de notifications ? (Push, in-app, email, SMS)
+2. Volume attendu ? (100 users, 10K, 1M+)
+3. Persistance requise ? (historique notifications)
+4. Contraintes techniques ? (stack existante à respecter)
+5. Délai acceptable ? (< 1s, < 5s, < 30s)
+```
+
+**Après vos réponses :**
+
+**[PLANNER] - [EXPLORE]**
+```
+J'ai scanné votre codebase:
+- Backend NestJS existant
+- Frontend React avec Zustand
+- PostgreSQL database
+- Pattern event-driven déjà en place
+```
+
+**[PLANNER] - [ARCHITECT]**
+```
+Voici 3 approches:
+
+### Option A: WebSocket (Socket.io)
+✅ Temps réel < 100ms
+✅ Bi-directionnel
+❌ Complexité infrastructure
+❌ Coût scaling
+
+### Option B: Server-Sent Events (SSE) ← Recommandé
+✅ Simple à implémenter
+✅ Reconnexion auto
+✅ Suffisant pour notifications unidirectionnelles
+❌ Pas bi-directionnel
+
+### Option C: Polling
+✅ Très simple
+❌ Latence 5-30s
+❌ Charge serveur
+
+**Recommandation: Option B (SSE)**
+Pourquoi ? Votre besoin est unidirectionnel, volume modéré (10K users),
+SSE est parfait et évite la complexité de WebSocket.
+
+**Tu valides cette approche ?**
+```
+
+**Après validation :**
+
+**[PLANNER] - [PLAN]**
+```markdown
+# Plan: Système de notifications temps réel (SSE)
+
+## 📋 Résumé
+Implémenter notifications temps réel via Server-Sent Events
+
+## ✅ Validations Obtenues
+- [x] Compréhension validée
+- [x] Architecture SSE approuvée
+- [x] Contraintes identifiées
+
+## 🎯 Scope
+**Inclus:**
+- Endpoint SSE /api/notifications/stream
+- Composant NotificationCenter React
+- Table notifications PostgreSQL
+- Tests E2E du flow
+
+**Hors scope:**
+- Push notifications mobile (Phase 2)
+- Email notifications (existe déjà)
+
+## 🏗️ Architecture
+Server-Sent Events avec:
+- NestJS endpoint SSE
+- Event emitter pour broadcast
+- Zustand store pour état client
+- PostgreSQL pour historique
+
+## 📝 Sous-tâches
+
+### 1. Backend - Endpoint SSE
+- Estimation: 1h
+- Agent: @fullstack_dev
+- Fichiers: src/notifications/notifications.controller.ts
+- Critères:
+  - [ ] Endpoint /api/notifications/stream
+  - [ ] Event emitter configuré
+  - [ ] Tests unitaires
+
+### 2. Backend - Service notifications
+- Estimation: 45min
+- Agent: @fullstack_dev
+- Dépendances: Tâche 1
+- Fichiers: src/notifications/notifications.service.ts
+
+### 3. Database - Migration
+- Estimation: 30min
+- Agent: @fullstack_dev
+- Fichiers: migrations/xxx-notifications-table.ts
+
+### 4. Frontend - Composant NotificationCenter
+- Estimation: 1h30
+- Agent: @designer + @fullstack_dev
+- Fichiers: components/NotificationCenter.tsx
+
+### 5. Tests E2E
+- Estimation: 1h
+- Agent: @tester
+- Dépendances: Toutes les précédentes
+
+## ⚠️ Risques
+| Risque | Impact | Mitigation |
+|--------|--------|------------|
+| Connexions SSE qui dropent | MEDIUM | Reconnexion auto + heartbeat |
+| Scaling > 10K users | LOW | Migration WebSocket si besoin |
+
+## 🚀 Prêt pour ORCHESTRATOR
+@orchestrator peut prendre le relais pour exécution.
+```
+
+**[PLANNER] - [HANDOFF]**
+```
+✅ Plan validé et prêt pour exécution.
+
+@orchestrator Voici le plan à exécuter:
+- 5 sous-tâches identifiées
+- Estimation totale: 4h45
+- Priorité: MEDIUM
+
+Je reste disponible pour clarifications.
+```
+
+---
+
+**Puis l'ORCHESTRATOR prend le relais :**
+
+1. ARCHITECT valide la faisabilité technique
+2. DESIGNER crée le composant NotificationCenter
 3. TESTER écrit les tests (TDD)
 4. FULLSTACK_DEV implémente backend + frontend
 5. REVIEWER valide le code
-6. SECURITY_ENGINEER vérifie la sécurité WebSocket
+6. SECURITY_ENGINEER vérifie la sécurité SSE
 7. DOCUMENTALIST met à jour le README
 8. DEVOPS configure le déploiement
 
