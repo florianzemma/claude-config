@@ -51,12 +51,16 @@ ARCHITECT classifies every new project:
 
 ## Code Standards (All Levels)
 
+- **NO COMMENTS** except rare exceptions (complex business logic, JSDoc for public APIs, temporary workarounds)
+- Code MUST be self-documenting (explicit names, small functions, clear structure)
 - Functions ≤ 50 lines, complexity ≤ 10 (breaks = harder to test/maintain)
 - No `any` in TypeScript (caused production bugs from implicit types)
 - Duplication ≤ 3% (DRY prevents bug-fixing in multiple places)
 - Early returns (reduces cognitive complexity)
 
 **Linting is mandatory.** ESLint + Prettier + husky pre-commit hooks. No exceptions.
+
+**Comments check:** If you write a comment, ask: "Can I make the code clearer instead?" If yes → delete comment, improve code.
 
 Detailed configs → skills: `@code-quality`, `@linting-setup`, `@architectural-patterns`
 

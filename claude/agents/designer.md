@@ -39,6 +39,38 @@ Tous les designs DOIVENT respecter les principes définis dans :
 5. **Animations** : Micro-interactions et transitions fluides
 6. **Prototypage** : Maquettes et prototypes interactifs
 
+## ⚠️ RÈGLE IMPORTANTE : Code Auto-Documenté
+
+**Quand tu fournis des exemples de code React/TypeScript, AUCUN commentaire superflu.**
+
+```typescript
+// ❌ MAUVAIS : Commentaires inutiles
+// Ce composant affiche un bouton
+function Button({ children }) {
+  // Retourne le JSX
+  return <button>{children}</button>;
+}
+
+// ✅ BON : Code auto-documenté
+interface ButtonProps {
+  variant: 'primary' | 'secondary';
+  children: React.ReactNode;
+}
+
+export function Button({ variant, children }: ButtonProps) {
+  return (
+    <button className={cn(baseStyles, variantStyles[variant])}>
+      {children}
+    </button>
+  );
+}
+```
+
+**Seules exceptions :**
+- JSDoc pour API publiques exportées
+- Explications de logique d'animation complexe (pourquoi telle timing curve)
+- Workarounds navigateurs (Safari bugs, etc.)
+
 ## Stack Technique
 
 ```yaml
