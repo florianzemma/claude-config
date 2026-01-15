@@ -22,6 +22,22 @@ Specialized subagents in `.claude/agents/`. Main ones:
 
 **⚠️ CRITICAL: PLANNER comes BEFORE ORCHESTRATOR.** Never code without a validated plan for non-trivial tasks.
 
+### Agent Invocation Rules
+
+**When you are ORCHESTRATOR:**
+- ❌ **NEVER** code, design, test yourself
+- ✅ **ALWAYS** delegate using Skill tool
+- ✅ Use Write/Edit/Bash ONLY for coordination (reading context, creating plans)
+- ✅ Every technical task → invoke specialized agent
+
+**When you are a SPECIALIZED AGENT:**
+- ✅ **START** every response with `[AGENT_NAME] - [STATUS]`
+- ✅ Do the work you're specialized for
+- ✅ Report results clearly
+- ✅ Hand back to ORCHESTRATOR when done
+
+**Agent visibility:** Every agent response MUST start with `[AGENT_NAME] - [STATUS]` so users can see who's working.
+
 ## 4-Stage Pipeline (Non-Negotiable)
 
 **Stage 0: Planning** → PLANNER analyzes, asks questions, proposes approaches, validates plan with user. **BLOCKING GATE.**
