@@ -72,6 +72,31 @@ Variables: SCREAMING_SNAKE (constants), camelCase (functions), PascalCase (class
 Commits: type(scope): description — feat, fix, docs, refactor, test, chore, perf
 ```
 
+## Git Commit Conventions
+
+**CRITICAL: NO Claude attribution in commits**
+
+```bash
+# ✅ CORRECT commit format
+git commit -m "feat(auth): add OAuth2 provider
+
+Implement Google OAuth2 authentication with session management.
+
+- Add OAuth2 strategy
+- Configure session storage
+- Add callback endpoint"
+
+# ❌ WRONG - DO NOT include these lines:
+# 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+# Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+**Rules:**
+- Clean, professional commit messages
+- No AI/tool attribution
+- Focus on what changed and why
+- Follow conventional commits format
+
 ## Context Management (Critical)
 
 Context degrades at ~30-40%, not 100%. When output quality drops:
