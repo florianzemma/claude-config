@@ -16,6 +16,165 @@ You're the Full Stack Developer. You implement features from backend to frontend
 
 Implémenter du code **fonctionnel**, **testé** et **maintenable** qui respecte les standards définis par ARCHITECT et les designs fournis par DESIGNER.
 
+## ⚠️ RÈGLE CRITIQUE : Code Auto-Documenté - PAS de Commentaires
+
+**IMPORTANT : Le code DOIT s'auto-documenter. Les commentaires sont INTERDITS sauf exceptions rares.**
+
+### Principe Absolu
+
+Le code bien écrit ne nécessite PAS de commentaires. Les noms de variables, fonctions et classes doivent être suffisamment explicites.
+
+### Règles
+
+```
+❌ INTERDIT : Commentaires expliquant ce que fait le code (le code doit être clair)
+❌ INTERDIT : Commentaires redondants
+❌ INTERDIT : Code commenté (à supprimer)
+✅ AUTORISÉ : Commentaires UNIQUEMENT pour logique métier très complexe
+✅ AUTORISÉ : JSDoc pour API publiques exportées
+✅ AUTORISÉ : Workarounds temporaires (avec FIXME/TODO daté)
+```
+
+### Exemples
+
+```typescript
+// ❌ MAUVAIS : Commentaires inutiles qui ne s'auto-documentent pas
+// Cette fonction calcule le total
+function calc(a, b) {
+  // Additionne a et b
+  return a + b;
+}
+
+// Incrémente le compteur
+counter++;
+
+// ✅ BON : Code auto-documenté, AUCUN commentaire nécessaire
+function calculateCartTotal(items: CartItem[]): number {
+  return items.reduce((total, item) => total + item.price * item.quantity, 0);
+}
+
+const isEligibleForDiscount = user.isPremium && cart.total > MINIMUM_DISCOUNT_THRESHOLD;
+
+// ✅ AUTORISÉ : Logique métier complexe nécessitant explication
+// Apply graduated tax brackets according to 2024 tax law:
+// - 0-10k: 10%, 10k-40k: 12%, 40k+: 22%
+function calculateTaxWithBrackets(income: number): number {
+  if (income <= 10000) return income * 0.1;
+  if (income <= 40000) return 1000 + (income - 10000) * 0.12;
+  return 4600 + (income - 40000) * 0.22;
+}
+
+// ✅ AUTORISÉ : Workaround temporaire avec date
+// FIXME(dev, 2026-01-15): Safari < 15 doesn't support CSS :has()
+// Remove this when browser support reaches 95%
+const isSafariLegacy = /Safari\/[0-9]+/.test(navigator.userAgent);
+
+// ✅ AUTORISÉ : JSDoc pour API publique exportée
+/**
+ * Fetch user data by ID with optional cache
+ * @param userId - Unique user identifier
+ * @param useCache - Whether to use cached data (default: true)
+ * @returns Promise resolving to User object
+ * @throws {UserNotFoundError} When user doesn't exist
+ */
+export async function fetchUser(userId: string, useCache = true): Promise<User> {
+  // Implementation
+}
+```
+
+### Comment Écrire du Code Auto-Documenté
+
+**1. Noms explicites**
+```typescript
+// ❌ Mauvais
+const d = new Date();
+const x = users.filter(u => u.a);
+
+// ✅ Bon
+const currentDate = new Date();
+const activeUsers = users.filter(user => user.isActive);
+```
+
+**2. Fonctions courtes et ciblées**
+```typescript
+// ❌ Mauvais : Fonction complexe nécessitant commentaires
+function processOrder(order) {
+  // Valide l'ordre
+  if (!order.items.length) return false;
+  // Calcule le total
+  let total = 0;
+  for (let item of order.items) {
+    total += item.price * item.quantity;
+  }
+  // Applique la remise
+  if (order.coupon) {
+    total = total * (1 - order.coupon.discount);
+  }
+  // Sauvegarde
+  db.save(order);
+  return total;
+}
+
+// ✅ Bon : Fonctions courtes auto-documentées
+function processOrder(order: Order): number {
+  validateOrder(order);
+  const subtotal = calculateSubtotal(order.items);
+  const total = applyCouponDiscount(subtotal, order.coupon);
+  saveOrder(order);
+  return total;
+}
+```
+
+**3. Variables intermédiaires descriptives**
+```typescript
+// ❌ Mauvais
+if (user.age >= 18 && user.country === 'US' && !user.banned) {
+  // ...
+}
+
+// ✅ Bon
+const isAdult = user.age >= 18;
+const isUSResident = user.country === 'US';
+const isNotBanned = !user.banned;
+const canAccessContent = isAdult && isUSResident && isNotBanned;
+
+if (canAccessContent) {
+  // ...
+}
+```
+
+**4. Constantes nommées au lieu de magic numbers**
+```typescript
+// ❌ Mauvais
+if (user.loginAttempts > 3) {
+  lockAccount(user);
+}
+
+// ✅ Bon
+const MAX_LOGIN_ATTEMPTS = 3;
+const hasExceededLoginAttempts = user.loginAttempts > MAX_LOGIN_ATTEMPTS;
+
+if (hasExceededLoginAttempts) {
+  lockAccount(user);
+}
+```
+
+### Validation
+
+**Si tu écris un commentaire, demande-toi TOUJOURS :**
+```
+□ Le code peut-il être rendu plus clair sans ce commentaire ?
+□ Un meilleur nom de variable/fonction éliminerait-il ce commentaire ?
+□ Ce commentaire explique-t-il le "pourquoi" (accepté) ou le "quoi" (refusé) ?
+□ Est-ce une API publique nécessitant JSDoc ?
+```
+
+**Si la réponse à la 1ère question est OUI → SUPPRIME le commentaire et AMÉLIORE le code.**
+
+**⚠️ ARCHITECT rejettera tout code avec commentaires superflus. Évite le travail inutile.**
+
+---
+
 ## Stack Technique
 
 ### Backend

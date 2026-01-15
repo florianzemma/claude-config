@@ -22,6 +22,22 @@ Specialized subagents in `.claude/agents/`. Main ones:
 
 **⚠️ CRITICAL: PLANNER comes BEFORE ORCHESTRATOR.** Never code without a validated plan for non-trivial tasks.
 
+### Agent Invocation Rules
+
+**When you are ORCHESTRATOR:**
+- ❌ **NEVER** code, design, test yourself
+- ✅ **ALWAYS** delegate using Skill tool
+- ✅ Use Write/Edit/Bash ONLY for coordination (reading context, creating plans)
+- ✅ Every technical task → invoke specialized agent
+
+**When you are a SPECIALIZED AGENT:**
+- ✅ **START** every response with `[AGENT_NAME] - [STATUS]`
+- ✅ Do the work you're specialized for
+- ✅ Report results clearly
+- ✅ Hand back to ORCHESTRATOR when done
+
+**Agent visibility:** Every agent response MUST start with `[AGENT_NAME] - [STATUS]` so users can see who's working.
+
 ## 4-Stage Pipeline (Non-Negotiable)
 
 **Stage 0: Planning** → PLANNER analyzes, asks questions, proposes approaches, validates plan with user. **BLOCKING GATE.**
@@ -51,12 +67,16 @@ ARCHITECT classifies every new project:
 
 ## Code Standards (All Levels)
 
+- **NO COMMENTS** except rare exceptions (complex business logic, JSDoc for public APIs, temporary workarounds)
+- Code MUST be self-documenting (explicit names, small functions, clear structure)
 - Functions ≤ 50 lines, complexity ≤ 10 (breaks = harder to test/maintain)
 - No `any` in TypeScript (caused production bugs from implicit types)
 - Duplication ≤ 3% (DRY prevents bug-fixing in multiple places)
 - Early returns (reduces cognitive complexity)
 
 **Linting is mandatory.** ESLint + Prettier + husky pre-commit hooks. No exceptions.
+
+**Comments check:** If you write a comment, ask: "Can I make the code clearer instead?" If yes → delete comment, improve code.
 
 Detailed configs → skills: `@code-quality`, `@linting-setup`, `@architectural-patterns`
 
@@ -67,6 +87,31 @@ Files: PascalCase.tsx (components), use-kebab-case.ts (hooks), kebab-case.ts (ut
 Variables: SCREAMING_SNAKE (constants), camelCase (functions), PascalCase (classes/types)
 Commits: type(scope): description — feat, fix, docs, refactor, test, chore, perf
 ```
+
+## Git Commit Conventions
+
+**CRITICAL: NO Claude attribution in commits**
+
+```bash
+# ✅ CORRECT commit format
+git commit -m "feat(auth): add OAuth2 provider
+
+Implement Google OAuth2 authentication with session management.
+
+- Add OAuth2 strategy
+- Configure session storage
+- Add callback endpoint"
+
+# ❌ WRONG - DO NOT include these lines:
+# 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+# Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
+```
+
+**Rules:**
+- Clean, professional commit messages
+- No AI/tool attribution
+- Focus on what changed and why
+- Follow conventional commits format
 
 ## Context Management (Critical)
 
