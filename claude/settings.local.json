@@ -2,12 +2,17 @@
   "permissions": {
     "allow": [
       "Bash(git add:*)",
-      "Bash(git commit *)",
+      "Bash(git commit:*)",
+      "Bash(grep:*)",
       "WebFetch",
       "WebSearch",
-      "WebFetch", 
+      "WebFetch",
       "Bash(find:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "mcp__plugin_serena_serena__list_dir",
+      "mcp__plugin_serena_serena__activate_project",
+      "Bash(git -C /Users/florian/Desktop/claude-config log --name-status --oneline -20)",
+      "Bash(git -C /Users/florian/Desktop/claude-config status --short)"
     ]
   }
 }

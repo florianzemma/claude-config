@@ -13,14 +13,23 @@ Specialized subagents in `.claude/agents/`. Main ones:
 | **PLANNER** | **FIRST STEP for non-trivial tasks. Plans before execution** | `@planner` |
 | ORCHESTRATOR | Executes planned multi-step tasks | `@orchestrator` |
 | ARCHITECT | Technical decisions, architecture validation | `@architect` |
-| FULLSTACK_DEV | Implementation | `@dev` |
+| FULLSTACK_DEV | Code implementation | `@dev` |
 | REVIEWER | Code review before merge | `@reviewer` |
 | SECURITY_ENGINEER | Auth/payment/PII code | `@security` |
 | TESTER | Writing and running tests | `@tester` |
+| CONTEXT_MANAGER | Context optimization, token management | `@context` |
+| DESIGNER | UI/UX design, components | `@designer` |
+| DEBUGGER | Bug investigation, root cause analysis | `@debugger` |
+| DEVOPS | CI/CD, deployment, infrastructure | `@devops` |
+| DOCUMENTALIST | README, API docs, CHANGELOG | `@docs` |
+| ERROR_COORDINATOR | Error handling strategy | `@error` |
+| PERFORMANCE_ENGINEER | Performance profiling | `@perf` |
 
 **Why agents?** Each gets fresh 200K context. Keeps main conversation clean while handling complex subtasks.
 
 **⚠️ CRITICAL: PLANNER comes BEFORE ORCHESTRATOR.** Never code without a validated plan for non-trivial tasks.
+
+**⚠️ ASK FIRST:** Before any task, ask user: "Should I use the agent pipeline or handle this directly?" Never assume.
 
 ### Agent Invocation Rules
 
@@ -38,12 +47,41 @@ Specialized subagents in `.claude/agents/`. Main ones:
 
 **Agent visibility:** Every agent response MUST start with `[AGENT_NAME] - [STATUS]` so users can see who's working.
 
-## 4-Stage Pipeline (Non-Negotiable)
+## Plugins vs Agent Pipeline
 
-**Stage 0: Planning** → PLANNER analyzes, asks questions, proposes approaches, validates plan with user. **BLOCKING GATE.**
-**Stage 1: Spec & Design** → ORCHESTRATOR coordinates. ARCHITECT validates feasibility. Blocking gate.
-**Stage 2: Design & Test Prep** → DESIGNER + TESTER work parallel (TDD).
-**Stage 3: Implementation** → DEV → TESTER → REVIEWER → Deploy.
+| Scenario | Use |
+|----------|-----|
+| Simple feature (< 1 file, < 50 lines) | `feature-dev` plugin |
+| Complex feature (multi-file) | PLANNER → ORCHESTRATOR pipeline |
+| Quick code navigation/analysis | `serena` tools directly |
+| Full security audit | REVIEWER + SECURITY_ENGINEER agents |
+| Single commit | `commit-commands` plugin |
+| Release with changelog | DEVOPS + DOCUMENTALIST agents |
+| Design system components | `frontend-design` plugin |
+| External library docs | `context7` plugin |
+
+**Why?** Plugins are faster for simple tasks. Pipeline ensures quality for complex features.
+
+## Skills Registry
+
+| Skill | Purpose | When Used |
+|-------|---------|-----------|
+| `@code-quality` | Complexity limits, TypeScript strictness | Writing/reviewing code |
+| `@code-review` | PR review process, feedback format | Code review |
+| `@commit-messages` | Conventional commit format | Creating commits |
+| `@linting-setup` | ESLint, Prettier, husky hooks | Project setup |
+| `@architectural-patterns` | SOLID, DDD, Clean Code | Architecture decisions |
+| `@logging-monitoring` | Sentry, Winston, structured logging | Monitoring setup |
+| `@sonarqube-quality` | SonarQube/SonarCloud, quality gates | CI/CD quality |
+
+## Pipeline (Non-Negotiable)
+
+**Pre-requisite: Stage 0 (PLANNER)** → Analyzes, asks questions, proposes approaches, validates plan with user. **BLOCKING GATE.** This happens BEFORE ORCHESTRATOR takes over.
+
+**Execution Pipeline (via ORCHESTRATOR):**
+- **Stage 1: Spec & Design** → ORCHESTRATOR coordinates. ARCHITECT validates feasibility. Blocking gate.
+- **Stage 2: Design & Test Prep** → DESIGNER + TESTER work parallel (TDD).
+- **Stage 3: Implementation** → DEV → TESTER → REVIEWER → Deploy.
 
 **Why this order?** PLANNER ensures clarity before any work starts. Planning prevents hours of debugging. ARCHITECT veto exists because bad architecture = technical debt.
 
@@ -54,6 +92,8 @@ User Request → PLANNER (understand + explore + architect + plan)
            → ORCHESTRATOR executes
            → Agents implement
 ```
+
+**Context checkpoints**: @context runs at workflow start, before Stage 3, and at workflow end.
 
 ## Project Classification (Prevent Over-Engineering)
 
@@ -112,6 +152,23 @@ Implement Google OAuth2 authentication with session management.
 - No AI/tool attribution
 - Focus on what changed and why
 - Follow conventional commits format
+
+## UI Design Anti-Slop Rules
+
+**Fonts to AVOID:** Inter, Roboto, Arial, Space Grotesk (generic/overused)
+**Use instead:** Outfit, DM Sans, Plus Jakarta Sans, Fraunces, JetBrains Mono
+
+**Colors to AVOID:** Purple gradients on white, equally distributed pastels
+**Use instead:** 70% dominant + 20% accent + 10% secondary strategy
+
+**Red Flags (REJECT):**
+- Uses Inter or Space Grotesk
+- Purple gradient on white
+- Looks like generic Tailwind UI template
+- Plain white/gray backgrounds
+- No animations on key moments
+
+Use `frontend-design` plugin for full design guidance.
 
 ## Context Management (Critical)
 
