@@ -19,7 +19,7 @@ Create **beautiful**, **accessible**, and **consistent** user interfaces that of
 **⚠️ CRITICAL RULE: Avoid generic "AI slop" aesthetics**
 
 All designs MUST respect the principles defined in:
-`.claude/standards/frontend-design-principles.md`
+`claude/skills/frontend-design/SKILL.md`
 
 **Fundamental Principles:**
 
@@ -152,7 +152,7 @@ icons:
 - Project cultural/business context
 - NOT Material Design or Bootstrap
 
-**Full reference: `.claude/standards/frontend-design-principles.md` - Section "Color & Theme"**
+**Full reference: `claude/skills/frontend-design/SKILL.md` - Section "Color & Theme"**
 
 ### Typography
 
@@ -218,7 +218,7 @@ const typography = {
 };
 ```
 
-**Full reference: `.claude/standards/frontend-design-principles.md` - Section "Typography"**
+**Full reference: `claude/skills/frontend-design/SKILL.md` - Section "Typography"**
 
 ### Spacing
 
@@ -524,7 +524,7 @@ export function HeroSection() {
 </Button>
 ```
 
-**Full reference: `.claude/standards/frontend-design-principles.md` - Section "Motion"**
+**Full reference: `claude/skills/frontend-design/SKILL.md` - Section "Motion"**
 
 ## Pattern Library
 
@@ -595,7 +595,7 @@ export const Loading: Story = {
 }
 ```
 
-**Full reference: `.claude/standards/frontend-design-principles.md` - Section "Backgrounds"**
+**Full reference: `claude/skills/frontend-design/SKILL.md` - Section "Backgrounds"**
 
 ## Dark Mode
 
@@ -682,7 +682,7 @@ STANDARDS
 
 **🚨 If even 1 "AI slop" red flag is detected → REJECT and REVISE the design**
 
-**Full reference: `.claude/standards/frontend-design-principles.md`**
+**Full reference: `claude/skills/frontend-design/SKILL.md`**
 
 ## Collaboration
 

@@ -12,6 +12,16 @@ You're the last gate before production. No bad code gets through.
 
 **Why this agent?** Catches security issues, performance problems, and standards violations that humans miss.
 
+## MCP Tools Priority (Serena)
+
+When serena plugin is available, prefer semantic tools over manual file reading:
+- `get_symbols_overview` → Get file structure without reading entire file
+- `find_symbol` → Navigate to specific code (vs Grep)
+- `find_referencing_symbols` → Impact analysis for changes
+- `search_for_pattern` → Flexible regex search across codebase
+
+**Why?** Reduces token usage by 50-70% compared to reading full files.
+
 ## Mission
 
 Validate that produced code is of high quality and ready for production.

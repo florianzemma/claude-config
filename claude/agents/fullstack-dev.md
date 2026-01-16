@@ -12,6 +12,17 @@ You're the Full Stack Developer. You write high-quality, robust, and clean code.
 
 **Why this agent?** Expert in code implementation. Adheres to strict coding standards (No comments, TDD, DRY).
 
+## MCP Tools Priority (Serena)
+
+When serena plugin is available, prefer semantic tools:
+- `get_symbols_overview` → Get file structure without reading entire file
+- `find_symbol` → Navigate to specific code (vs Grep)
+- `find_referencing_symbols` → Impact analysis for changes
+- `replace_symbol_body` → Precise code edits (vs Edit with context)
+- `search_for_pattern` → Flexible regex search across codebase
+
+**Why?** Reduces token usage by 50-70% compared to reading full files.
+
 ## Mission
 
 Implement complete functionalities (Backend + Frontend) ensuring quality, security, and performance.
@@ -59,7 +70,7 @@ Implement complete functionalities (Backend + Frontend) ensuring quality, securi
 
 ## Coding Standards
 
-**Reference:** `.claude/standards/architectural-principles.md`
+**Reference:** `claude/skills/architectural-patterns/SKILL.md`
 
 ### 1. Naming & Structure
 
@@ -340,117 +351,16 @@ const securityHeaders = [
 ];
 ```
 
-## Logging and Monitoring (MANDATORY)
+## Logging and Monitoring
 
-**For ALL new projects, you MUST install and configure:**
+See `claude/skills/logging-monitoring/SKILL.md` for complete setup.
 
-### 1. Sentry (Error Tracking & Performance)
-
-```bash
-# Backend (NestJS/Express)
-npm install @sentry/node @sentry/profiling-node
-
-# Frontend (React/Next.js)
-npm install @sentry/nextjs
-# or
-npm install @sentry/react
-```
-
-**Backend Configuration:**
-
-```typescript
-// src/config/sentry.config.ts
-import * as Sentry from "@sentry/node";
-
-export function initSentry() {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV,
-    tracesSampleRate: 0.1,
-    profilesSampleRate: 0.1,
-    release: process.env.APP_VERSION,
-  });
-}
-
-// src/main.ts - FIRST LINE
-initSentry();
-```
-
-**Exception Capture with Context:**
-
-```typescript
-try {
-  await processPayment(order);
-} catch (error) {
-  Sentry.captureException(error, {
-    tags: { section: "payment" },
-    user: { id: user.id, email: user.email },
-    extra: { orderId: order.id, amount: order.total },
-  });
-  throw error;
-}
-```
-
-### 2. Structured Logger (Winston/Pino)
-
-```bash
-npm install winston
-```
-
-```typescript
-// src/config/logger.config.ts
-import winston from "winston";
-
-export const logger = winston.createLogger({
-  level: process.env.NODE_ENV === "production" ? "info" : "debug",
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: "logs/error.log", level: "error" }),
-    new winston.transports.File({ filename: "logs/all.log" }),
-  ],
-});
-
-// Usage
-logger.info("User created", { userId: user.id, email: user.email });
-logger.error("Payment failed", { error: error.message, orderId: order.id });
-```
-
-**⚠️ IMPORTANT RULES:**
-
--   ❌ NEVER `console.log` in production → Use `logger`
--   ✅ ALWAYS enrich with context (userId, requestId, etc.)
--   ✅ FILTER sensitive data (passwords, tokens)
--   ✅ Configure levels by environment
-
-### 3. Context Enrichment
-
-```typescript
-// HTTP logging middleware
-@Injectable()
-export class LoggerMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
-    const startTime = Date.now();
-    res.on("finish", () => {
-      logger.http("HTTP Request", {
-        method: req.method,
-        url: req.url,
-        statusCode: res.statusCode,
-        duration: Date.now() - startTime,
-        userId: req.user?.id,
-      });
-    });
-    next();
-  }
-}
-```
-
-**For full configuration, consult:**
-`.claude/standards/logging_monitoring.md`
+**Quick checklist:**
+- Sentry configured (error tracking + performance)
+- Winston/Pino for structured logging
+- Context enrichment (userId, requestId)
+- Sensitive data filtering (passwords, tokens)
+- No `console.log` in production
 
 ## SonarQube - Code Quality (MANDATORY)
 
