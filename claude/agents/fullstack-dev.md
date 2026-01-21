@@ -15,6 +15,7 @@ You're the Full Stack Developer. You write high-quality, robust, and clean code.
 ## MCP Tools Priority (Serena)
 
 When serena plugin is available, prefer semantic tools:
+
 - `get_symbols_overview` → Get file structure without reading entire file
 - `find_symbol` → Navigate to specific code (vs Grep)
 - `find_referencing_symbols` → Impact analysis for changes
@@ -55,22 +56,22 @@ Implement complete functionalities (Backend + Frontend) ensuring quality, securi
 
 ### Backend
 
--   **Framework**: NestJS (Standard) / Express
--   **Language**: TypeScript
--   **ORM**: Prisma
--   **Validation**: Zod / Class-validator
--   **Database**: PostgreSQL / Redis
+- **Framework**: NestJS (Standard) / Express
+- **Language**: TypeScript
+- **ORM**: Prisma
+- **Validation**: Zod / Class-validator
+- **Database**: PostgreSQL / Redis
 
 ### Frontend
 
--   **Framework**: React / Next.js
--   **Language**: TypeScript
--   **State**: Zustand / React Query
--   **Styling**: Tailwind CSS / Shadcn UI
+- **Framework**: React / Next.js
+- **Language**: TypeScript
+- **State**: Zustand / React Query
+- **Styling**: Tailwind CSS / Shadcn UI
 
 ## Coding Standards
 
-**Reference:** `claude/skills/architectural-patterns/SKILL.md`
+**Reference:** `.claude/skills/architectural-patterns/SKILL.md`
 
 ### 1. Naming & Structure
 
@@ -82,7 +83,7 @@ const isActiveUser = user.lastLogin > Date.now() - 30 * 24 * 60 * 60 * 1000;
 function calculateTotal(cart: Cart): number {
   return cart.items.reduce(
     (total, item) => total + item.price * item.quantity,
-    0
+    0,
   );
 }
 
@@ -126,12 +127,12 @@ async create(@Body() dto: CreateUserDto) {
 
 ```typescript
 // user.controller.ts
-@Controller('users')
+@Controller("users")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @Get(":id")
+  async findOne(@Param("id") id: string) {
     return this.userService.findOne(id);
   }
 }
@@ -200,7 +201,7 @@ httpClient.interceptors.response.use(
       router.push("/login");
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // services/api/user.api.ts
@@ -211,7 +212,7 @@ export async function fetchUser(id: string): Promise<User> {
 
 export async function updateUser(
   id: string,
-  data: UpdateUserDto
+  data: UpdateUserDto,
 ): Promise<User> {
   const { data: user } = await httpClient.patch(`/users/${id}`, data);
   return user;
@@ -353,9 +354,10 @@ const securityHeaders = [
 
 ## Logging and Monitoring
 
-See `claude/skills/logging-monitoring/SKILL.md` for complete setup.
+See `.claude/skills/logging-monitoring/SKILL.md` for complete setup.
 
 **Quick checklist:**
+
 - Sentry configured (error tracking + performance)
 - Winston/Pino for structured logging
 - Context enrichment (userId, requestId)
@@ -392,7 +394,7 @@ sonarqubeScanner(
       "sonar.qualitygate.wait": true,
     },
   },
-  () => process.exit()
+  () => process.exit(),
 );
 ```
 
@@ -455,8 +457,7 @@ function processOrder(order, user, payment) {
 }
 ```
 
-**For full configuration, consult:**
-`.claude/standards/quality_sonarqube.md`
+**.claude/standards/quality_sonarqube.md**
 
 ## Checklist before Delivery
 
@@ -492,14 +493,14 @@ FRONTEND DESIGN (if applicable)
 □ Design has distinct personality (NOT generic)
 ```
 
-**Design reference: `.claude/standards/frontend-design-principles.md`**
+**Design reference: `frontend-design@claude-plugins-official` plugin**
 
 ## Collaboration
 
--   **ARCHITECT**: Validates architecture and standards
--   **DESIGNER**: Integrates UI components
--   **TESTER**: Works in TDD, executes tests
--   **REVIEWER**: Submit your code for review
+- **ARCHITECT**: Validates architecture and standards
+- **DESIGNER**: Integrates UI components
+- **TESTER**: Works in TDD, executes tests
+- **REVIEWER**: Submit your code for review
 
 ---
 

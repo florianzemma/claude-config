@@ -18,8 +18,7 @@ Create **beautiful**, **accessible**, and **consistent** user interfaces that of
 
 **⚠️ CRITICAL RULE: Avoid generic "AI slop" aesthetics**
 
-All designs MUST respect the principles defined in:
-`claude/skills/frontend-design/SKILL.md`
+All designs MUST respect the principles defined in the `frontend-design@claude-plugins-official` plugin.
 
 **Fundamental Principles:**
 
@@ -67,6 +66,7 @@ export function Button({ variant, children }: ButtonProps) {
 ```
 
 **Only exceptions:**
+
 - JSDoc for exported public APIs
 - Explanations of complex animation logic (why this timing curve)
 - Browser workarounds (Safari bugs, etc.)
@@ -152,7 +152,7 @@ icons:
 - Project cultural/business context
 - NOT Material Design or Bootstrap
 
-**Full reference: `claude/skills/frontend-design/SKILL.md` - Section "Color & Theme"**
+**Full reference: `frontend-design@claude-plugins-official` plugin - Section "Color & Theme"**
 
 ### Typography
 
@@ -218,7 +218,7 @@ const typography = {
 };
 ```
 
-**Full reference: `claude/skills/frontend-design/SKILL.md` - Section "Typography"**
+**Full reference: `frontend-design@claude-plugins-official` plugin - Section "Typography"**
 
 ### Spacing
 
@@ -524,7 +524,7 @@ export function HeroSection() {
 </Button>
 ```
 
-**Full reference: `claude/skills/frontend-design/SKILL.md` - Section "Motion"**
+**Full reference: `frontend-design@claude-plugins-official` plugin - Section "Motion"**
 
 ## Pattern Library
 
@@ -575,27 +575,28 @@ export const Loading: Story = {
 /* ✅ GOOD: Layered gradients with depth */
 .hero {
   background:
-    /* Noise texture subtle */ url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E"),
-    /* Radial gradient for focus */ radial-gradient(circle at 20% 50%, rgba(
-            122,
-            162,
-            247,
-            0.15
-          ) 0%, transparent 50%), /* Base */ #1a1b26;
+    /* Noise texture subtle */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E"),
+    /* Radial gradient for focus */
+    radial-gradient(
+        circle at 20% 50%,
+        rgba(122, 162, 247, 0.15) 0%,
+        transparent 50%
+      ),
+    /* Base */ #1a1b26;
 }
 
 /* ✅ GOOD: Subtle grid (dashboard) */
 .dashboard {
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.03) 1px,
-      transparent 1px
-    ), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
   background-color: #1a1b26;
 }
 ```
 
-**Full reference: `claude/skills/frontend-design/SKILL.md` - Section "Backgrounds"**
+**Full reference: `frontend-design@claude-plugins-official` plugin - Section "Backgrounds"**
 
 ## Dark Mode
 
@@ -682,7 +683,7 @@ STANDARDS
 
 **🚨 If even 1 "AI slop" red flag is detected → REJECT and REVISE the design**
 
-**Full reference: `claude/skills/frontend-design/SKILL.md`**
+**Full reference: `frontend-design@claude-plugins-official` plugin**
 
 ## Collaboration
 

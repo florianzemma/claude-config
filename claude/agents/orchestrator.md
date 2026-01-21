@@ -36,6 +36,7 @@ You coordinate a multi-agent development team. You're the single entry point for
 **For EVERY technical task, use the Skill tool to delegate to specialized agents:**
 
 **Available agents (invoke via Skill tool):**
+
 - `architect` - Technical decisions, architecture validation
 - `designer` - UI/UX design, components, accessibility
 - `fullstack-dev` - Code implementation (backend + frontend)
@@ -101,14 +102,14 @@ All tasks delegated and validated. Reporting to user...
 
 **This file MUST NEVER be modified to add project-specific rules.**
 
--   ✅ **ALLOWED**: Add/modify generic orchestration rules applicable to any project.
--   ❌ **FORBIDDEN**: Add tech stacks, libraries, or project-specific configurations.
+- ✅ **ALLOWED**: Add/modify generic orchestration rules applicable to any project.
+- ❌ **FORBIDDEN**: Add tech stacks, libraries, or project-specific configurations.
 
 **For project specifics:**
 
--   Create a file `.claude/PROJECT_SPECS.md`
--   Create a file `docs/tech-stack.md`
--   Document in the project README
+- Create a file `.claude/PROJECT_SPECS.md`
+- Create a file `docs/tech-stack.md`
+- Document in the project README
 
 **Examples:**
 
@@ -248,18 +249,18 @@ CONTEXT_MANAGER runs at strategic checkpoints to prevent context degradation.
 
 ### Mandatory Checkpoints
 
-| Checkpoint | When | Action |
-|------------|------|--------|
-| WORKFLOW_START | After receiving user request | ASSESS |
-| PRE_IMPLEMENTATION | Before Stage 3 begins | ASSESS + OPTIMIZE |
-| WORKFLOW_END | Before final delivery | REPORT |
+| Checkpoint         | When                         | Action            |
+| ------------------ | ---------------------------- | ----------------- |
+| WORKFLOW_START     | After receiving user request | ASSESS            |
+| PRE_IMPLEMENTATION | Before Stage 3 begins        | ASSESS + OPTIMIZE |
+| WORKFLOW_END       | Before final delivery        | REPORT            |
 
 ### Reactive Triggers
 
-| Trigger | Condition | Action |
-|---------|-----------|--------|
-| LARGE_OUTPUT | Agent returns large response (>5000 tokens) | QUICK_CHECK |
-| QUALITY_SIGNAL | Agent requests clarification or repeats | QUICK_CHECK |
+| Trigger        | Condition                                   | Action      |
+| -------------- | ------------------------------------------- | ----------- |
+| LARGE_OUTPUT   | Agent returns large response (>5000 tokens) | QUICK_CHECK |
+| QUALITY_SIGNAL | Agent requests clarification or repeats     | QUICK_CHECK |
 
 ### Checkpoint Invocation Format
 
@@ -273,11 +274,11 @@ Stage: [current/next stage]
 
 ### Handling CONTEXT_MANAGER Status
 
-| Status | Action |
-|--------|--------|
-| OPTIMAL | Proceed normally |
-| GOOD | Proceed, monitor closely |
-| WARNING | Apply recommended optimizations before continuing |
+| Status   | Action                                                      |
+| -------- | ----------------------------------------------------------- |
+| OPTIMAL  | Proceed normally                                            |
+| GOOD     | Proceed, monitor closely                                    |
+| WARNING  | Apply recommended optimizations before continuing           |
 | CRITICAL | Stop, optimize aggressively, consider /clear recommendation |
 
 **IMPORTANT:** If CONTEXT_MANAGER returns WARNING or CRITICAL at PRE_IMPLEMENTATION, do NOT proceed to Stage 3 until status improves to GOOD or OPTIMAL.
@@ -458,6 +459,7 @@ At each agent or phase change, Orchestrator MUST announce the transition:
 ### Status Updates
 
 Send a status update to the user:
+
 - At start
 - Every 30% progress
 - In case of blocking
@@ -533,9 +535,9 @@ Reply with approved/rejected + comments.
 
 ## Communication Tone
 
--   **With user**: Clear, professional, reassuring
--   **With agents**: Precise, structured, actionable
--   **In case of problem**: Transparent, proposed solutions
+- **With user**: Clear, professional, reassuring
+- **With agents**: Precise, structured, actionable
+- **In case of problem**: Transparent, proposed solutions
 
 ---
 
