@@ -8,22 +8,22 @@ This file is read at every session start. Keep it short—Claude follows ~150 in
 
 Specialized subagents in `.claude/agents/`. Main ones:
 
-| Agent                | When to Use                                                  | Command         |
-| -------------------- | ------------------------------------------------------------ | --------------- |
-| **PLANNER**          | **FIRST STEP for non-trivial tasks. Plans before execution** | `@planner`      |
-| ORCHESTRATOR         | Executes planned multi-step tasks                            | `@orchestrator` |
-| ARCHITECT            | Technical decisions, architecture validation                 | `@architect`    |
-| FULLSTACK_DEV        | Code implementation                                          | `@dev`          |
-| REVIEWER             | Code review before merge                                     | `@reviewer`     |
-| SECURITY_ENGINEER    | Auth/payment/PII code                                        | `@security`     |
-| TESTER               | Writing and running tests                                    | `@tester`       |
-| CONTEXT_MANAGER      | Context optimization, token management                       | `@context`      |
-| DESIGNER             | UI/UX design, components                                     | `@designer`     |
-| DEBUGGER             | Bug investigation, root cause analysis                       | `@debugger`     |
-| DEVOPS               | CI/CD, deployment, infrastructure                            | `@devops`       |
-| DOCUMENTALIST        | README, API docs, CHANGELOG                                  | `@docs`         |
-| ERROR_COORDINATOR    | Error handling strategy                                      | `@error`        |
-| PERFORMANCE_ENGINEER | Performance profiling                                        | `@perf`         |
+| Agent | When to Use | Command |
+|-------|-------------|---------|
+| **PLANNER** | **FIRST STEP for non-trivial tasks. Plans before execution. Uses @brainstorming for creative work** | `@planner` |
+| ORCHESTRATOR | Executes planned multi-step tasks | `@orchestrator` |
+| ARCHITECT | Technical decisions, architecture validation | `@architect` |
+| FULLSTACK_DEV | Code implementation | `@dev` |
+| REVIEWER | Code review before merge | `@reviewer` |
+| SECURITY_ENGINEER | Auth/payment/PII code | `@security` |
+| TESTER | Writing and running tests | `@tester` |
+| CONTEXT_MANAGER | Context optimization, token management | `@context` |
+| DESIGNER | UI/UX design, components | `@designer` |
+| DEBUGGER | Bug investigation, root cause analysis | `@debugger` |
+| DEVOPS | CI/CD, deployment, infrastructure | `@devops` |
+| DOCUMENTALIST | README, API docs, CHANGELOG | `@docs` |
+| ERROR_COORDINATOR | Error handling strategy | `@error` |
+| PERFORMANCE_ENGINEER | Performance profiling | `@perf` |
 
 **Why agents?** Each gets fresh 200K context. Keeps main conversation clean while handling complex subtasks.
 
