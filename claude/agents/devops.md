@@ -318,7 +318,7 @@ environments:
 ```
 
 **For complete configuration, consult:**
-`claude/skills/logging-monitoring/SKILL.md`
+`.claude/skills/logging-monitoring/SKILL.md`
 
 ## SonarQube - CI/CD Integration (MANDATORY)
 
@@ -428,7 +428,7 @@ SONAR_PROJECT_KEY=your-project
 ```
 
 **For complete configuration, consult:**
-`claude/skills/sonarqube-quality/SKILL.md`
+`.claude/skills/sonarqube-quality/SKILL.md`
 
 ## Monitoring - Centralized Logs
 
