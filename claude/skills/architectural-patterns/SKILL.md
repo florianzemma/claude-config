@@ -7,483 +7,278 @@ description: SOLID, DDD, Clean Code, and design patterns reference. Use when des
 
 ## SOLID Principles
 
+| Principle | Definition | Key Check |
+|-----------|------------|-----------|
+| **S** Single Responsibility | One class = one reason to change | Does this class do too many things? |
+| **O** Open/Closed | Open for extension, closed for modification | Can I add features without changing existing code? |
+| **L** Liskov Substitution | Subtypes must be substitutable for base types | Can I replace parent with child without breaking? |
+| **I** Interface Segregation | No fat interfaces | Is client forced to implement unused methods? |
+| **D** Dependency Inversion | Depend on abstractions, not concretions | Am I tightly coupled to implementation? |
+
 ### S - Single Responsibility
-
-> "A class/function should have ONE reason to change."
-
 ```typescript
-// Bad: Multiple responsibilities
+// ❌ Bad: Multiple responsibilities
 class User {
-  validate(): boolean { /* validation */ }
-  save(): void { /* persistence */ }
-  sendWelcomeEmail(): void { /* notification */ }
+  validate() { } // Validation
+  save() { }     // Persistence
+  sendEmail() { } // Notification
 }
 
-// Good: Separated
-class User { constructor(public id: string, public email: string) {} }
-class UserValidator { validate(user: User): ValidationResult { } }
-class UserRepository { save(user: User): Promise<void> { } }
-class UserNotificationService { sendWelcomeEmail(user: User): Promise<void> { } }
+// ✅ Good: Separated
+class User { /* data only */ }
+class UserValidator { validate(user) { } }
+class UserRepository { save(user) { } }
+class NotificationService { sendEmail(user) { } }
 ```
 
 ### O - Open/Closed
-
-> "Open for extension, closed for modification."
-
 ```typescript
-// Bad: Must modify to add new payment type
-class PaymentProcessor {
-  process(type: string, amount: number): void {
-    if (type === 'credit_card') { }
-    else if (type === 'paypal') { }
-    // Must add else if for each new type
-  }
+// ❌ Bad: Must modify for new types
+process(type) {
+  if (type === 'A') { }
+  else if (type === 'B') { } // Add else if each time
 }
 
-// Good: Extend without modification
-interface PaymentMethod {
-  process(amount: number): Promise<PaymentResult>
-}
-class CreditCardPayment implements PaymentMethod { }
-class PayPalPayment implements PaymentMethod { }
-class CryptoPayment implements PaymentMethod { } // New - no modification needed
+// ✅ Good: Extend via interface
+interface Handler { handle() }
+class HandlerA implements Handler { }
+class HandlerB implements Handler { } // New - no modification
 ```
 
 ### L - Liskov Substitution
-
-> "Subclasses must be substitutable for their base class."
-
 ```typescript
-// Bad: Penguin throws when Bird.fly() is called
-class Bird { fly(): void { } }
-class Penguin extends Bird { fly(): void { throw new Error() } }
+// ❌ Bad: Subclass throws on parent method
+class Bird { fly() { } }
+class Penguin extends Bird { fly() { throw Error() } }
 
-// Good: Common interface, different implementations
-interface Bird { move(): void }
-class FlyingBird implements Bird { move(): void { this.fly() } }
-class Penguin implements Bird { move(): void { this.swim() } }
+// ✅ Good: Different interfaces
+interface FlyingBird { fly() }
+interface SwimmingBird { swim() }
 ```
 
 ### I - Interface Segregation
-
-> "Clients shouldn't depend on interfaces they don't use."
-
 ```typescript
-// Bad: Robot forced to implement eat() and sleep()
+// ❌ Bad: Fat interface
 interface Worker { work(); eat(); sleep(); code(); }
+class Robot implements Worker { } // Must implement eat/sleep
 
-// Good: Segregated interfaces
-interface Workable { work(): void }
-interface Eatable { eat(): void }
-class Developer implements Workable, Eatable { }
-class Robot implements Workable { } // Only what it needs
+// ✅ Good: Segregated
+interface Workable { work() }
+interface Eatable { eat() }
+class Robot implements Workable { } // Only what needed
 ```
 
 ### D - Dependency Inversion
-
-> "Depend on abstractions, not concrete implementations."
-
 ```typescript
-// Bad: Depends on concrete MySQL
-class UserService {
-  private database = new MySQLDatabase()
+// ❌ Bad: Concrete dependency
+class Service {
+  private db = new MySQLDatabase() // Tightly coupled
 }
 
-// Good: Depends on abstraction
-class UserService {
-  constructor(private database: Database) {}
+// ✅ Good: Abstract dependency
+class Service {
+  constructor(private db: Database) { } // Any DB works
 }
-const service = new UserService(new MySQLDatabase()) // or PostgresDatabase
 ```
 
 ## Domain-Driven Design (DDD)
 
-### Entities vs Value Objects
+### Core Concepts
 
-**Entity**: Has identity (ID), mutable, continuity over time
-**Value Object**: No identity, immutable, equality by value
+| Concept | Purpose | Example |
+|---------|---------|---------|
+| **Entity** | Object with identity | User, Order (has ID) |
+| **Value Object** | Object without identity | Email, Money (immutable) |
+| **Aggregate** | Cluster of entities | Order + OrderItems |
+| **Repository** | Data access abstraction | UserRepository |
+| **Service** | Business logic without state | PaymentService |
+| **Factory** | Complex object creation | OrderFactory |
 
-```typescript
-// Entity
-class User {
-  constructor(public readonly id: UserId, private email: Email) {}
-  changeEmail(newEmail: Email): void { this.email = newEmail }
-}
+### Bounded Context
+- Each subdomain has its own model
+- Same concept can mean different things
+- Example: "User" in Auth vs "Customer" in Orders
 
-// Value Object
-class Money {
-  constructor(public readonly amount: number, public readonly currency: Currency) {}
-  add(other: Money): Money {
-    return new Money(this.amount + other.amount, this.currency) // New object
-  }
-  equals(other: Money): boolean {
-    return this.amount === other.amount && this.currency === other.currency
-  }
-}
-```
-
-### Aggregates
-
-Cluster of objects treated as unit. Aggregate Root is only entry point.
+### Aggregate Rules
+1. Single entry point (Aggregate Root)
+2. Enforce invariants
+3. Transaction boundary
+4. Load/save as unit
 
 ```typescript
+// ✅ Good: Aggregate
 class Order { // Aggregate Root
   private items: OrderItem[] = []
 
-  addItem(product: Product, quantity: number): void {
-    // Validates and maintains invariants
-    if (this.status !== OrderStatus.Draft) throw new Error()
-    this.items.push(new OrderItem(product.id, product.price, quantity))
-    this.recalculateTotal()
+  addItem(item: OrderItem) {
+    if (this.items.length >= 100) throw Error()
+    this.items.push(item)
   }
 
-  getItems(): readonly OrderItem[] {
-    return [...this.items] // Defensive copy
-  }
-}
-```
-
-### Domain Events
-
-Capture significant business events. Enable decoupled communication.
-
-```typescript
-class OrderConfirmed implements DomainEvent {
-  constructor(
-    public readonly aggregateId: string,
-    public readonly customerId: string,
-    public readonly total: Money,
-    public readonly occurredAt = new Date()
-  ) {}
-}
-
-// Handlers react to events
-class SendOrderConfirmationEmail {
-  async handle(event: OrderConfirmed): Promise<void> {
-    await this.emailService.send({ /* ... */ })
+  // Invariant: Total > 0
+  getTotal() {
+    return this.items.reduce((sum, item) => sum + item.price, 0)
   }
 }
 ```
 
-### Repositories
+## Clean Code Principles
 
-Abstraction over persistence. Interface in domain, implementation in infrastructure.
+### Naming
+- **Variables**: Descriptive nouns (`userEmail`, not `ue`)
+- **Functions**: Verb + noun (`calculateTotal`, not `calc`)
+- **Classes**: Nouns (`UserService`, not `UserManager`)
+- **Booleans**: is/has/can (`isValid`, `hasAccess`)
+- **Constants**: SCREAMING_SNAKE (`MAX_RETRIES`)
 
-```typescript
-// Domain layer
-interface OrderRepository {
-  save(order: Order): Promise<void>
-  findById(id: string): Promise<Order | null>
-}
-
-// Infrastructure layer
-class PostgresOrderRepository implements OrderRepository {
-  async save(order: Order): Promise<void> { /* SQL */ }
-}
-```
-
-## Clean Code - Functions
-
-### One Function = One Thing
+### Functions
+- **Small**: ≤ 50 lines (ideal ≤ 30)
+- **One thing**: Single responsibility
+- **Few parameters**: ≤ 4 parameters
+- **No side effects**: Pure when possible
+- **Early returns**: Reduce nesting
 
 ```typescript
-// Bad: Does multiple things
-function processUserRegistration(data) {
-  // 1. Validation 2. Transformation 3. Persistence 4. Notification 5. Logging
-}
-
-// Good: One responsibility each
-function registerUser(command) {
-  const validated = validateUserData(command)
-  const user = createUser(validated)
-  await saveUser(user)
-  await sendWelcomeEmail(user)
+// ✅ Good: Clear, small, single purpose
+function calculateDiscount(price: number, isVIP: boolean): number {
+  if (price < 0) throw new Error('Invalid price')
+  if (isVIP) return price * 0.9
+  return price
 }
 ```
 
-### Single Abstraction Level
+### Code Organization
+- **File size**: ≤ 500 lines (ideal ≤ 300)
+- **Nesting**: ≤ 4 levels
+- **Complexity**: Cyclomatic ≤ 10, Cognitive ≤ 15
+- **Duplication**: < 3%
 
+### Comments (See `.claude/AGENT_STANDARDS.md`)
+- **Avoid**: Code should be self-documenting
+- **Allowed**: JSDoc, complex business logic, workarounds
+
+## Design Patterns (Common)
+
+### Creational
+| Pattern | Purpose | When |
+|---------|---------|------|
+| **Singleton** | One instance | Database connection, config |
+| **Factory** | Flexible object creation | Multiple types, complex setup |
+| **Builder** | Step-by-step construction | Many optional parameters |
+
+### Structural
+| Pattern | Purpose | When |
+|---------|---------|------|
+| **Adapter** | Interface compatibility | Integrate external library |
+| **Decorator** | Add behavior dynamically | Extend without subclassing |
+| **Facade** | Simplify complex system | Hide complexity |
+
+### Behavioral
+| Pattern | Purpose | When |
+|---------|---------|------|
+| **Strategy** | Interchangeable algorithms | Multiple ways to do something |
+| **Observer** | Event notification | Pub/sub, reactive systems |
+| **Command** | Encapsulate request | Undo/redo, queue operations |
+
+### Pattern Example: Strategy
 ```typescript
-// Bad: Mixed levels
-function processOrder(orderId) {
-  const order = orderRepository.findById(orderId)
-  if (order.status === 'pending') {
-    let total = 0
-    for (let i = 0; i < order.items.length; i++) { // Low-level
-      total += order.items[i].price * order.items[i].quantity
-    }
-    order.confirm() // High-level
-  }
+interface SortStrategy {
+  sort(data: number[]): number[]
 }
 
-// Good: Same level
-function processOrder(orderId) {
-  const order = loadOrder(orderId)
-  if (order.isPending()) {
-    calculateTotal(order)
-    confirmOrder(order)
-    notifyCustomer(order)
-  }
-}
-```
-
-### Max 3 Parameters
-
-```typescript
-// Bad: Too many params
-function createUser(email, password, firstName, lastName, age, country, phone) {}
-
-// Good: Object parameter
-interface CreateUserCommand {
-  email: string; password: string; firstName: string; /* ... */
-}
-function createUser(command: CreateUserCommand) {}
-```
-
-### Command Query Separation (CQS)
-
-- **Command**: Modifies state, returns void
-- **Query**: Returns value, no modification
-
-```typescript
-// Bad: Mixed
-function getUserAndIncrementAccessCount(id): User {
-  const user = db.find(id)
-  user.accessCount++ // Modification
-  return user // Return
+class QuickSort implements SortStrategy {
+  sort(data) { /* quicksort */ }
 }
 
-// Good: Separated
-function getUser(id): User { return db.find(id) }
-function incrementUserAccessCount(id): void { /* ... */ }
-```
-
-## Error Handling
-
-### Prefer Exceptions
-
-```typescript
-// Bad: Error codes
-function deleteUser(id): number {
-  if (!user) return ERROR_NOT_FOUND
-  if (user.hasOrders()) return ERROR_HAS_ORDERS
-  return SUCCESS
+class MergeSort implements SortStrategy {
+  sort(data) { /* mergesort */ }
 }
 
-// Good: Exceptions
-function deleteUser(id): void {
-  const user = findUserOrThrow(id)
-  if (user.hasOrders()) throw new UserHasOrdersError(id)
-  database.delete(user)
-}
-```
-
-### Don't Return Null
-
-```typescript
-// Bad
-function findUser(id): User | null { }
-
-// Good: Throw if required
-function findUserOrThrow(id): User {
-  const user = db.find(id)
-  if (!user) throw new UserNotFoundError(id)
-  return user
+class Sorter {
+  constructor(private strategy: SortStrategy) {}
+  sort(data) { return this.strategy.sort(data) }
 }
 
-// Good: Special case object
-function findUserOrGuest(id): User {
-  return db.find(id) ?? new GuestUser()
-}
+// Usage
+const sorter = new Sorter(new QuickSort())
+sorter.sort([3, 1, 2])
 ```
 
-### Rich Context in Exceptions
+## Anti-Patterns (Avoid)
 
-```typescript
-// Bad
-throw new Error('Invalid amount')
+| Anti-Pattern | Issue | Fix |
+|--------------|-------|-----|
+| **God Object** | Does everything | Split responsibilities (SRP) |
+| **Anemic Domain** | No behavior, only getters/setters | Add business logic to entities |
+| **Spaghetti Code** | No structure, high coupling | Apply SOLID, refactor |
+| **Premature Optimization** | Optimize before profiling | Measure first |
+| **Golden Hammer** | Same pattern everywhere | Choose appropriate pattern |
+| **Magic Numbers** | Hardcoded values | Extract to constants |
 
-// Good
-throw new InvalidAmountError(amount, min, max)
-// "Amount 150 is invalid. Must be between 0 and 100"
+## Architecture Layers
+
+### Typical Structure
+```
+Presentation    → UI, Controllers, API endpoints
+Application     → Use cases, orchestration
+Domain          → Business logic, entities
+Infrastructure  → Database, external services
 ```
 
-## Design Patterns
+### Dependency Rule
+- **Outer depends on inner** (never reverse)
+- Domain has NO dependencies
+- Infrastructure depends on domain
 
-### Factory
+## Code Quality Metrics
 
-```typescript
-class PaymentMethodFactory {
-  create(type: string, config: unknown): PaymentMethod {
-    switch (type) {
-      case 'credit_card': return new CreditCardPayment(config)
-      case 'paypal': return new PayPalPayment(config)
-      default: throw new Error(`Unknown: ${type}`)
-    }
-  }
-}
+| Metric | Target | Tool |
+|--------|--------|------|
+| Cyclomatic Complexity | ≤ 10 | ESLint, SonarQube |
+| Cognitive Complexity | ≤ 15 | SonarQube |
+| Duplication | < 3% | SonarQube, jscpd |
+| Test Coverage | 70-80% | Jest, Coverage.py |
+| Function Length | ≤ 50 lines | ESLint |
+| File Length | ≤ 500 lines | Manual review |
+
+## When to Apply Patterns
+
+**DO:**
+- When complexity justifies pattern
+- When team understands pattern
+- When requirements clearly need it
+
+**DON'T:**
+- Over-engineer simple problems
+- Use pattern for resume points
+- Apply without understanding
+
+**Rule:** Start simple, refactor to patterns when needed.
+
+## Quick Reference
+
+**Check your code:**
+```
+□ Each class has ONE responsibility? (SRP)
+□ Can extend without modifying? (OCP)
+□ Subtypes work like parent? (LSP)
+□ No fat interfaces? (ISP)
+□ Depend on abstractions? (DIP)
+□ Functions < 50 lines?
+□ Complexity < 10?
+□ Duplication < 3%?
+□ Meaningful names?
+□ No magic numbers?
 ```
 
-### Builder
+## Resources
 
-```typescript
-const query = new QueryBuilder()
-  .select('id', 'name')
-  .from('users')
-  .where('age > 18')
-  .orderBy('name')
-  .limit(10)
-  .build()
-```
+- **Code standards**: `.claude/AGENT_STANDARDS.md`
+- **Refactoring**: Martin Fowler - Refactoring
+- **Clean Code**: Robert Martin - Clean Code
+- **DDD**: Eric Evans - Domain-Driven Design
+- **Patterns**: Gang of Four - Design Patterns
 
-### Strategy
+---
 
-```typescript
-interface DiscountStrategy {
-  calculate(amount: Money): Money
-}
-class PercentageDiscount implements DiscountStrategy { }
-class FixedDiscount implements DiscountStrategy { }
-
-class PriceCalculator {
-  constructor(private strategy: DiscountStrategy) {}
-  calculate(price: Money): Money {
-    return this.strategy.calculate(price)
-  }
-}
-```
-
-### Observer
-
-```typescript
-interface Observer<T> { update(data: T): void }
-
-class EventBus<T> {
-  private observers: Observer<T>[] = []
-  attach(o: Observer<T>): void { this.observers.push(o) }
-  notify(data: T): void { this.observers.forEach(o => o.update(data)) }
-}
-```
-
-## Architectural Patterns
-
-### Hexagonal (Ports & Adapters)
-
-```
-[Adapters (Infrastructure)] → [Ports (Domain Interfaces)] → [Domain Core]
-```
-
-```typescript
-// Port (Domain)
-interface PaymentGateway {
-  charge(amount: Money): Promise<PaymentResult>
-}
-
-// Adapter (Infrastructure)
-class StripePaymentGateway implements PaymentGateway {
-  async charge(amount: Money): Promise<PaymentResult> { /* Stripe API */ }
-}
-```
-
-### CQRS
-
-Separate read and write models.
-
-```typescript
-// Write (Command)
-class CreateOrderCommand {
-  async execute(): Promise<OrderId> {
-    const order = Order.create(this.items)
-    await orderRepository.save(order)
-    return order.id
-  }
-}
-
-// Read (Query) - optimized for queries
-class GetOrderDetailsQuery {
-  async execute(): Promise<OrderDetailsDTO> {
-    return database.query(`SELECT ... JOIN ...`) // Denormalized
-  }
-}
-```
-
-## General Principles
-
-### Composition > Inheritance
-
-```typescript
-// Bad: Rigid inheritance
-class FlyingAnimal extends Animal { }
-class SwimmingAnimal extends Animal { }
-// Can't have animal that flies AND swims
-
-// Good: Composition
-class Animal {
-  constructor(private moveBehavior: Movable) {}
-  move(): void { this.moveBehavior.move() }
-}
-const duck = new Animal(new FlyingBehavior())
-duck.setMoveBehavior(new SwimmingBehavior()) // Flexible
-```
-
-### Tell, Don't Ask
-
-```typescript
-// Bad: Ask state, then act
-if (cart.items.length === 0) throw new Error()
-let total = 0
-for (const item of cart.items) { total += item.price }
-
-// Good: Tell what to do
-const result = cart.checkout() // Cart handles internally
-```
-
-### Fail Fast
-
-```typescript
-// Validate early
-class Email {
-  constructor(value: string) {
-    if (!value.includes('@')) throw new Error('Invalid email')
-    // Email is ALWAYS valid after construction
-  }
-}
-```
-
-## Validation Checklist
-
-```
-SOLID
-[] SRP: One responsibility per class/function
-[] OCP: Extend without modifying
-[] LSP: Substitutable subclasses
-[] ISP: Small, specific interfaces
-[] DIP: Depend on abstractions
-
-DDD
-[] Ubiquitous language in code
-[] Entities vs Value Objects distinguished
-[] Aggregates with clear roots
-[] Domain events for significant actions
-[] Repositories abstract persistence
-
-CLEAN CODE
-[] Functions do ONE thing
-[] Single abstraction level per function
-[] ≤ 3 parameters (else use object)
-[] No hidden side effects
-[] CQS respected
-
-ERROR HANDLING
-[] Exceptions over error codes
-[] Domain vs technical exceptions separated
-[] No null returns (throw or special case)
-[] Rich context in exceptions
-
-CODE SMELLS ABSENT
-[] No long methods (> 30 lines)
-[] No large classes
-[] No feature envy
-[] No data clumps
-[] No primitive obsession
-```
+**Remember: Patterns are tools, not goals. Use when complexity justifies, not for resume.**
