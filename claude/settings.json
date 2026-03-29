@@ -6,5 +6,42 @@
     "feature-dev@claude-plugins-official": true,
     "serena@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write \"$CLAUDE_TOOL_OUTPUT_PATH\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm typecheck 2>/dev/null || npx tsc --noEmit 2>/dev/null || true"
+          },
+          {
+            "type": "command",
+            "command": "pnpm lint 2>/dev/null || npx eslint . --max-warnings=0 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude Code a terminé\" with title \"Claude Code\"' 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
   }
 }
