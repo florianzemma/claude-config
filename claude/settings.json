@@ -8,6 +8,26 @@
     "commit-commands@claude-plugins-official": true
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CMD=\"$CLAUDE_TOOL_INPUT_command\"\nBLOCKED=0\n\n# Commandes destructives interdites\necho \"$CMD\" | grep -qE 'rm\\s+-rf|DROP\\s+TABLE|TRUNCATE\\s+TABLE|curl\\s+.*\\|\\s*bash|curl\\s+.*\\|\\s*sh|git\\s+reset\\s+--hard' && BLOCKED=1\n\nif [ \"$BLOCKED\" = \"1\" ]; then\n  echo \"BLOQUÉ : commande destructive détectée — $CMD\" >&2\n  exit 2\nfi"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=\"$CLAUDE_TOOL_INPUT_path\"\nif [ -z \"$FILE\" ]; then exit 0; fi\n\ncase \"$FILE\" in\n  .env*|**/.env*)\n    echo \"BLOQUÉ : écriture sur fichier .env interdite — $FILE\" >&2\n    exit 2\n    ;;\n  .git/*|**/.git/*)\n    echo \"BLOQUÉ : écriture dans .git interdite — $FILE\" >&2\n    exit 2\n    ;;\n  package-lock.json|**/package-lock.json)\n    echo \"BLOQUÉ : écriture sur package-lock.json interdite — modifier via npm/pnpm uniquement\" >&2\n    exit 2\n    ;;\n  node_modules/*|**/node_modules/*)\n    echo \"BLOQUÉ : écriture dans node_modules interdite — $FILE\" >&2\n    exit 2\n    ;;\nesac"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
@@ -19,13 +39,36 @@
         ]
       }
     ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "async": true,
+            "command": "BACKUP_DIR=\"$HOME/.claude/backups\"\nmkdir -p \"$BACKUP_DIR\"\nTIMESTAMP=$(date +%Y%m%d_%H%M%S)\nROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo \"unknown\")\nPROJECT=$(basename \"$ROOT\")\nFILE=\"$BACKUP_DIR/${PROJECT}_${TIMESTAMP}.md\"\n\necho \"# Compact backup — $PROJECT — $TIMESTAMP\" > \"$FILE\"\necho \"\" >> \"$FILE\"\necho \"## Git status\" >> \"$FILE\"\ngit -C \"$ROOT\" status --short 2>/dev/null >> \"$FILE\" || echo \"(no git)\" >> \"$FILE\"\necho \"\" >> \"$FILE\"\necho \"## PLAN.md\" >> \"$FILE\"\ncat \"$ROOT/PLAN.md\" 2>/dev/null >> \"$FILE\" || echo \"(no PLAN.md)\" >> \"$FILE\"\n\n# Garder seulement les 20 derniers backups\nls -t \"$BACKUP_DIR\"/${PROJECT}_*.md 2>/dev/null | tail -n +21 | xargs rm -f 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ROOT=$(git rev-parse --show-toplevel 2>/dev/null)\nif [ -z \"$ROOT\" ]; then exit 0; fi\n\necho \"=== SESSION START ===\"\necho \"\"\necho \"## Git status\"\ngit -C \"$ROOT\" status --short 2>/dev/null || echo \"(no changes)\"\necho \"\"\necho \"## PLAN.md\"\ncat \"$ROOT/PLAN.md\" 2>/dev/null || echo \"(aucun plan en cours)\"\necho \"=================\""
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "# Vérification silencieuse à chaque fin de tour\nROOT=$(git rev-parse --show-toplevel 2>/dev/null)\nif [ -z \"$ROOT\" ]; then exit 0; fi\ncd \"$ROOT\"\n\n# TypeScript check si tsconfig existe\nif [ -f tsconfig.json ] && command -v npx &>/dev/null; then\n  RESULT=$(npx tsc --noEmit 2>&1)\n  if [ $? -ne 0 ]; then\n    echo \"TypeScript errors:\" >&2\n    echo \"$RESULT\" | head -20 >&2\n    exit 2\n  fi\nfi\n\n# Lint check si eslint est installé\nif [ -f node_modules/.bin/eslint ]; then\n  LINT=$(npx eslint . --quiet --format compact 2>&1 | head -10)\n  if [ $? -ne 0 ]; then\n    echo \"Lint errors:\" >&2\n    echo \"$LINT\" >&2\n    exit 2\n  fi\nfi"
+            "command": "# Guard anti-boucle infinie\nif [ \"$CLAUDE_STOP_HOOK_ACTIVE\" = \"1\" ]; then exit 0; fi\nexport CLAUDE_STOP_HOOK_ACTIVE=1\n\nROOT=$(git rev-parse --show-toplevel 2>/dev/null)\nif [ -z \"$ROOT\" ]; then exit 0; fi\ncd \"$ROOT\"\n\n# TypeScript check si tsconfig existe\nif [ -f tsconfig.json ] && command -v npx &>/dev/null; then\n  RESULT=$(npx tsc --noEmit 2>&1)\n  if [ $? -ne 0 ]; then\n    echo \"TypeScript errors:\" >&2\n    echo \"$RESULT\" | head -20 >&2\n    exit 2\n  fi\nfi\n\n# Lint check si eslint est installé\nif [ -f node_modules/.bin/eslint ]; then\n  LINT=$(npx eslint . --quiet --format compact 2>&1 | head -10)\n  if [ $? -ne 0 ]; then\n    echo \"Lint errors:\" >&2\n    echo \"$LINT\" >&2\n    exit 2\n  fi\nfi"
           }
         ]
       }
