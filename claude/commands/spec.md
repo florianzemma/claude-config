@@ -1,39 +1,16 @@
-# /spec
+Interview-moi en détail sur cette feature :
 
-Interview + rédaction de spec avant implémentation.
+$ARGUMENTS
 
-## Comportement
+Utilise AskUserQuestion. Pose des questions sur :
+- L'implémentation technique précise
+- Les edge cases et cas limites
+- Les contraintes de performance
+- Les dépendances avec le code existant
+- Les tradeoffs possibles
 
-1. **Interviewer** l'utilisateur avec max 5 questions pour comprendre :
-   - Le problème métier (pas juste la feature)
-   - Les cas d'usage principaux
-   - Les contraintes (perf, sécurité, compatibilité)
-   - Ce qui est hors scope
+Ne pose PAS de questions évidentes. Creuse les parties difficiles que je n'ai peut-être pas considérées.
 
-2. **Rédiger** la spec dans `docs/specs/YYYY-MM-DD-[feature].md`
+Continue l'interview jusqu'à avoir couvert tous les angles, puis écris une spec complète dans SPEC.md.
 
-## Format spec
-
-```markdown
-# Spec : [Feature]
-
-## Problème
-[Pourquoi on build ça]
-
-## Solution
-[Ce qu'on build exactement]
-
-## Cas d'usage
-1. [acteur] peut [action] pour [résultat]
-
-## Contraintes
-- [contrainte technique/métier]
-
-## Hors scope
-- [ce qu'on ne couvre pas]
-
-## Critères d'acceptation
-- [ ] [test concret]
-```
-
-**La spec est validée avant tout planning ou coding.**
+Une fois la spec terminée, dis-moi de lancer une session fraîche pour l'implémenter (contexte clean = meilleure implémentation).

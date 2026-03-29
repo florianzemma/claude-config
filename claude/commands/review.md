@@ -1,30 +1,14 @@
-# /review
+Fais une review de code comme un staff engineer senior. Analyse les changements en cours.
 
-Review de code niveau staff engineer — pragmatique et actionnab.
+$ARGUMENTS
 
-## Comportement
+Commence par git diff (staged et unstaged). Évalue :
 
-Analyser le diff ou les fichiers spécifiés selon :
+1. Correctness — le code fait-il ce qu'il prétend faire ?
+2. Edge cases — quels cas limites ne sont pas gérés ?
+3. Simplicité — peut-on simplifier sans perdre en fonctionnalité ?
+4. Conventions — respecte-t-on les patterns existants du projet ?
+5. Tests — la couverture est-elle suffisante pour les changements ?
 
-1. **Bugs & correctness** — erreurs logiques, edge cases, race conditions
-2. **Sécurité** — injections, auth bypass, données non validées, secrets exposés
-3. **Performance** — N+1 queries, memory leaks, algorithmes sous-optimaux
-4. **Maintenabilité** — lisibilité, duplication, couplage excessif
-5. **Tests** — coverage suffisant, cas manquants
-
-## Format de sortie
-
-```
-✅ Approuvé / ⚠️ Approuvé avec réserves / ❌ Refusé
-
-### Must fix
-- [problème] → [solution concrète]
-
-### Should fix
-- [problème] → [suggestion]
-
-### Nice to have
-- [amélioration optionnelle]
-```
-
-Rester concis. Prioriser les must-fix. Proposer la correction, pas juste signaler.
+Sois critique et constructif. Ne valide pas par complaisance.
+Format : liste numérotée des problèmes par sévérité (bloquant → suggestion).

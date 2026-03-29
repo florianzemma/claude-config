@@ -10,35 +10,33 @@
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Edit|Write|MultiEdit",
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "npx prettier --write \"$CLAUDE_TOOL_OUTPUT_PATH\" 2>/dev/null || true"
+            "command": "FILE=\"$CLAUDE_FILE_PATH\"\nif [ -z \"$FILE\" ]; then exit 0; fi\ncase \"$FILE\" in\n  *.ts|*.tsx|*.js|*.jsx|*.json|*.css|*.md)\n    if command -v npx &>/dev/null && [ -f \"$(git rev-parse --show-toplevel 2>/dev/null)/node_modules/.bin/prettier\" 2>/dev/null ]; then\n      npx prettier --write \"$FILE\" 2>/dev/null || true\n    fi\n    ;;\nesac"
           }
         ]
       }
     ],
     "Stop": [
       {
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "pnpm typecheck 2>/dev/null || npx tsc --noEmit 2>/dev/null || true"
-          },
-          {
-            "type": "command",
-            "command": "pnpm lint 2>/dev/null || npx eslint . --max-warnings=0 2>/dev/null || true"
+            "command": "# Vérification silencieuse à chaque fin de tour\nROOT=$(git rev-parse --show-toplevel 2>/dev/null)\nif [ -z \"$ROOT\" ]; then exit 0; fi\ncd \"$ROOT\"\n\n# TypeScript check si tsconfig existe\nif [ -f tsconfig.json ] && command -v npx &>/dev/null; then\n  RESULT=$(npx tsc --noEmit 2>&1)\n  if [ $? -ne 0 ]; then\n    echo \"TypeScript errors:\" >&2\n    echo \"$RESULT\" | head -20 >&2\n    exit 2\n  fi\nfi\n\n# Lint check si eslint est installé\nif [ -f node_modules/.bin/eslint ]; then\n  LINT=$(npx eslint . --quiet --format compact 2>&1 | head -10)\n  if [ $? -ne 0 ]; then\n    echo \"Lint errors:\" >&2\n    echo \"$LINT\" >&2\n    exit 2\n  fi\nfi"
           }
         ]
       }
     ],
     "Notification": [
       {
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude Code a terminé\" with title \"Claude Code\"' 2>/dev/null || true"
+            "command": "osascript -e 'display notification \"Claude Code attend ton input\" with title \"Claude Code\"' 2>/dev/null || notify-send 'Claude Code' 'Attend ton input' 2>/dev/null || true"
           }
         ]
       }

@@ -1,10 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git:*)",
-      "Bash(pnpm:*)",
-      "Bash(npx:*)",
-      "Bash(node:*)"
+      "mcp__plugin_serena_serena__list_dir"
     ]
   }
 }

@@ -1,21 +1,14 @@
-# /cleanup
+Agent de nettoyage — Vérifie l'état général du projet et combat l'entropie.
 
-Agent anti-entropie — nettoie et restructure le codebase.
+$ARGUMENTS
 
-## Comportement
+Utilise des subagents pour chaque vérification (contexte séparé, rapporte juste les résultats) :
 
-1. **Scanner** les fichiers modifiés récemment ou le scope spécifié
-2. **Identifier** : code mort, TODO orphelins, imports inutilisés, duplication > 3%
-3. **Proposer** une liste de nettoyages avec priorité
-4. **Exécuter** après validation (pas d'auto-exécution destructive)
+1. Code mort — fonctions non appelées, imports inutilisés, variables déclarées mais jamais lues
+2. TODO/FIXME/HACK — liste-les tous avec fichier et ligne
+3. Dépendances — packages dans package.json qui ne sont pas importés dans le code
+4. Duplications — logique similaire copiée à plusieurs endroits
+5. Cohérence — fichiers qui ne suivent pas les conventions de naming du projet
 
-## Checklist type
-
-- [ ] Supprimer imports inutilisés
-- [ ] Extraire les magic numbers en constantes
-- [ ] Renommer les variables peu claires
-- [ ] Supprimer le code commenté
-- [ ] Consolider les types dupliqués
-- [ ] Mettre à jour les TODO résolus
-
-Un commit propre par catégorie de nettoyage.
+Rapport priorisé : critique (casse potentielle) → important (dette technique) → suggestion (nice to have).
+Ne corrige rien sans validation.

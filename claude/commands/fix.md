@@ -1,18 +1,11 @@
-# /fix
+Fix ce bug directement, sans pipeline agents :
 
-Quick bug fix sans pipeline — pour les corrections simples et localisées.
+$ARGUMENTS
 
-## Comportement
-
-1. **Identifier** le bug — lire le contexte, les logs, reproduire si possible
-2. **Root cause** — ne pas patcher le symptôme, trouver la cause
-3. **Fixer** — minimal, chirurgical, pas de refactoring opportuniste
-4. **Tester** — vérifier que le fix ne casse rien (run tests si dispo)
-5. **Commiter** — `fix(scope): description du bug corrigé`
-
-## Règles
-
-- Un fix = un commit
-- Pas de changements hors scope du bug
-- Si le fix révèle un problème plus profond → signaler mais ne pas fixer maintenant
-- Si le bug nécessite > 3 fichiers modifiés → utiliser le pipeline complet (`/plan`)
+Process :
+1. Reproduis le problème (écris un test qui échoue si possible)
+2. Isole la cause racine
+3. Corrige avec le changement minimal nécessaire
+4. Vérifie que le test passe
+5. Vérifie qu'aucun autre test ne casse
+6. Commit avec format : fix(scope): description

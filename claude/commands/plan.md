@@ -1,32 +1,14 @@
-# /plan
+Analyse la tâche suivante et crée un plan structuré dans PLAN.md :
 
-Crée un plan structuré avant d'implémenter quoi que ce soit.
+$ARGUMENTS
 
-## Comportement
+Le plan doit contenir :
+1. Objectif — une phrase claire
+2. Fichiers impactés — liste exhaustive avec chemin
+3. Phases — étapes séquentielles, chacune testable indépendamment (5-10 min max chacune)
+4. Critères de succès — comment vérifier que c'est fait
+5. Risques — ce qui peut mal tourner et comment mitiger
 
-1. **Analyser** la demande — poser max 3 questions clarifiantes si nécessaire
-2. **Décomposer** en étapes numérotées avec estimation effort
-3. **Identifier** les risques et dépendances
-4. **Écrire** le plan dans `docs/plans/YYYY-MM-DD-[sujet].md`
-5. **Attendre** la validation explicite avant de coder
+Utilise un subagent pour explorer la codebase si nécessaire.
 
-## Format du plan
-
-```markdown
-# Plan : [Titre]
-
-## Objectif
-[Ce qu'on build et pourquoi]
-
-## Étapes
-1. [ ] Étape 1 — [description] (~Xh)
-2. [ ] Étape 2 — [description] (~Xh)
-
-## Risques
-- [risque] → [mitigation]
-
-## Hors scope
-- [ce qu'on ne fait PAS]
-```
-
-**Ne pas coder avant validation explicite du plan.**
+N'implémente RIEN. Juste le plan. Attends ma validation avant de coder.
