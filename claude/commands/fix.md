@@ -1,3 +1,7 @@
+---
+allowed-tools: Read, Glob, Grep, Edit, Write, Bash(npm test*), Bash(pnpm test*), Bash(npx vitest*), Bash(npx jest*)
+description: Quick bug fix sans pipeline — reproduce, root cause, fix minimal, test
+---
 Fix ce bug directement, sans pipeline agents :
 
 $ARGUMENTS

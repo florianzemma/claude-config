@@ -1,3 +1,8 @@
+---
+allowed-tools: Read, Glob, Grep, Bash(git diff*), Bash(git log*), Bash(git status*)
+description: Code review niveau staff engineer sur les changements en cours
+model: claude-opus-4-5
+---
 Fais une review de code comme un staff engineer senior. Analyse les changements en cours.
 
 $ARGUMENTS

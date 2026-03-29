@@ -1,3 +1,7 @@
+---
+allowed-tools: Read, Glob, Grep, Write
+description: Interview + rédaction de spec complète dans SPEC.md avant d'implémenter
+---
 Interview-moi en détail sur cette feature :
 
 $ARGUMENTS

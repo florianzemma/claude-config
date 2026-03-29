@@ -1,3 +1,7 @@
+---
+allowed-tools: Read, Glob, Grep, Write, Bash(git status*), Bash(git log*), Bash(find*)
+description: Crée un plan structuré dans PLAN.md avant d'implémenter quoi que ce soit
+---
 Analyse la tâche suivante et crée un plan structuré dans PLAN.md :
 
 $ARGUMENTS

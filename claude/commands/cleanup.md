@@ -1,3 +1,7 @@
+---
+allowed-tools: Read, Glob, Grep, Bash(find*), Bash(git status*)
+description: Anti-entropie — détecte code mort, TODOs, deps inutilisées, duplications
+---
 Agent de nettoyage — Vérifie l'état général du projet et combat l'entropie.
 
 $ARGUMENTS
