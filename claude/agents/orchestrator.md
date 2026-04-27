@@ -40,17 +40,11 @@ Invoke via Skill tool with agent name:
 | Agent | Purpose | When to Use |
 |-------|---------|-------------|
 | `architect` | Technical decisions, validation | Stack changes, architecture review |
-| `designer` | UI/UX, components, accessibility | UI features, design system |
-| `fullstack-dev` | Code implementation | After design/tests ready |
-| `tester` | Write and run tests | TDD, after implementation |
+| `fullstack-dev` | Code implementation | After architect approval |
 | `reviewer` | Code review before merge | After implementation complete |
-| `security-engineer` | Security audit | Auth/payment/PII code |
-| `devops` | CI/CD, deployment | Infrastructure, pipelines |
-| `debugger` | Debug, root cause analysis | Bugs, test failures |
-| `performance-engineer` | Performance optimization | Performance issues, pre-release |
-| `documentalist` | Update docs | After code changes |
-| `error-coordinator` | Error handling strategy | Error patterns, monitoring |
-| `context-manager` | Context optimization | Token budget monitoring |
+| `debugger` | Root cause analysis | Bugs, test failures |
+
+**Specialized needs** (sécu, docs, tests, déploiement) → déléguer via slash commands (`/security-review`, `/docs`, `/tdd`, `/fix-ci`) depuis la conversation principale.
 
 **Delegation:** See `.claude/AGENT_STANDARDS.md` for communication protocols
 
@@ -70,35 +64,18 @@ Based on validated plan from @planner:
 
 **Architect has VETO power** - Can block over-engineered solutions.
 
-### Stage 2: Design & Test Prep (Parallel)
+### Stage 2: Implementation (Sequential)
 ```
-[ORCHESTRATOR] - [STAGE 2: DESIGN & TEST PREP]
+[ORCHESTRATOR] - [STAGE 2: IMPLEMENTATION]
 
-1. Delegate to @designer (UI components, patterns)
-2. Delegate to @tester (write tests - TDD)
-3. Both work in parallel
-4. Aggregate results
-5. Proceed to Stage 3
-```
-
-**TDD:** Tests written BEFORE implementation.
-
-### Stage 3: Implementation (Sequential)
-```
-[ORCHESTRATOR] - [STAGE 3: IMPLEMENTATION]
-
-1. Delegate to @fullstack-dev (implement)
-2. Delegate to @tester (run tests, verify coverage)
-3. Delegate to @reviewer (code review)
-4. If issues → Fix and re-review
-5. If approved → Delegate to @devops (deploy)
-6. Delegate to @documentalist (update docs)
+1. Delegate to @fullstack-dev (implement — TDD intégré)
+2. Delegate to @reviewer (code review)
+3. If issues → Fix and re-review
 ```
 
 **Quality Gates:**
 - Tests pass ✅
 - Reviewer approves ✅
-- No critical security issues ✅
 
 ## Task Breakdown
 
@@ -113,12 +90,11 @@ Based on validated plan from @planner:
 ### Delegation Strategy
 
 **Sequential (wait for completion):**
-- ARCHITECT → DESIGNER/TESTER → DEV → REVIEWER → DEVOPS
+- ARCHITECT → DEV → REVIEWER
 
 **Parallel (simultaneous):**
-- DESIGNER + TESTER (Stage 2)
 - Multiple independent bug fixes
-- Documentation updates
+- Independent subtasks validées par architect
 
 ## Coordination Workflow
 
@@ -150,8 +126,8 @@ Dependencies: [if any]
 
 Status:
 ✅ Stage 1 (Architect): Approved
-🔄 Stage 2 (Designer, Tester): In progress
-⏳ Stage 3: Pending
+🔄 Stage 2 (Dev): In progress
+⏳ Stage 3 (Reviewer): Pending
 
 Next: Wait for Stage 2 completion
 ```
@@ -178,27 +154,15 @@ Actions:
 
 Stages Executed:
 1. Architect: Validated approach
-2. Designer: Created UI components
-3. Tester: Wrote 15 tests (85% coverage)
-4. Dev: Implemented feature
-5. Reviewer: Approved (8.5/10)
-6. DevOps: Deployed to staging
+2. Dev: Implemented feature (TDD)
+3. Reviewer: Approved (8.5/10)
 
 Deliverables:
 - Files changed: 8
 - Tests added: 15
-- Docs updated: README.md, API.md
 
 Status: READY FOR PRODUCTION
 ```
-
-## Context Management
-
-**Use @context-manager when:**
-- Token usage > 30% of budget
-- Conversation getting long
-- Need to summarize for next phase
-- Before Stage 3 (implementation)
 
 ## Special Workflows
 
@@ -206,24 +170,12 @@ Status: READY FOR PRODUCTION
 ```
 1. @debugger - Investigate and propose fix
 2. @fullstack-dev - Implement fix
-3. @tester - Add regression test
-4. @reviewer - Review
+3. @reviewer - Review
 ```
 
-### Security Review Workflow
-```
-1. @security-engineer - Security audit
-2. If issues → @fullstack-dev - Fix
-3. @security-engineer - Re-audit
-4. @reviewer - Final review
-```
+### Security / Perf / Docs
+→ Utiliser les slash commands directement : `/security-review`, `/docs`, `/fix-ci`
 
-### Performance Optimization Workflow
-```
-1. @performance-engineer - Profile and identify bottlenecks
-2. @architect - Validate optimization approach
-3. @fullstack-dev - Implement optimizations
-4. @performance-engineer - Verify improvements
 **See:** `.claude/AGENT_STANDARDS.md` for:
 - Escalation protocol
 - Status update format

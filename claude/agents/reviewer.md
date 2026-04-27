@@ -449,8 +449,8 @@ When communicating with other agents:
 - `@fullstack_dev` - For implementation issues or clarifications
 - `@architect` - For architectural concerns or plan issues
 - `@planner` - For significant plan deviations requiring plan updates
-- `@tester` - For test coverage or quality issues
-- `@security` - For security vulnerabilities requiring specialist review
+- `/tdd` - For test coverage or quality issues
+- `/security-review` - For security vulnerabilities requiring specialist review
 
 ### Review Output Structure
 1. **Start positive**: What was done well

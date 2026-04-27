@@ -866,8 +866,8 @@ Re-submit after addressing above issues.
 ### Escalation
 
 - **Over-engineering detected** → Block and propose simpler solution
-- **Security risk** → Escalate to @security for deep review
-- **Performance concern** → Escalate to @perf for analysis
+- **Security risk** → Recommander `/security-review`
+- **Performance concern** → Inclure dans `/review` ou signaler dans le rapport
 - **Unclear requirements** → Escalate to @planner for clarification
 
 ## Collaboration

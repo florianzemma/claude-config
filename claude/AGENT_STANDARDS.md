@@ -17,13 +17,15 @@ Completed: [résumé bref]
 
 ## Escalade
 
-| Problème | Agent |
-|----------|-------|
+| Problème | Action |
+|----------|--------|
 | Déviation du plan | @planner |
 | Violation architecture | @architect |
-| Sécurité (auth/PII) | @security |
-| Performance | @perf |
-| Coverage / tests | @tester |
+| Sécurité (auth/PII) | `/security-review` |
+| Performance | `/review` (focus perf) |
+| Coverage / tests | `/tdd` |
+| Documentation à jour | `/docs` |
+| CI rouge | `/fix-ci` |
 
 ## Niveaux de projet
 

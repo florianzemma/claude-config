@@ -1,52 +1,49 @@
 # SCRATCHPAD
 
-**Purpose:** External memory for complex tasks. Claude reads this on session resume.
+**Usage :** mémoire externe pour les tâches complexes. Lire au reprise de session. Mettre à jour après chaque phase.
 
-## Current Task
+## Tâche en cours
 
-[Brief description of what we're building]
+[Description courte de ce qu'on construit]
 
 ## Plan
 
-### Stage 1: Specification & Design
-- [ ] ARCHITECT approval
-- [ ] ADR created
+### Stage 1: Spec/Design
+- [ ] @architect — validation archi
+- [ ] ADR créé si décision technique majeure
 
-### Stage 2: Design & Test Prep
-- [ ] DESIGNER mockups
-- [ ] TESTER test cases (TDD - should fail)
+### Stage 2: Implémentation
+- [ ] @fullstack-dev — code (TDD)
+- [ ] tests verts
 
-### Stage 3: Implementation
-- [ ] FULLSTACK_DEV code
-- [ ] TESTER tests pass
-- [ ] REVIEWER approval
-- [ ] Deploy
+### Stage 3: Review
+- [ ] @reviewer — approuvé
+- [ ] `/docs` si API publique modifiée
 
-## Progress
+## Progression
 
-### Completed
-- [List what's done]
+### Complété
+- [ce qui est fait]
 
-### In Progress
-- [Current work]
+### En cours
+- [travail actuel]
 
-### Blocked
-- [Any blockers]
+### Bloqué
+- [blockers + raison]
 
-## Key Decisions
+## Fichiers modifiés
 
-| Decision | Reasoning | Date |
-|----------|-----------|------|
+- `path/to/file.ts` — [description]
+
+## Décisions clés
+
+| Décision | Raison | Date |
+|----------|--------|------|
 | | | |
-
-## Files Modified
-
-- `path/to/file.ts` - [brief description]
 
 ## Notes
 
-[Any important context for resuming work]
+[Contexte important pour reprendre — hypothèses, contraintes, état des tests]
 
 ---
-
-*Last updated: [timestamp]*
+*Mis à jour : [timestamp]*
