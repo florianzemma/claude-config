@@ -71,7 +71,7 @@ Implement complete functionalities (Backend + Frontend) ensuring quality, securi
 
 ## Coding Standards
 
-**Reference:** `.claude/skills/architectural-patterns/SKILL.md`
+**Reference:** Architecture principles are enforced by default — see the Architecture section in `.claude/CLAUDE.md`
 
 ### 1. Naming & Structure
 
@@ -354,91 +354,32 @@ const securityHeaders = [
 
 ## Logging and Monitoring
 
-See `.claude/skills/logging-monitoring/SKILL.md` for complete setup.
+Self-contained baseline (no external skill required):
 
-**Quick checklist:**
+- Structured logger (Winston/Pino) — never raw `console.log` in production
+- Error tracking + performance (Sentry or equivalent), wired at app entrypoint
+- Context enrichment on every log line: `userId`, `requestId`
+- Sensitive data filtering — never log passwords, tokens, or PII
+- One log level policy per environment (debug in dev, info+ in prod)
 
-- Sentry configured (error tracking + performance)
-- Winston/Pino for structured logging
-- Context enrichment (userId, requestId)
-- Sensitive data filtering (passwords, tokens)
-- No `console.log` in production
+## Code Quality (enforced by default)
 
-## SonarQube - Code Quality (MANDATORY)
+Architecture and quality principles are enforced by default — see the
+Architecture and Code sections in `.claude/CLAUDE.md`. No vendor-specific
+static-analysis tool is mandated here; pick the project's own linter/CI gate.
 
-**For ALL new projects, you MUST configure SonarQube:**
-
-### 1. Installation
-
-```bash
-npm install --save-dev sonarqube-scanner
-```
-
-### 2. Configuration
-
-```javascript
-// sonar-project.js
-const sonarqubeScanner = require("sonarqube-scanner");
-
-sonarqubeScanner(
-  {
-    serverUrl: process.env.SONAR_HOST_URL || "https://sonarcloud.io",
-    token: process.env.SONAR_TOKEN,
-    options: {
-      "sonar.projectKey": "my-project",
-      "sonar.sources": "src",
-      "sonar.tests": "src",
-      "sonar.test.inclusions": "**/*.test.ts,**/*.spec.ts",
-      "sonar.exclusions": "**/node_modules/**,**/dist/**,**/*.test.ts",
-      "sonar.typescript.lcov.reportPaths": "coverage/lcov.info",
-      "sonar.qualitygate.wait": true,
-    },
-  },
-  () => process.exit(),
-);
-```
-
-### 3. NPM Scripts
-
-```json
-{
-  "scripts": {
-    "test:coverage": "jest --coverage",
-    "sonar": "node sonar-project.js",
-    "sonar:check": "npm run test:coverage && npm run sonar"
-  }
-}
-```
-
-### 4. Before each PR
-
-```bash
-# Check locally
-npm run sonar:check
-
-# Quality Gate MUST pass:
-# ✅ Coverage ≥ 80%
-# ✅ 0 bugs
-# ✅ 0 vulnerabilities
-# ✅ Duplication ≤ 3%
-# ✅ Maintainability Rating A
-```
-
-**Fixing SonarQube Issues:**
+What every PR must satisfy regardless of tooling:
 
 ```typescript
 // ❌ BLOCKER: Hardcoded credentials
 const apiKey = "sk-1234567890";
-
 // ✅ FIXED
 const apiKey = process.env.API_KEY;
 
 // ❌ CRITICAL: SQL Injection
 const query = `SELECT * FROM users WHERE id = ${userId}`;
-
 // ✅ FIXED
-const query = `SELECT * FROM users WHERE id = $1`;
-const result = await db.query(query, [userId]);
+const result = await db.query("SELECT * FROM users WHERE id = $1", [userId]);
 
 // ❌ MAJOR: Function too complex
 function processOrder(order, user, payment) {
@@ -448,7 +389,6 @@ function processOrder(order, user, payment) {
     }
   }
 }
-
 // ✅ FIXED: Split into smaller functions
 function processOrder(order, user, payment) {
   validateOrderStatus(order);
@@ -457,7 +397,8 @@ function processOrder(order, user, payment) {
 }
 ```
 
-**.claude/standards/quality_sonarqube.md**
+Quality bar: coverage ≥ 80%, 0 known bugs/vulnerabilities, duplication ≤ 3%,
+no hardcoded secrets, complexity ≤ 10 per function.
 
 ## Checklist before Delivery
 
@@ -465,21 +406,21 @@ function processOrder(order, user, payment) {
 CODE QUALITY
 □ Code respects ARCHITECT standards
 □ Unit tests written and passing
-□ Coverage ≥ 80% (checked by SonarQube)
-□ No console.log (use logger)
-□ Sentry configured and errors captured
+□ Coverage ≥ 80%
+□ No console.log (use structured logger)
+□ Error tracking configured and errors captured
 □ Structured logger (Winston/Pino) implemented
 □ Context enrichment in logs
-□ SonarQube Quality Gate passes
-□ No Blocker/Critical SonarQube issues
-□ Technical Debt < 5%
+□ Linter / CI quality gate passes
+□ No blocker/critical issues from linter or CI
+□ Technical debt kept low (duplication ≤ 3%)
 □ Complete error handling
 □ Input validation
 □ Strict TypeScript types
 □ Acceptable performance
-□ Security checked (OWASP via SonarQube)
+□ Security checked (OWASP Top 10)
 □ Public functions documented
-□ No hardcoded secrets (detected by SonarQube)
+□ No hardcoded secrets
 □ DB migrations (if applicable)
 □ Environment variables documented (.env.example)
 

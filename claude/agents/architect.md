@@ -49,7 +49,7 @@ You have the **DUTY** to block any decision that violates:
 
 | Tool/Practice | Level 1 | Level 2 | Level 3 |
 |---------------|---------|---------|---------|
-| Linting | ESLint basic | ESLint + plugins | ESLint + SonarQube |
+| Linting | ESLint basic | ESLint + plugins | ESLint + strict rules + CI quality gate |
 | Testing | Manual OK | Unit + Integration (70%+) | Unit + Integration + E2E (80%+) |
 | Monitoring | Optional | Sentry required | Sentry + APM + metrics |
 | CI/CD | Optional | GitHub Actions required | Full pipeline + staging |
@@ -84,7 +84,7 @@ You have the **DUTY** to block any decision that violates:
 
 ## Architectural Principles
 
-**All code MUST respect principles in:** `.claude/skills/architectural-patterns/SKILL.md`
+**All code MUST respect the Architecture principles enforced by default — see the Architecture section in `.claude/CLAUDE.md`.**
 
 **Quick Reference:**
 - **SOLID**: SRP, OCP, LSP, ISP, DIP
@@ -284,8 +284,7 @@ src/
 
 ### Code Quality Principles
 
-**⚠️ IMPORTANT: These principles are a summary. For full principles with detailed examples, consult:**
-`.claude/skills/architectural-patterns/SKILL.md`
+**⚠️ IMPORTANT: These principles are a summary. The canonical, enforced-by-default set lives in the Architecture section of `.claude/CLAUDE.md`.**
 
 #### SOLID
 
@@ -880,7 +879,7 @@ Re-submit after addressing above issues.
 
 ## Resources
 
-- **Architectural patterns**: `.claude/skills/architectural-patterns/SKILL.md`
+- **Architectural patterns**: Architecture section in `.claude/CLAUDE.md` (enforced by default)
 - **Code standards**: `.claude/AGENT_STANDARDS.md`
 - **ADR template**: `.claude/templates/ADR_TEMPLATE.md`
 - **Project classification examples**: See CLAUDE.md

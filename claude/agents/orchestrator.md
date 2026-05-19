@@ -44,7 +44,7 @@ Invoke via Skill tool with agent name:
 | `reviewer` | Code review before merge | After implementation complete |
 | `debugger` | Root cause analysis | Bugs, test failures |
 
-**Specialized needs** (sécu, docs, tests, déploiement) → déléguer via slash commands (`/security-review`, `/docs`, `/tdd`, `/fix-ci`) depuis la conversation principale.
+**Specialized needs** (sécu, tests, CI) → déléguer via slash commands (`/security-review`, `/tdd`, `/fix-ci`) depuis la conversation principale. Doc : mise à jour inline dans le même PR.
 
 **Delegation:** See `.claude/AGENT_STANDARDS.md` for communication protocols
 
@@ -173,8 +173,8 @@ Status: READY FOR PRODUCTION
 3. @reviewer - Review
 ```
 
-### Security / Perf / Docs
-→ Utiliser les slash commands directement : `/security-review`, `/docs`, `/fix-ci`
+### Security / Perf / CI
+→ Utiliser les slash commands directement : `/security-review`, `/review`, `/fix-ci`
 
 **See:** `.claude/AGENT_STANDARDS.md` for:
 - Escalation protocol
