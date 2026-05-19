@@ -16,7 +16,11 @@
 - Énonce tes hypothèses explicitement. Si tu en fais une grosse, signale-la.
 - Si une approche plus simple existe, dis-le. Pousse en arrière si c'est justifié.
 - Si tu bloques ou es confus, nomme le blocage — ne hallucine pas une solution.
-- Définis le succès avant de coder : "fix the bug" → "écris un test qui échoue, puis fais-le passer". Pour les tâches multi-étapes : `[étape] → verify: [comment vérifier]`.
+- Définis le succès avant de coder. Transforme chaque tâche en critère vérifiable :
+  - "fix the bug" → "écris un test qui reproduit le bug, puis fais-le passer"
+  - "add validation" → "écris les tests pour les inputs invalides, puis fais-les passer"
+  - "refactor X" → "les tests passent avant et après, comportement identique"
+- Pour les tâches multi-étapes, énonce un plan bref : `1. [étape] → verify: [check]`. Boucle jusqu'à vérification. Des critères faibles ("make it work") nécessitent des clarifications constantes — des critères forts permettent d'avancer seul.
 
 ## Gestion du contexte
 
@@ -41,6 +45,8 @@
 - Pas de code mort. Pas de TODO sans issue.
 - Pas de commentaires sauf : business logic complexe, JSDoc pour API publiques, workarounds temporaires.
 - Si tu écris un commentaire, demande-toi : "je peux rendre le code plus clair à la place ?" Si oui → supprime le commentaire.
+- Pas de features non demandées. Pas d'abstractions pour du code à usage unique. Pas de "flexibilité" ou "configurabilité" non requise.
+- Pas de gestion d'erreurs pour des scénarios impossibles. Ne valide qu'aux frontières du système (input utilisateur, APIs externes).
 - Si tu as écrit 200 lignes là où 50 suffisaient, réécris. Demande-toi : un senior engineer dirait-il que c'est trop compliqué ? Si oui → simplifie.
 
 ## Architecture _(enforced — appliqué par défaut, pas un skill on-demand)_

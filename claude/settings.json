@@ -83,17 +83,6 @@
         ]
       }
     ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "# Guard anti-boucle infinie\nif [ \"$CLAUDE_STOP_HOOK_ACTIVE\" = \"1\" ]; then exit 0; fi\nexport CLAUDE_STOP_HOOK_ACTIVE=1\n\nROOT=$(git rev-parse --show-toplevel 2>/dev/null)\nif [ -z \"$ROOT\" ]; then exit 0; fi\ncd \"$ROOT\"\n\n# TypeScript check si tsconfig existe\nif [ -f tsconfig.json ] && command -v npx &>/dev/null; then\n  RESULT=$(npx tsc --noEmit 2>&1)\n  if [ $? -ne 0 ]; then\n    echo \"TypeScript errors:\" >&2\n    echo \"$RESULT\" | head -20 >&2\n    exit 2\n  fi\nfi\n\n# Lint check si eslint est installé\nif [ -f node_modules/.bin/eslint ]; then\n  LINT=$(npx eslint . --quiet --format compact 2>&1 | head -10)\n  if [ $? -ne 0 ]; then\n    echo \"Lint errors:\" >&2\n    echo \"$LINT\" >&2\n    exit 2\n  fi\nfi"
-          }
-        ]
-      }
-    ],
     "Notification": [
       {
         "matcher": "",
