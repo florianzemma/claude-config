@@ -18,7 +18,7 @@
 
 ### Stage 3: Review
 - [ ] @reviewer — approuvé
-- [ ] `/docs` si API publique modifiée
+- [ ] Doc mise à jour (inline) si API publique modifiée
 
 ## Progression
 

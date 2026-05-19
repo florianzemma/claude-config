@@ -24,7 +24,7 @@ Completed: [résumé bref]
 | Sécurité (auth/PII) | `/security-review` |
 | Performance | `/review` (focus perf) |
 | Coverage / tests | `/tdd` |
-| Documentation à jour | `/docs` |
+| Documentation à jour | inline, dans le même PR que le changement |
 | CI rouge | `/fix-ci` |
 
 ## Niveaux de projet

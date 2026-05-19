@@ -1,6 +1,24 @@
 {
   "model": "opusplan",
   "enabledPlugins": {},
+  "permissions": {
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.local)",
+      "Read(**/.env.*.local)",
+      "Read(**/.env.production)",
+      "Read(**/.env.development)",
+      "Read(**/.env.staging)",
+      "Read(**/.env.test)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/id_rsa)",
+      "Read(**/id_ed25519)",
+      "Read(**/*.p12)",
+      "Read(**/*.pfx)",
+      "Read(**/secrets.*)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -8,7 +26,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "CMD=\"$CLAUDE_TOOL_INPUT_command\"\nBLOCKED=0\n\n# Commandes destructives interdites\necho \"$CMD\" | grep -qE 'rm\\s+-rf|DROP\\s+TABLE|TRUNCATE\\s+TABLE|curl\\s+.*\\|\\s*bash|curl\\s+.*\\|\\s*sh|git\\s+reset\\s+--hard' && BLOCKED=1\n\nif [ \"$BLOCKED\" = \"1\" ]; then\n  echo \"BLOQUÉ : commande destructive détectée — $CMD\" >&2\n  exit 2\nfi"
+            "command": "CMD=\"$CLAUDE_TOOL_INPUT_command\"\nBLOCKED=0\n\n# Commandes destructives interdites\necho \"$CMD\" | grep -qE 'rm\\s+-rf|DROP\\s+TABLE|TRUNCATE\\s+TABLE|curl\\s+.*\\|\\s*bash|curl\\s+.*\\|\\s*sh|git\\s+reset\\s+--hard' && BLOCKED=1\n\n# Lecture de fichiers de secrets via shell interdite (.env.example/.sample/.template tolérés)\nif echo \"$CMD\" | grep -qE '(^|[|&; ])(cat|bat|less|more|head|tail|nl|xxd|od|strings|grep|rg|ack|awk|sed)([[:space:]]|$)'; then\n  echo \"$CMD\" | grep -qE '\\.env([^.[:alnum:]]|$|\\.(local|production|prod|development|dev|staging|test))' && BLOCKED=1\n  echo \"$CMD\" | grep -qE '(\\.pem|\\.key|id_rsa|id_ed25519|\\.p12|\\.pfx|secrets\\.[a-z]+)([^.[:alnum:]]|$)' && BLOCKED=1\nfi\n\nif [ \"$BLOCKED\" = \"1\" ]; then\n  echo \"BLOQUÉ : commande destructive ou lecture de secrets détectée — $CMD\" >&2\n  exit 2\nfi"
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=\"${CLAUDE_TOOL_INPUT_file_path:-$CLAUDE_TOOL_INPUT_path}\"\nif [ -z \"$FILE\" ]; then exit 0; fi\nBASE=$(basename \"$FILE\")\ncase \"$BASE\" in\n  .env.example|.env.sample|.env.template|.env.dist) exit 0 ;;\nesac\ncase \"$BASE\" in\n  .env|.env.*|*.pem|*.key|id_rsa|id_dsa|id_ecdsa|id_ed25519|*.p12|*.pfx|secrets.*)\n    echo \"BLOQUÉ : lecture de fichier de secrets interdite — $FILE (risque de fuite de credentials ; utiliser .env.example)\" >&2\n    exit 2\n    ;;\nesac"
           }
         ]
       },

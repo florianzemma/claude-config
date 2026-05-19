@@ -70,9 +70,9 @@ When reviewing completed work, follow this structured approach:
 - Confirm no over-engineering or unnecessary abstractions
 
 ### 4. Standards Compliance
-- Verify ESLint passes with 0 errors
-- Check SonarQube Quality Gate (Level 2+)
-- Ensure logging/monitoring standards met (Sentry, structured logging)
+- Verify the linter passes with 0 errors
+- Check the project's static-analysis / quality gate passes (Level 2+, whatever tool the project uses)
+- Ensure logging/monitoring standards met (error tracking + structured logging)
 - Validate test coverage requirements (70-80% depending on level)
 - Confirm no hardcoded credentials or security vulnerabilities
 
@@ -104,7 +104,7 @@ When reviewing completed work, follow this structured approach:
 
 ### Code Quality (ALL PROJECTS - Mandatory Standards)
 
-**⚠️ These standards are MANDATORY regardless of project level (with or without SonarQube)**
+**⚠️ These standards are MANDATORY regardless of project level or which static-analysis tool (if any) is configured**
 
 ```
 Complexity and Size:
@@ -147,7 +147,7 @@ Security:
 **LEVEL 1 (Simple) - Deep Manual Review:**
 
 ```
-□ ESLint passes with 0 errors (plugins sonarjs + security)
+□ Linter passes with 0 errors
 □ Manual review of functions > 30 lines
 □ Visual check for duplication
 □ Complexity verification (nesting, multiple conditions)
@@ -155,11 +155,11 @@ Security:
 □ No console.log in production
 ```
 
-**LEVEL 2 and 3 - Automatic SonarQube + Review:**
+**LEVEL 2 and 3 - Automated static analysis + Review:**
 
 ```
-□ ESLint passes with 0 errors
-□ SonarQube/SonarCloud Quality Gate PASSES
+□ Linter passes with 0 errors
+□ Static-analysis quality gate PASSES (project's chosen tool)
 □ Coverage ≥ 70% (LEVEL 2) or ≥ 80% (LEVEL 3)
 □ No bugs detected
 □ No vulnerabilities
@@ -185,22 +185,18 @@ Security:
 □ Alerts configured for critical errors
 ```
 
-### SonarQube / Quality Gates
+### Static Analysis / Quality Gates _(Level 2+, tool-agnostic)_
 
 ```
-□ SonarQube configured and integrated in CI/CD
-□ Quality Gate PASSES (checked in PR)
+□ Static-analysis tool integrated in CI/CD (vendor is a per-project choice)
+□ Quality gate PASSES (checked in PR)
 □ New code coverage ≥ 80%
 □ No new bugs
 □ No new vulnerabilities
 □ Duplication ≤ 3%
-□ Technical Debt < 5%
-□ Maintainability Rating A
-□ Security Rating A
-□ Reliability Rating A
-□ Security Hotspots reviewed
-□ No Blocker/Critical unresolved issues
-□ Rules disabled justified in ADR
+□ Technical debt under control
+□ No blocker/critical unresolved issues
+□ Any disabled rule justified in an ADR
 ```
 
 ### Tests
@@ -385,18 +381,18 @@ Plan Alignment:
 
 @fullstack_dev Please confirm: Was the JWT → sessions change intentional? If so, we need architectural approval from @architect.
 
-Blocker (SonarQube):
+Blocker (quality gate):
 
-- SonarQube Quality Gate FAILED (must pass before merge)
+- Static-analysis quality gate FAILED (must pass before merge)
 - Coverage: 65% (required: ≥80%)
 - 3 new bugs detected
 - 2 security vulnerabilities (SQL injection, hardcoded credentials)
 
 Critical (Must Fix):
 
-- Line 45: Password not hashed (use bcrypt) [SonarQube: CRITICAL]
-- Line 89: SQL injection vulnerability (use parameterized queries) [SonarQube: BLOCKER]
-- Line 120: Hardcoded API key (use env variable) [SonarQube: BLOCKER]
+- Line 45: Password not hashed (use bcrypt) [CRITICAL]
+- Line 89: SQL injection vulnerability (use parameterized queries) [BLOCKER]
+- Line 120: Hardcoded API key (use env variable) [BLOCKER]
 - Sentry not configured - no error tracking
 - Missing rate limiting (planned in Step 3.2)
 
@@ -417,11 +413,11 @@ Actions Required:
 
 1. **Resolve plan deviation**: Confirm JWT → sessions change with @architect
 2. **Implement missing feature**: Add rate limiting (Step 3.2)
-3. **Fix all SonarQube Blocker/Critical issues**
-4. **Configure Sentry** for error tracking
+3. **Fix all blocker/critical issues** flagged by static analysis
+4. **Configure error tracking** (structured, with context enrichment)
 5. **Replace console.log** with structured logger
 6. **Add tests** to reach 80% coverage
-7. Re-run sonar:check locally before re-requesting review
+7. Re-run lint + static analysis locally before re-requesting review
 
 Score: 5.5/10
 Status: ❌ CHANGES REQUIRED - Cannot merge until critical issues resolved

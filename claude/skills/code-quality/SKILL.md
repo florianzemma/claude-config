@@ -35,40 +35,27 @@ These aren't arbitrary—each prevents specific production issues we've encounte
 - **Pure functions when possible** — Easier to test, no hidden side effects
 - **Immutability by default** — Prevents mutation bugs in complex state
 
-## ESLint Configuration
+## Enforcing These Limits
 
-Required plugins for all projects:
+These thresholds are tool-agnostic — enforce them with whatever linter the project already uses (ESLint `complexity`/`max-lines-per-function`/`max-depth`, Biome, Ruff, Clippy, etc.). The numbers matter, not the vendor.
 
-```json
-{
-  "plugins": ["@typescript-eslint", "sonarjs", "security"],
-  "rules": {
-    "complexity": ["error", 10],
-    "max-lines-per-function": ["error", { "max": 50 }],
-    "max-depth": ["error", 4],
-    "@typescript-eslint/no-explicit-any": "error",
-    "sonarjs/cognitive-complexity": ["error", 15],
-    "sonarjs/no-duplicate-string": ["error", 3],
-    "sonarjs/no-identical-functions": "error"
-  }
-}
-```
+Minimum lint rules to map:
 
-## Pre-commit Hooks (Non-Negotiable)
+- complexity ≤ 10
+- max function length ≤ 50 lines
+- max nesting depth ≤ 4
+- no implicit `any` / explicit types on public APIs
+- cognitive complexity ≤ 15
+- no duplicated string literals / identical functions (extract to a shared utility)
 
-```bash
-npm install --save-dev eslint prettier lint-staged husky
-npx husky install
-```
-
-Every commit must auto-run linter and formatter. No manual formatting debates.
+Wire the linter + formatter into a pre-commit hook so every commit is checked automatically — no manual formatting debates.
 
 ## Quality by Project Level
 
-| Level | Coverage | Tools |
-|-------|----------|-------|
-| 1 (Simple) | ESLint only | Manual review |
-| 2 (Medium) | ≥70% | SonarCloud |
-| 3 (Complex) | ≥80% | SonarQube + E2E |
+| Level | Coverage | Verification |
+|-------|----------|--------------|
+| 1 (Simple) | Lint only | Deep manual review |
+| 2 (Medium) | ≥70% | Lint + automated static analysis + review |
+| 3 (Complex) | ≥80% | Lint + static analysis + E2E + review |
 
-Match tooling to project complexity. Don't over-engineer simple projects.
+Match tooling to project complexity. Don't over-engineer simple projects. The choice of static-analysis vendor is a per-project decision, not a config default.

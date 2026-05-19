@@ -43,6 +43,15 @@
 - Si tu écris un commentaire, demande-toi : "je peux rendre le code plus clair à la place ?" Si oui → supprime le commentaire.
 - Si tu as écrit 200 lignes là où 50 suffisaient, réécris. Demande-toi : un senior engineer dirait-il que c'est trop compliqué ? Si oui → simplifie.
 
+## Architecture _(enforced — appliqué par défaut, pas un skill on-demand)_
+
+- **SOLID** : SRP (une classe = une raison de changer), OCP (étendre sans modifier), LSP (sous-types substituables), ISP (pas d'interface grasse), DIP (dépendre d'abstractions, pas d'implémentations).
+- **Clean Code** : noms explicites (verbe+nom pour fonctions, is/has/can pour booléens), fonctions ≤ 50 lignes faisant une seule chose, early returns, pas d'effets de bord cachés, pas de magic numbers (→ constantes).
+- **DDD (Level 2+)** : Entity (identité) vs Value Object (immutable), Aggregate Root = point d'entrée unique + invariants + frontière transactionnelle, Repository pour l'accès données, bounded contexts par sous-domaine.
+- **Layering** : Presentation → Application → Domain → Infrastructure. Dépendance vers l'intérieur uniquement. Le Domain n'a aucune dépendance.
+- **Patterns** : appliquer seulement quand la complexité le justifie. Start simple, refactor vers un pattern quand le besoin est prouvé — jamais pour le CV.
+- **Anti-patterns à REJETER** : God object, modèle anémique, couplage fort, dépendances circulaires, optimisation prématurée (mesurer d'abord), golden hammer.
+
 ## Naming
 
 - Fichiers : PascalCase.tsx (composants), use-kebab-case.ts (hooks), kebab-case.ts (utils)
@@ -53,6 +62,12 @@
 - Commits conventionnels : feat(scope): description, fix, docs, refactor, test, chore, perf
 - JAMAIS d'attribution Claude/AI dans les commits (pas de Co-Authored-By, pas de "Generated with")
 - Commits atomiques. Jamais de force push sur main.
+
+## Sécurité _(enforced — non négociable)_
+
+- **NE JAMAIS lire de fichier de secrets** : `.env`, `.env.*`, `*.pem`, `*.key`, `id_rsa`, `*.p12`, `credentials`, `secrets.*`, `.npmrc`/`.netrc` contenant des tokens. Ne pas les `cat`, `grep`, `head`, `tail`, ni les ouvrir via un outil de lecture — risque de fuite de credentials dans le contexte/les logs.
+- Si la tâche exige de connaître **quelles** variables existent, lire `.env.example` (jamais `.env`). Si une valeur de secret est réellement nécessaire, demander à l'utilisateur de l'injecter — ne pas la lire depuis le disque.
+- Jamais de secret hardcodé, jamais de secret écrit dans un commit, un log, ou une sortie. Bloqué aussi côté harness (`settings.json` : deny + hook).
 
 ## Design UI _(projets frontend uniquement — ignorer sinon)_
 
@@ -76,7 +91,7 @@
 
 **Règle** : @planner en premier. N'orchestre pas plusieurs agents sans plan validé.
 
-**Besoins spécialisés** (sécu, docs, perf, déploiement) → slash command dédiée (`/security-review`, `/docs`, `/fix-ci`...) ou skill on-demand. Pas d'agent dédié.
+**Besoins spécialisés** (sécu, CI, perf) → slash command dédiée (`/security-review`, `/fix-ci`, `/review`...) ou skill on-demand. Doc : mise à jour inline dans le même PR. Pas d'agent dédié.
 
 ## Skills
 
@@ -88,10 +103,8 @@ Chargées on-demand, pas à chaque session. Disponibles dans `.claude/skills/` :
 | `code-review` | Revue approfondie niveau staff |
 | `code-quality` | Dette technique, patterns, refactor |
 | `commit-messages` | Conventions de messages git |
-| `architectural-patterns` | Patterns archi courants |
-| `linting-setup` | Config ESLint/Prettier/Biome |
-| `logging-monitoring` | Observabilité, structured logging |
-| `sonarqube-quality` | Analyse statique SonarQube |
+
+Les principes d'architecture sont **enforced par défaut** (section Architecture ci-dessus), pas chargés on-demand. Le setup outillage (linting, monitoring, analyse statique) est volontairement hors config : trop couplé à un outil/vendor spécifique, à décider par projet.
 
 ## Communication
 
