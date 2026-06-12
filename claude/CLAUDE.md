@@ -86,29 +86,29 @@
 
 6 agents dans `.claude/agents/`. Chacun tourne dans un contexte frais isolé (200K).
 
-| Agent | Quand |
-|---|---|
-| @planner | Entry point obligatoire pour toute tâche non-triviale |
-| @architect | Décisions techniques, validation archi, veto stack |
-| @fullstack-dev | Implémentation (TDD intégré) |
-| @reviewer | Review avant merge — fresh context, sans biais |
-| @debugger | Root cause analysis sur bug non-trivial |
-| @orchestrator | Coordination multi-agents pour features larges |
+| Agent | Quand | Modèle |
+|---|---|---|
+| @planner | Entry point obligatoire pour toute tâche non-triviale | opusplan |
+| @architect | Décisions techniques, validation archi, veto stack | claude-opus-4-8 |
+| @fullstack-dev | Implémentation (TDD intégré) | claude-sonnet-4-6 |
+| @reviewer | Review avant merge — fresh context, sans biais | claude-opus-4-8 |
+| @debugger | Root cause analysis sur bug non-trivial | claude-opus-4-8 |
+| @orchestrator | Coordination multi-agents pour features larges | claude-sonnet-4-6 |
 
 **Règle** : @planner en premier. N'orchestre pas plusieurs agents sans plan validé.
 
-**Besoins spécialisés** (sécu, CI, perf) → slash command dédiée (`/security-review`, `/fix-ci`, `/review`...) ou skill on-demand. Doc : mise à jour inline dans le même PR. Pas d'agent dédié.
+**Besoins spécialisés** (sécu, CI, perf, runbook) → slash command dédiée (`/security-review`, `/fix-ci`, `/review`, `/runbook <module>`...) ou skill on-demand. Doc : mise à jour inline dans le même PR. Pas d'agent dédié.
 
 ## Skills
 
 Chargées on-demand, pas à chaque session. Disponibles dans `.claude/skills/` :
 
-| Skill | Usage |
-|---|---|
-| `brainstorming` | Design et spec avant d'implémenter |
-| `code-review` | Revue approfondie niveau staff |
-| `code-quality` | Dette technique, patterns, refactor |
-| `commit-messages` | Conventions de messages git |
+| Skill | Usage | Modèle |
+|---|---|---|
+| `brainstorming` | Design et spec avant d'implémenter | claude-opus-4-8 |
+| `code-review` | Revue approfondie niveau staff | claude-opus-4-8 |
+| `code-quality` | Dette technique, patterns, refactor | claude-sonnet-4-6 |
+| `commit-messages` | Conventions de messages git | claude-haiku-4-5 |
 
 Les principes d'architecture sont **enforced par défaut** (section Architecture ci-dessus), pas chargés on-demand. Le setup outillage (linting, monitoring, analyse statique) est volontairement hors config : trop couplé à un outil/vendor spécifique, à décider par projet.
 

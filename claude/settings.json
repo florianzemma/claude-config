@@ -1,5 +1,6 @@
 {
   "model": "opusplan",
+  "fallbackModel": ["claude-sonnet-4-6"],
   "enabledPlugins": {},
   "permissions": {
     "deny": [
@@ -55,7 +56,29 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=\"$CLAUDE_FILE_PATH\"\nif [ -z \"$FILE\" ]; then exit 0; fi\ncase \"$FILE\" in\n  *.ts|*.tsx|*.js|*.jsx|*.json|*.css|*.md)\n    if command -v npx &>/dev/null && [ -f \"$(git rev-parse --show-toplevel 2>/dev/null)/node_modules/.bin/prettier\" 2>/dev/null ]; then\n      npx prettier --write \"$FILE\" 2>/dev/null || true\n    fi\n    ;;\nesac"
+            "command": "FILE=\"${CLAUDE_TOOL_INPUT_path:-${CLAUDE_TOOL_INPUT_file_path:-}}\"\nif [ -z \"$FILE\" ]; then exit 0; fi\ncase \"$FILE\" in\n  *.ts|*.tsx|*.js|*.jsx|*.json|*.css|*.md)\n    if command -v npx &>/dev/null && [ -f \"$(git rev-parse --show-toplevel 2>/dev/null)/node_modules/.bin/prettier\" 2>/dev/null ]; then\n      npx prettier --write \"$FILE\" 2>/dev/null || true\n    fi\n    ;;\nesac"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "PROMPT=\"${CLAUDE_USER_PROMPT:-}\"\nif echo \"$PROMPT\" | grep -qiE '\\bprod(uction)?\\b|\\bmain\\b|\\bmaster\\b|force-push|force_push'; then\n  echo \"BLOQUÉ : opération risquée détectée (prod/main/master/force-push).\" >&2\n  echo \"Utilise /create-pr pour pousser tes changements en sécurité.\" >&2\n  exit 2\nfi"
+          }
+        ]
+      }
+    ],
+    "PostToolBatch": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo \"\")\nif [ -z \"$ROOT\" ]; then exit 0; fi\nif [ ! -f \"$ROOT/tsconfig.json\" ] || [ ! -d \"$ROOT/node_modules\" ]; then exit 0; fi\nOUTPUT=$(cd \"$ROOT\" && npx tsc --noEmit 2>&1)\nif [ $? -ne 0 ]; then\n  echo \"BLOQUÉ : erreurs TypeScript détectées — corrige avant de continuer.\" >&2\n  echo \"$OUTPUT\" >&2\n  exit 2\nfi"
           }
         ]
       }

@@ -2,6 +2,9 @@
 name: fullstack-dev
 description: Implement code for backend and frontend. Use for ANY code change request. Follows strict standards: No comments, TDD, Clean Code. Works sequentially in Stage 3 after Design/Tests are ready.
 tools: Read, Glob, Grep, Bash, Edit, Write
+model: claude-sonnet-4-6
+max_turns: 40
+isolation: worktree
 ---
 
 # FULLSTACK_DEV

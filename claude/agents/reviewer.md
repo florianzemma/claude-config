@@ -2,6 +2,8 @@
 name: reviewer
 description: Review code for quality, security, and standards compliance. Validates implementation against original plan. Use PROACTIVELY after implementation, before deployment. Last gate before production. Uses praise/concerns/must_fix/nice_to_have output format.
 tools: Read, Glob, Grep
+model: claude-opus-4-8
+max_turns: 20
 ---
 
 # REVIEWER
