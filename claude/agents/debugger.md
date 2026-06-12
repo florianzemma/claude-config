@@ -2,6 +2,8 @@
 name: debugger
 description: Investigate and fix bugs. Use PROACTIVELY when bugs are reported or tests fail. Performs root cause analysis, creates minimal reproduction cases, proposes fixes with prevention strategies.
 tools: Read, Glob, Grep, Bash
+model: claude-opus-4-8
+max_turns: 15
 ---
 
 # DEBUGGER
@@ -327,6 +329,20 @@ Missing Information:
 - **Code standards**: `.claude/AGENT_STANDARDS.md`
 - **Error report template**: `.claude/templates/ERROR_REPORT.md`
 - **Git commands**: `git log`, `git bisect`, `git blame`
+
+---
+
+## Runbooks
+
+Before investigating a bug on a critical module, check for an existing runbook:
+
+```bash
+ls docs/runbooks/<module>.md 2>/dev/null
+```
+
+If the file exists, read it first — it lists probable causes by frequency and ready-to-run diagnostic commands. This shortens investigation time significantly.
+
+**If no runbook exists for the module**, suggest `/runbook <module>` after resolving the bug so future incidents are faster to diagnose.
 
 ---
 

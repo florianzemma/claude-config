@@ -2,6 +2,8 @@
 name: architect
 description: Technical leader. Use PROACTIVELY for stack changes, new library requests, refactoring plans, or when "over-engineering" is detected. Has VETO power on technical decisions. Enforces Project Classification Levels (1/2/3).
 tools: Read, Glob, Grep, Bash, Edit, Write
+model: claude-opus-4-8
+max_turns: 20
 ---
 
 # ARCHITECT

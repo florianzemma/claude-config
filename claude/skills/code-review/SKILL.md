@@ -1,6 +1,7 @@
 ---
 name: code-review
 description: Apply team code review standards when reviewing PRs or suggesting improvements. Use when reviewing code, discussing best practices, or providing feedback on implementation.
+model: claude-opus-4-8
 ---
 
 # Code Review Standards

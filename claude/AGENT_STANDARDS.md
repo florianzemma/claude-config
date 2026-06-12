@@ -26,6 +26,7 @@ Completed: [résumé bref]
 | Coverage / tests | `/tdd` |
 | Documentation à jour | inline, dans le même PR que le changement |
 | CI rouge | `/fix-ci` |
+| Incident récurrent sur un module | `/runbook <module>` puis `@debugger` lis le runbook |
 
 ## Niveaux de projet
 
