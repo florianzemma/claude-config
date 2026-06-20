@@ -13,7 +13,10 @@ Commence par git diff (staged et unstaged). Évalue :
 2. Edge cases — quels cas limites ne sont pas gérés ?
 3. Simplicité — peut-on simplifier sans perdre en fonctionnalité ?
 4. Conventions — respecte-t-on les patterns existants du projet ?
-5. Tests — la couverture est-elle suffisante pour les changements ?
+5. Tests — évalue sur trois critères :
+   - Les nouveaux comportements sont-ils testés via l'interface publique (pas les détails internes) ?
+   - Les tests survivraient-ils à un refactor interne sans changer de comportement ?
+   - Happy path ET edge cases (null, vide, valeurs limites, erreurs) sont-ils couverts ?
 
 Sois critique et constructif. Ne valide pas par complaisance.
 Format : liste numérotée des problèmes par sévérité (bloquant → suggestion).
