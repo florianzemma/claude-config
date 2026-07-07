@@ -1,5 +1,5 @@
 ---
-model: claude-opus-4-8
+model: opus
 allowed-tools: Read, Glob, Grep, Bash(find*), Bash(ls*), Bash(cat*), Bash(git log*), Bash(git blame*)
 description: Génère un runbook de troubleshooting condensé pour un module/service.
 ---

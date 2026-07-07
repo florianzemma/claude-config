@@ -1,7 +1,7 @@
 ---
 name: code-quality
 description: Apply code quality standards when writing or reviewing code. Use when implementing features, refactoring, or reviewing PRs. Enforces complexity limits, duplication rules, and TypeScript strictness.
-model: claude-sonnet-4-6
+model: sonnet
 ---
 
 # Code Quality Standards

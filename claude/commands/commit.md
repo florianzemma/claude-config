@@ -1,7 +1,8 @@
 ---
 allowed-tools: Bash(git diff*), Bash(git add*), Bash(git commit*), Bash(git status*)
 description: Génère un message de commit conventionnel depuis git diff et commit
-model: claude-haiku-4-5
+disable-model-invocation: true
+model: haiku
 ---
 Génère et effectue un commit conventionnel pour les changements en cours.
 

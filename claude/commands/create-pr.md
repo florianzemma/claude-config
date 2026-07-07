@@ -1,6 +1,7 @@
 ---
 allowed-tools: Bash(git*), Bash(gh*)
 description: Crée une branche, commit les changements, et ouvre une PR via gh CLI
+disable-model-invocation: true
 ---
 Crée une pull request pour les changements en cours :
 

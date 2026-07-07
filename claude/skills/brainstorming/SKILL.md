@@ -1,7 +1,7 @@
 ---
 name: brainstorming
 description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
-model: claude-opus-4-8
+model: opus
 ---
 
 # Brainstorming Ideas Into Designs
@@ -37,13 +37,12 @@ Start by understanding the current project context, then ask questions one at a 
 
 **Documentation:**
 - Write the validated design to `docs/plans/YYYY-MM-DD-<topic>-design.md`
-- Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit the design document to git
 
 **Implementation (if continuing):**
 - Ask: "Ready to set up for implementation?"
-- Use superpowers:using-git-worktrees to create isolated workspace
-- Use superpowers:writing-plans to create detailed implementation plan
+- Turn the validated design into a PLAN.md (`/plan`) with phases and verifiable success criteria
+- Dispatch implementation to @fullstack-dev (isolated worktree) once the plan is validated
 
 ## Key Principles
 

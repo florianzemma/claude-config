@@ -1,7 +1,7 @@
 ---
 allowed-tools: Read, Glob, Grep, Bash(git diff*), Bash(git log*)
 description: Audit sécurité OWASP Top 10 sur le code modifié — sévérité + fix concret
-model: claude-opus-4-5
+model: opus
 ---
 Fais un audit de sécurité OWASP Top 10 sur les changements en cours :
 
