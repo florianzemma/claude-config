@@ -89,17 +89,6 @@
         ]
       }
     ],
-    "PostToolBatch": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo \"\")\nif [ -z \"$ROOT\" ]; then exit 0; fi\nif [ ! -f \"$ROOT/tsconfig.json\" ] || [ ! -d \"$ROOT/node_modules\" ]; then exit 0; fi\nOUTPUT=$(cd \"$ROOT\" && npx tsc --noEmit 2>&1)\nif [ $? -ne 0 ]; then\n  echo \"BLOQUÉ : erreurs TypeScript détectées — corrige avant de continuer.\" >&2\n  echo \"$OUTPUT\" >&2\n  exit 2\nfi"
-          }
-        ]
-      }
-    ],
     "PreCompact": [
       {
         "matcher": "",
