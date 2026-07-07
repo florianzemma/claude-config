@@ -1,35 +1,31 @@
 # Agent Standards
 
-Standards et protocoles partagés entre tous les agents. Les règles de code et naming sont dans CLAUDE.md — ne pas dupliquer ici.
+Standards partagés entre tous les agents. Les règles de code et naming sont dans CLAUDE.md — ne pas dupliquer ici.
 
 ## Format de réponse
 
 Chaque réponse d'agent commence par : `[AGENT_NAME] - [STATUS]`
-Status possibles : IN_PROGRESS, REVIEWING, COMPLETED, BLOCKED, HANDOFF, APPROVED, REJECTED
+Status possibles : IN_PROGRESS, COMPLETED, BLOCKED, APPROVED, REJECTED, CHANGES_REQUESTED, FIXED, NEED_INFO
 
-## Handoff entre agents
+## Retour au main loop
 
-```
-[AGENT_NAME] - [HANDOFF]
-Completed: [résumé bref]
-@next_agent : [contexte clé, fichiers modifiés, prochaines étapes]
-```
+Un agent ne dispatche pas d'autres agents : il termine par un rapport structuré, le **main loop** décide de la suite. Chaque rapport final contient : résumé, fichiers modifiés (si applicable), points d'attention, prochaine étape recommandée.
 
-## Escalade
+## Escalade (décidée par le main loop)
 
 | Problème | Action |
 |----------|--------|
-| Déviation du plan | @planner |
-| Violation architecture | @architect |
+| Requirements flous | Question à l'utilisateur (jamais d'interprétation silencieuse) |
+| Décision technique / violation archi | @architect |
+| Bug non-trivial, test en échec inexpliqué | @debugger |
 | Sécurité (auth/PII) | `/security-review` |
-| Performance | `/review` (focus perf) |
 | Coverage / tests | `/tdd` |
-| Documentation à jour | inline, dans le même PR que le changement |
 | CI rouge | `/fix-ci` |
-| Incident récurrent sur un module | `/runbook <module>` puis `@debugger` lis le runbook |
+| Incident récurrent sur un module | `/runbook <module>` puis @debugger lit le runbook |
+| Documentation | inline, dans le même PR que le changement |
 
 ## Niveaux de projet
 
-- **Level 1** (simple) : landing, blog → ESLint + Vercel seulement
-- **Level 2** (medium) : SaaS, app interne → + Sentry + 70% coverage
+- **Level 1** (simple) : landing, blog → lint + déploiement managé seulement
+- **Level 2** (medium) : SaaS, app interne → + error tracking + 70% coverage
 - **Level 3** (complex) : fintech, healthtech → full stack + 80% + E2E
