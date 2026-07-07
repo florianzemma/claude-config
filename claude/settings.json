@@ -1,8 +1,32 @@
 {
-  "model": "opusplan",
-  "fallbackModel": ["claude-sonnet-4-6"],
-  "enabledPlugins": {},
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "fileCheckpointingEnabled": true,
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
   "permissions": {
+    "allow": [
+      "Bash(npm test*)",
+      "Bash(npm run test*)",
+      "Bash(npm run lint*)",
+      "Bash(npm run build*)",
+      "Bash(pnpm test*)",
+      "Bash(npx vitest*)",
+      "Bash(npx jest*)",
+      "Bash(npx tsc*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(git show*)",
+      "Bash(gh pr view*)",
+      "Bash(gh pr list*)",
+      "Bash(gh issue view*)",
+      "Bash(gh issue list*)",
+      "Bash(gh run list*)",
+      "Bash(gh run view*)"
+    ],
     "deny": [
       "Read(**/.env)",
       "Read(**/.env.local)",
@@ -17,7 +41,11 @@
       "Read(**/id_ed25519)",
       "Read(**/*.p12)",
       "Read(**/*.pfx)",
-      "Read(**/secrets.*)"
+      "Read(**/secrets.*)",
+      "Read(**/.npmrc)",
+      "Read(**/.netrc)",
+      "Read(**/credentials)",
+      "Read(**/credentials.*)"
     ]
   },
   "hooks": {
@@ -27,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "CMD=\"$CLAUDE_TOOL_INPUT_command\"\nBLOCKED=0\n\n# Commandes destructives interdites\necho \"$CMD\" | grep -qE 'rm\\s+-rf|DROP\\s+TABLE|TRUNCATE\\s+TABLE|curl\\s+.*\\|\\s*bash|curl\\s+.*\\|\\s*sh|git\\s+reset\\s+--hard' && BLOCKED=1\n\n# Lecture de fichiers de secrets via shell interdite (.env.example/.sample/.template tolérés)\nif echo \"$CMD\" | grep -qE '(^|[|&; ])(cat|bat|less|more|head|tail|nl|xxd|od|strings|grep|rg|ack|awk|sed)([[:space:]]|$)'; then\n  echo \"$CMD\" | grep -qE '\\.env([^.[:alnum:]]|$|\\.(local|production|prod|development|dev|staging|test))' && BLOCKED=1\n  echo \"$CMD\" | grep -qE '(\\.pem|\\.key|id_rsa|id_ed25519|\\.p12|\\.pfx|secrets\\.[a-z]+)([^.[:alnum:]]|$)' && BLOCKED=1\nfi\n\nif [ \"$BLOCKED\" = \"1\" ]; then\n  echo \"BLOQUÉ : commande destructive ou lecture de secrets détectée — $CMD\" >&2\n  exit 2\nfi"
+            "command": "CMD=\"$CLAUDE_TOOL_INPUT_command\"\nBLOCKED=0\nREASON=\"\"\n\n# Commandes destructives interdites\nif echo \"$CMD\" | grep -qE 'rm\\s+-rf|DROP\\s+TABLE|TRUNCATE\\s+TABLE|curl\\s+.*\\|\\s*bash|curl\\s+.*\\|\\s*sh|git\\s+reset\\s+--hard'; then\n  BLOCKED=1; REASON=\"commande destructive\"\nfi\n\n# Force-push interdit sans --force-with-lease ; jamais vers main/master\nif echo \"$CMD\" | grep -qE 'git\\s+push' ; then\n  if echo \"$CMD\" | grep -qE '(--force([^-]|$)|\\s-f(\\s|$))' && ! echo \"$CMD\" | grep -q 'force-with-lease'; then\n    BLOCKED=1; REASON=\"force-push sans --force-with-lease\"\n  fi\n  if echo \"$CMD\" | grep -qE 'git\\s+push\\s+[^ ]+\\s+(main|master)(\\s|$|:)'; then\n    BLOCKED=1; REASON=\"push direct vers main/master — passe par /create-pr\"\n  fi\nfi\n\n# Lecture de fichiers de secrets via shell interdite (.env.example/.sample/.template tolérés)\nif echo \"$CMD\" | grep -qE '(^|[|&; ])(cat|bat|less|more|head|tail|nl|xxd|od|strings|grep|rg|ack|awk|sed)([[:space:]]|$)'; then\n  if echo \"$CMD\" | grep -qE '\\.env([^.[:alnum:]]|$|\\.(local|production|prod|development|dev|staging|test))'; then BLOCKED=1; REASON=\"lecture de secrets\"; fi\n  if echo \"$CMD\" | grep -qE '(\\.pem|\\.key|id_rsa|id_ed25519|\\.p12|\\.pfx|\\.npmrc|\\.netrc|secrets\\.[a-z]+)([^.[:alnum:]]|$)'; then BLOCKED=1; REASON=\"lecture de secrets\"; fi\nfi\n\nif [ \"$BLOCKED\" = \"1\" ]; then\n  echo \"BLOQUÉ ($REASON) : $CMD\" >&2\n  exit 2\nfi"
           }
         ]
       },
@@ -36,7 +64,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=\"${CLAUDE_TOOL_INPUT_file_path:-$CLAUDE_TOOL_INPUT_path}\"\nif [ -z \"$FILE\" ]; then exit 0; fi\nBASE=$(basename \"$FILE\")\ncase \"$BASE\" in\n  .env.example|.env.sample|.env.template|.env.dist) exit 0 ;;\nesac\ncase \"$BASE\" in\n  .env|.env.*|*.pem|*.key|id_rsa|id_dsa|id_ecdsa|id_ed25519|*.p12|*.pfx|secrets.*)\n    echo \"BLOQUÉ : lecture de fichier de secrets interdite — $FILE (risque de fuite de credentials ; utiliser .env.example)\" >&2\n    exit 2\n    ;;\nesac"
+            "command": "FILE=\"${CLAUDE_TOOL_INPUT_file_path:-$CLAUDE_TOOL_INPUT_path}\"\nif [ -z \"$FILE\" ]; then exit 0; fi\nBASE=$(basename \"$FILE\")\ncase \"$BASE\" in\n  .env.example|.env.sample|.env.template|.env.dist) exit 0 ;;\nesac\ncase \"$BASE\" in\n  .env|.env.*|*.pem|*.key|id_rsa|id_dsa|id_ecdsa|id_ed25519|*.p12|*.pfx|secrets.*|.npmrc|.netrc)\n    echo \"BLOQUÉ : lecture de fichier de secrets interdite — $FILE (utiliser .env.example)\" >&2\n    exit 2\n    ;;\nesac"
           }
         ]
       },
@@ -45,7 +73,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=\"$CLAUDE_TOOL_INPUT_path\"\nif [ -z \"$FILE\" ]; then exit 0; fi\n\ncase \"$FILE\" in\n  .env*|**/.env*)\n    echo \"BLOQUÉ : écriture sur fichier .env interdite — $FILE\" >&2\n    exit 2\n    ;;\n  .git/*|**/.git/*)\n    echo \"BLOQUÉ : écriture dans .git interdite — $FILE\" >&2\n    exit 2\n    ;;\n  package-lock.json|**/package-lock.json)\n    echo \"BLOQUÉ : écriture sur package-lock.json interdite — modifier via npm/pnpm uniquement\" >&2\n    exit 2\n    ;;\n  node_modules/*|**/node_modules/*)\n    echo \"BLOQUÉ : écriture dans node_modules interdite — $FILE\" >&2\n    exit 2\n    ;;\nesac"
+            "command": "FILE=\"${CLAUDE_TOOL_INPUT_file_path:-$CLAUDE_TOOL_INPUT_path}\"\nif [ -z \"$FILE\" ]; then exit 0; fi\nBASE=$(basename \"$FILE\")\ncase \"$BASE\" in\n  .env|.env.*)\n    case \"$BASE\" in .env.example|.env.sample|.env.template|.env.dist) exit 0 ;; esac\n    echo \"BLOQUÉ : écriture sur fichier .env interdite — $FILE\" >&2\n    exit 2\n    ;;\n  package-lock.json|pnpm-lock.yaml|yarn.lock)\n    echo \"BLOQUÉ : écriture sur lockfile interdite — modifier via le package manager uniquement\" >&2\n    exit 2\n    ;;\nesac\ncase \"$FILE\" in\n  */.git/*|.git/*)\n    echo \"BLOQUÉ : écriture dans .git interdite — $FILE\" >&2\n    exit 2\n    ;;\n  */node_modules/*|node_modules/*)\n    echo \"BLOQUÉ : écriture dans node_modules interdite — $FILE\" >&2\n    exit 2\n    ;;\nesac"
           }
         ]
       }
@@ -56,18 +84,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=\"${CLAUDE_TOOL_INPUT_path:-${CLAUDE_TOOL_INPUT_file_path:-}}\"\nif [ -z \"$FILE\" ]; then exit 0; fi\ncase \"$FILE\" in\n  *.ts|*.tsx|*.js|*.jsx|*.json|*.css|*.md)\n    if command -v npx &>/dev/null && [ -f \"$(git rev-parse --show-toplevel 2>/dev/null)/node_modules/.bin/prettier\" 2>/dev/null ]; then\n      npx prettier --write \"$FILE\" 2>/dev/null || true\n    fi\n    ;;\nesac"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "PROMPT=\"${CLAUDE_USER_PROMPT:-}\"\nif echo \"$PROMPT\" | grep -qiE '\\bprod(uction)?\\b|\\bmain\\b|\\bmaster\\b|force-push|force_push'; then\n  echo \"BLOQUÉ : opération risquée détectée (prod/main/master/force-push).\" >&2\n  echo \"Utilise /create-pr pour pousser tes changements en sécurité.\" >&2\n  exit 2\nfi"
+            "command": "FILE=\"${CLAUDE_TOOL_INPUT_file_path:-$CLAUDE_TOOL_INPUT_path}\"\nif [ -z \"$FILE\" ]; then exit 0; fi\ncase \"$FILE\" in\n  *.ts|*.tsx|*.js|*.jsx|*.json|*.css|*.md)\n    ROOT=$(git rev-parse --show-toplevel 2>/dev/null)\n    if [ -n \"$ROOT\" ] && [ -f \"$ROOT/node_modules/.bin/prettier\" ]; then\n      npx prettier --write \"$FILE\" 2>/dev/null || true\n    fi\n    ;;\nesac"
           }
         ]
       }
@@ -112,7 +129,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude Code attend ton input\" with title \"Claude Code\"' 2>/dev/null || notify-send 'Claude Code' 'Attend ton input' 2>/dev/null || true"
+            "command": "notify-send 'Claude Code' 'Attend ton input' 2>/dev/null || osascript -e 'display notification \"Claude Code attend ton input\" with title \"Claude Code\"' 2>/dev/null || true"
           }
         ]
       }
