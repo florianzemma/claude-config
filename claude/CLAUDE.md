@@ -1,13 +1,17 @@
 # Claude Code Instructions
 
-## Ce fichier est lu à chaque session. Chaque règle doit empêcher une erreur réelle.
+Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revue de config : si retirer une ligne ne provoquerait aucune erreur, la retirer.
 
 ## Workflow
 
-- **Plan first** : shift+tab (plan mode) pour toute tâche touchant 2+ fichiers. Écris le plan dans PLAN.md.
-- **Décompose** : phases de 5-10 min max, chacune testable indépendamment.
-- **Subagents pour la recherche** : "utilise un subagent pour investiguer X" — garde le contexte principal clean pour l'implémentation.
-- **Session A / Session B** : implémente dans une session, review dans une session fraîche. Le reviewer n'a aucun biais.
+- **Plan mode** (shift+tab) quand l'approche est incertaine ou que la tâche touche 3+ fichiers. Si le diff se décrit en une phrase, implémente directement. Écris le plan dans PLAN.md.
+- **Décompose** : phases de 5-10 min max, chacune testable indépendamment. Format : `1. [étape] → verify: [check]`.
+- **Subagents pour la recherche** : investigation ou lecture massive → subagent (Explore) ; le contexte principal reste propre pour l'implémentation.
+- **Session A / Session B** : implémente dans une session, review dans une session fraîche (`@reviewer` ou `/review`). Le reviewer n'a aucun biais.
+- **Toujours un moyen de vérifier** : chaque tâche se termine par un check exécutable (test, build, diff). Avant de déclarer une tâche non-triviale terminée : skill `verify` — preuve exécutée, pas juste "les tests passent". Transforme la demande en critère vérifiable avant de coder :
+  - "fix the bug" → "écris un test qui reproduit le bug, puis fais-le passer"
+  - "add validation" → "écris les tests pour les inputs invalides, puis fais-les passer"
+  - "refactor X" → "les tests passent avant et après, comportement identique"
 
 ## Avant de coder
 
@@ -16,17 +20,13 @@
 - Énonce tes hypothèses explicitement. Si tu en fais une grosse, signale-la.
 - Si une approche plus simple existe, dis-le. Pousse en arrière si c'est justifié.
 - Si tu bloques ou es confus, nomme le blocage — ne hallucine pas une solution.
-- Définis le succès avant de coder. Transforme chaque tâche en critère vérifiable :
-  - "fix the bug" → "écris un test qui reproduit le bug, puis fais-le passer"
-  - "add validation" → "écris les tests pour les inputs invalides, puis fais-les passer"
-  - "refactor X" → "les tests passent avant et après, comportement identique"
-- Pour les tâches multi-étapes, énonce un plan bref : `1. [étape] → verify: [check]`. Boucle jusqu'à vérification. Des critères faibles ("make it work") nécessitent des clarifications constantes — des critères forts permettent d'avancer seul.
 
 ## Gestion du contexte
 
 - /compact manuellement à ~50% du contexte, jamais après.
 - Lors du compact : TOUJOURS préserver la liste des fichiers modifiés, le statut des tests, et le plan en cours.
 - /clear entre deux tâches distinctes. Une conversation = une feature.
+- Après 2 corrections ratées sur le même point : /rewind vers le checkpoint et reformule — corriger dans un contexte pollué marche rarement.
 - Écris les plans et l'état dans PLAN.md ou SCRATCHPAD.md pour survivre aux compactions.
 
 ## Édits chirurgicaux
@@ -40,23 +40,20 @@
 ## Code
 
 - TypeScript strict, zéro `any`.
-- Fonctions ≤ 50 lignes, complexité ≤ 10.
-- Early returns. Un fichier = une responsabilité.
+- Fonctions ≤ 50 lignes, complexité ≤ 10. Early returns. Un fichier = une responsabilité.
 - Pas de code mort. Pas de TODO sans issue.
-- Pas de commentaires sauf : business logic complexe, JSDoc pour API publiques, workarounds temporaires.
-- Si tu écris un commentaire, demande-toi : "je peux rendre le code plus clair à la place ?" Si oui → supprime le commentaire.
-- Pas de features non demandées. Pas d'abstractions pour du code à usage unique. Pas de "flexibilité" ou "configurabilité" non requise.
+- Pas de commentaires sauf : business logic complexe, JSDoc pour API publiques, workarounds temporaires. Avant d'écrire un commentaire : "je peux rendre le code plus clair à la place ?" Si oui → pas de commentaire.
+- Pas de features non demandées. Pas d'abstractions pour du code à usage unique.
 - Pas de gestion d'erreurs pour des scénarios impossibles. Ne valide qu'aux frontières du système (input utilisateur, APIs externes).
-- Si tu as écrit 200 lignes là où 50 suffisaient, réécris. Demande-toi : un senior engineer dirait-il que c'est trop compliqué ? Si oui → simplifie.
+- Si tu as écrit 200 lignes là où 50 suffisaient, réécris.
 
-## Architecture _(enforced — appliqué par défaut, pas un skill on-demand)_
+## Architecture _(enforced — appliqué par défaut)_
 
-- **SOLID** : SRP (une classe = une raison de changer), OCP (étendre sans modifier), LSP (sous-types substituables), ISP (pas d'interface grasse), DIP (dépendre d'abstractions, pas d'implémentations).
-- **Clean Code** : noms explicites (verbe+nom pour fonctions, is/has/can pour booléens), fonctions ≤ 50 lignes faisant une seule chose, early returns, pas d'effets de bord cachés, pas de magic numbers (→ constantes).
-- **DDD (Level 2+)** : Entity (identité) vs Value Object (immutable), Aggregate Root = point d'entrée unique + invariants + frontière transactionnelle, Repository pour l'accès données, bounded contexts par sous-domaine.
-- **Layering** : Presentation → Application → Domain → Infrastructure. Dépendance vers l'intérieur uniquement. Le Domain n'a aucune dépendance.
-- **Patterns** : appliquer seulement quand la complexité le justifie. Start simple, refactor vers un pattern quand le besoin est prouvé — jamais pour le CV.
-- **Anti-patterns à REJETER** : God object, modèle anémique, couplage fort, dépendances circulaires, optimisation prématurée (mesurer d'abord), golden hammer.
+- SOLID et Clean Code s'appliquent partout — tu connais les définitions, pas besoin de les rappeler ici.
+- DDD pour les projets Level 2+ : Entity vs Value Object, Aggregate Root = invariants + frontière transactionnelle, Repository, bounded contexts.
+- Layering : Presentation → Application → Domain → Infrastructure. Dépendance vers l'intérieur uniquement. Le Domain n'a aucune dépendance.
+- Patterns seulement quand la complexité le justifie. Start simple, refactor vers un pattern quand le besoin est prouvé.
+- Anti-patterns à REJETER : god object, modèle anémique, couplage fort, dépendances circulaires, optimisation prématurée (mesurer d'abord), golden hammer.
 
 ## Naming
 
@@ -67,13 +64,14 @@
 
 - Commits conventionnels : feat(scope): description, fix, docs, refactor, test, chore, perf
 - JAMAIS d'attribution Claude/AI dans les commits (pas de Co-Authored-By, pas de "Generated with")
-- Commits atomiques. Jamais de force push sur main.
+- Commits atomiques. Jamais de force push sur main (bloqué aussi par hook).
+- **Config globale versionnée** : `~/.claude/` est un symlink vers le repo `~/claude-config` (`claude/`). Dès que je modifie la config Claude globale (CLAUDE.md, settings.json, agents, commands, skills), commit + push dans `~/claude-config` pour que la config reste toujours à jour.
 
 ## Sécurité _(enforced — non négociable)_
 
-- **NE JAMAIS lire de fichier de secrets** : `.env`, `.env.*`, `*.pem`, `*.key`, `id_rsa`, `*.p12`, `credentials`, `secrets.*`, `.npmrc`/`.netrc` contenant des tokens. Ne pas les `cat`, `grep`, `head`, `tail`, ni les ouvrir via un outil de lecture — risque de fuite de credentials dans le contexte/les logs.
-- Si la tâche exige de connaître **quelles** variables existent, lire `.env.example` (jamais `.env`). Si une valeur de secret est réellement nécessaire, demander à l'utilisateur de l'injecter — ne pas la lire depuis le disque.
-- Jamais de secret hardcodé, jamais de secret écrit dans un commit, un log, ou une sortie. Bloqué aussi côté harness (`settings.json` : deny + hook).
+- **NE JAMAIS lire de fichier de secrets** : `.env`, `.env.*`, `*.pem`, `*.key`, `id_rsa`, `*.p12`, `credentials`, `secrets.*`, `.npmrc`/`.netrc`. Ni `cat`, ni `grep`, ni outil de lecture — risque de fuite de credentials dans le contexte/les logs.
+- Si la tâche exige de connaître **quelles** variables existent, lire `.env.example` (jamais `.env`). Si une valeur de secret est nécessaire, demander à l'utilisateur de l'injecter.
+- Jamais de secret hardcodé, jamais de secret écrit dans un commit, un log, ou une sortie. Bloqué aussi côté harness (`settings.json` : deny + hooks).
 
 ## Design UI _(projets frontend uniquement — ignorer sinon)_
 
@@ -82,35 +80,27 @@
 - Couleurs : 70% dominant + 20% accent + 10% secondary. Pas de gradient violet sur blanc.
 - Rejeter tout design qui ressemble à un template Tailwind UI générique.
 
-## Agents disponibles
+## Agents
 
-6 agents dans `.claude/agents/`. Chacun tourne dans un contexte frais isolé (200K).
+4 agents custom dans `.claude/agents/`, chacun en contexte frais isolé. Le **main loop orchestre** : plan validé (plan mode), puis dispatch — pas d'agent planner/orchestrator intermédiaire.
 
 | Agent | Quand | Modèle |
 |---|---|---|
-| @planner | Entry point obligatoire pour toute tâche non-triviale | opusplan |
-| @architect | Décisions techniques, validation archi, veto stack | claude-opus-4-8 |
-| @fullstack-dev | Implémentation (TDD intégré) | claude-sonnet-4-6 |
-| @reviewer | Review avant merge — fresh context, sans biais | claude-opus-4-8 |
-| @debugger | Root cause analysis sur bug non-trivial | claude-opus-4-8 |
-| @orchestrator | Coordination multi-agents pour features larges | claude-sonnet-4-6 |
+| @architect | Décision technique, validation archi, veto stack, classification Level 1/2/3 | opus |
+| @fullstack-dev | Implémentation TDD isolée (worktree) — features parallélisables | sonnet |
+| @reviewer | Review avant merge — fresh context, sans biais, read-only | opus |
+| @debugger | Root cause analysis sur bug non-trivial | opus |
 
-**Règle** : @planner en premier. N'orchestre pas plusieurs agents sans plan validé.
+Pour la recherche/lecture massive : built-in `Explore`. Pour la planification : plan mode natif.
 
-**Besoins spécialisés** (sécu, CI, perf, runbook) → slash command dédiée (`/security-review`, `/fix-ci`, `/review`, `/runbook <module>`...) ou skill on-demand. Doc : mise à jour inline dans le même PR. Pas d'agent dédié.
+## Skills & commands
 
-## Skills
+Chargées on-demand. Skills : `verify` (preuve avant "terminé"), `retro` (corrections → règles, en fin de tâche), `brainstorming` (design avant d'implémenter), `code-review`, `code-quality`, `db-migration` (schéma DB sans casse), `commit-messages`, `pr-desc`, `release-notes`, `refinement` (Jira).
+Commands : `/commit`, `/create-pr`, `/debug`, `/fix-ci`, `/fix-issue`, `/plan`, `/prime`, `/review`, `/runbook`, `/security-review`, `/tdd`, `/worklog-jira`.
 
-Chargées on-demand, pas à chaque session. Disponibles dans `.claude/skills/` :
+Règle de répartition : une **skill** enseigne le comment, un **hook** applique la règle (déterministe), un **subagent** isole le travail. Si je viole une règle de ce fichier de façon répétée → skill `retro` pour la convertir en règle ou en hook.
 
-| Skill | Usage | Modèle |
-|---|---|---|
-| `brainstorming` | Design et spec avant d'implémenter | claude-opus-4-8 |
-| `code-review` | Revue approfondie niveau staff | claude-opus-4-8 |
-| `code-quality` | Dette technique, patterns, refactor | claude-sonnet-4-6 |
-| `commit-messages` | Conventions de messages git | claude-haiku-4-5 |
-
-Les principes d'architecture sont **enforced par défaut** (section Architecture ci-dessus), pas chargés on-demand. Le setup outillage (linting, monitoring, analyse statique) est volontairement hors config : trop couplé à un outil/vendor spécifique, à décider par projet.
+- **Review = skill obligatoire** : toute demande de review (MR, PR, diff, "fais les commentaires", `/review`) → invoquer le skill `code-review` **avant** de reviewer. Jamais de review à la main sans le skill.
 
 ## Communication
 

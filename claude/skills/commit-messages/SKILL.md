@@ -1,7 +1,7 @@
 ---
 name: commit-messages
 description: Generate commit messages following conventional commits format. Use when creating commits, helping with commit messages, or reviewing commit history.
-model: claude-haiku-4-5
+model: haiku
 ---
 
 # Commit Message Format

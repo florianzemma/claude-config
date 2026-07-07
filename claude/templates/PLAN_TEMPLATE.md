@@ -52,5 +52,5 @@
 ## Prêt pour exécution
 
 ```
-@orchestrator — plan validé, [N] subtasks, ~[Xh] total.
+Plan validé — le main loop exécute : @fullstack-dev par subtask, @reviewer après chaque bloc.
 ```

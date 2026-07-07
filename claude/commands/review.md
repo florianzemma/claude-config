@@ -1,22 +1,9 @@
 ---
-allowed-tools: Read, Glob, Grep, Bash(git diff*), Bash(git log*), Bash(git status*)
-description: Code review niveau staff engineer sur les changements en cours
-model: claude-opus-4-5
+allowed-tools: Read, Glob, Grep, Bash(git diff*), Bash(git log*), Bash(git status*), Skill
+description: Code review niveau staff engineer — délègue au skill code-review
 ---
-Fais une review de code comme un staff engineer senior. Analyse les changements en cours.
+Invoque le skill `code-review` et applique-le aux changements en cours.
 
 $ARGUMENTS
 
-Commence par git diff (staged et unstaged). Évalue :
-
-1. Correctness — le code fait-il ce qu'il prétend faire ?
-2. Edge cases — quels cas limites ne sont pas gérés ?
-3. Simplicité — peut-on simplifier sans perdre en fonctionnalité ?
-4. Conventions — respecte-t-on les patterns existants du projet ?
-5. Tests — évalue sur trois critères :
-   - Les nouveaux comportements sont-ils testés via l'interface publique (pas les détails internes) ?
-   - Les tests survivraient-ils à un refactor interne sans changer de comportement ?
-   - Happy path ET edge cases (null, vide, valeurs limites, erreurs) sont-ils couverts ?
-
-Sois critique et constructif. Ne valide pas par complaisance.
-Format : liste numérotée des problèmes par sévérité (bloquant → suggestion).
+Commence par récupérer le diff complet (staged + unstaged) via `git diff HEAD`, puis exécute le skill `code-review` sur ce diff.
