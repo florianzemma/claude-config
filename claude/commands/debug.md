@@ -6,10 +6,24 @@ Debug ce problème de façon systématique :
 
 $ARGUMENTS
 
+**Prérequis : construis une feedback loop avant tout**
+
+Avant de formuler la moindre hypothèse, tu dois avoir une commande rouge-capable — une commande unique qui reproduit le bug et que tu peux relancer en 1-2 secondes. Sans ça, ne passe pas à l'étape 1.
+
+Options par ordre de préférence :
+- Test automatisé qui échoue (`npx vitest run path/to/test`)
+- Appel CLI/curl qui reproduit le comportement fautif
+- Script minimal isolé (`node reproduce.ts`)
+- `git bisect run <commande>` si c'est une régression
+
+Si aucune n'est réalisable, dis-le explicitement et explique pourquoi.
+
+---
+
 Suis ces 5 étapes dans l'ordre. Ne saute aucune.
 
 **1. Reproduire**
-Écris un test qui échoue démontrant le bug. Si tu ne peux pas le reproduire, dis-le clairement avant d'aller plus loin.
+Lance ta commande rouge-capable. Elle doit échouer de façon déterministe. Si le bug est intermittent, documente les conditions qui le déclenchent avant d'aller plus loin.
 
 **2. Isoler**
 Réduis le périmètre au minimum : quel fichier, quelle fonction, quelle ligne. Si le bug est régressif, utilise `git log` pour trouver le commit qui l'a introduit. `git bisect` si nécessaire.
