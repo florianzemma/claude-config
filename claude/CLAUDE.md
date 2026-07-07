@@ -65,6 +65,7 @@ Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revu
 - Commits conventionnels : feat(scope): description, fix, docs, refactor, test, chore, perf
 - JAMAIS d'attribution Claude/AI dans les commits (pas de Co-Authored-By, pas de "Generated with")
 - Commits atomiques. Jamais de force push sur main (bloqué aussi par hook).
+- **Config globale versionnée** : `~/.claude/` est un symlink vers le repo `~/claude-config` (`claude/`). Dès que je modifie la config Claude globale (CLAUDE.md, settings.json, agents, commands, skills), commit + push dans `~/claude-config` pour que la config reste toujours à jour.
 
 ## Sécurité _(enforced — non négociable)_
 
@@ -98,6 +99,8 @@ Chargées on-demand. Skills : `verify` (preuve avant "terminé"), `retro` (corre
 Commands : `/commit`, `/create-pr`, `/debug`, `/fix-ci`, `/fix-issue`, `/plan`, `/prime`, `/review`, `/runbook`, `/security-review`, `/tdd`, `/worklog-jira`.
 
 Règle de répartition : une **skill** enseigne le comment, un **hook** applique la règle (déterministe), un **subagent** isole le travail. Si je viole une règle de ce fichier de façon répétée → skill `retro` pour la convertir en règle ou en hook.
+
+- **Review = skill obligatoire** : toute demande de review (MR, PR, diff, "fais les commentaires", `/review`) → invoquer le skill `code-review` **avant** de reviewer. Jamais de review à la main sans le skill.
 
 ## Communication
 
