@@ -42,6 +42,8 @@ Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revu
 - TypeScript strict, zéro `any`.
 - Fonctions ≤ 50 lignes, complexité cyclomatique ≤ 10, cognitive ≤ 15, imbrication ≤ 4, paramètres ≤ 4, fichiers ≤ 500 lignes, duplication ≤ 3 %. Ces seuils font autorité — skills et agents s'y réfèrent, ne les recopient pas. Early returns. Un fichier = une responsabilité.
 - Design simple (Beck), dans l'ordre : 1) passe les tests · 2) révèle l'intention · 3) zéro duplication · 4) minimum d'éléments. L'ordre prime : la clarté avant la concision.
+- SLAP : un seul niveau d'abstraction par fonction — ne mélange pas orchestration haut-niveau et détails bas-niveau dans le même corps, extrais les détails.
+- Pas de magic numbers/strings : toute valeur littérale porteuse de sens → constante nommée.
 - Pas de code mort. Pas de TODO sans issue.
 - Pas de commentaires sauf : business logic complexe, JSDoc pour API publiques, workarounds temporaires. Avant d'écrire un commentaire : "je peux rendre le code plus clair à la place ?" Si oui → pas de commentaire.
 - Pas de features non demandées. Pas d'abstractions pour du code à usage unique. Rule of Three (Fowler) : on tolère 2 duplications, on extrait à la 3e — jamais d'abstraction avant.
@@ -54,6 +56,7 @@ Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revu
 - DDD pour les projets Level 2+ : Entity vs Value Object, Aggregate Root = invariants + frontière transactionnelle, Repository, bounded contexts.
 - Layering : Presentation → Application → Domain → Infrastructure. Dépendance vers l'intérieur uniquement. Le Domain n'a aucune dépendance.
 - Patterns seulement quand la complexité le justifie. Start simple, refactor vers un pattern quand le besoin est prouvé.
+- Forte cohésion, faible couplage : un module regroupe ce qui change ensemble et minimise ses dépendances externes — c'est le critère de découpage par défaut.
 - Anti-patterns à REJETER : god object, modèle anémique, couplage fort, dépendances circulaires, optimisation prématurée (mesurer d'abord), golden hammer.
 
 ## Naming
