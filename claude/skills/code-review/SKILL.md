@@ -43,6 +43,17 @@ Before reading any code, gather context that shapes the review:
 
 > If no ticket is found or the MCP tool is unavailable, proceed with the review but note the missing context.
 
+## Step 1 — Vérifie les claims, ne les crois pas
+
+Une affirmation n'est pas une preuve — la tienne comme celle de l'auteur. Avant de valider ou de rejeter un point, **lis la source réelle** :
+
+- « c'est déjà géré / ça marche déjà » → trace le chemin de code toi-même, ne te fie pas au résumé d'un seul fichier ou d'un seul subagent.
+- « ces couleurs / valeurs ne sont pas dans le thème » → **ouvre le thème/design system** (`packages/ui`, `@birdz/mui-theme`, tokens) et compare hex par hex. Une valeur peut y être exactement, ou à un delta imperceptible d'un token existant.
+- « ce type / cette API existe » → grep la définition avant de t'appuyer dessus.
+- Une réponse d'un contributeur qui clôt une discussion (« pas possible », « hors scope ») est un claim à vérifier, pas une conclusion.
+
+Règle : si ta conclusion contredit une observation directe (l'app, le code lu, la maquette), l'observation fait foi — ré-investigue.
+
 ## Review Checklist
 
 ### Security (BLOCKING)
@@ -56,6 +67,15 @@ Before reading any code, gather context that shapes the review:
 - [ ] Respecte les seuils de `~/.claude/CLAUDE.md` § Code (taille fonction, complexité, imbrication, params)
 - [ ] No `any` types in TypeScript
 - [ ] No obvious code duplication
+
+### Design & valeurs en dur
+- [ ] Pas de couleur hex / magic value inline : vérifier qu'un token du thème/DS existe (cf. Step 1) et l'utiliser
+- [ ] Une valeur hardcodée répétée ≥ 2 fois → constante nommée a minima
+- [ ] Une teinte absente du thème n'excuse pas le hardcode : soit l'ajouter au thème, soit constante + ticket d'alignement DS ; challenger une valeur hors design system
+
+### Lisibilité
+- [ ] Les conditions de sortie sautent aux yeux : guard clause / early return en bloc, pas de sortie noyée en fin de ternaire ni de `if (cond) return` sur une ligne
+- [ ] Cohérence de forme à l'intérieur d'une même fonction/fichier (ne pas mélanger deux styles de guard)
 
 ### Testing
 - [ ] Tests cover happy path
