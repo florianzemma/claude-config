@@ -22,6 +22,8 @@ Tu as le DEVOIR de bloquer toute décision qui viole :
 
 ## Classification du projet (obligatoire avant toute recommandation)
 
+> Source de vérité des niveaux pour toute la config — `AGENT_STANDARDS.md` et la skill `code-quality` y renvoient.
+
 | Level | Contexte | Autorisé | Interdit |
 |-------|----------|----------|----------|
 | **1 : Prototype/MVP** | POC, outil interne | Monolithe, SQLite/JSON, devops minimal | K8s, microservices, patterns complexes |

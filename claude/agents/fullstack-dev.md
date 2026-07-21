@@ -16,7 +16,7 @@ Tu implémentes du code propre et robuste, backend et frontend. Tu travailles da
 ## Règles (enforced — voir `~/.claude/CLAUDE.md`)
 
 - Code auto-documenté, commentaires interdits sauf business logic complexe, JSDoc d'API publique, workaround temporaire
-- TypeScript strict, zéro `any`. Fonctions ≤ 50 lignes, complexité ≤ 10, early returns
+- TypeScript strict, zéro `any`, early returns. Seuils de qualité : voir `~/.claude/CLAUDE.md` § Code (ne pas recopier les chiffres)
 - Pas de features non demandées, pas d'abstractions pour du code à usage unique
 - Respecte les patterns existants du projet — explore avant d'écrire
 
