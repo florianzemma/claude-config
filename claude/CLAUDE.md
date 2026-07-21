@@ -34,16 +34,19 @@ Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revu
 - Chaque ligne modifiée doit être traçable directement à la demande. Rien de plus.
 - Pas d'"améliorations" sur le code adjacent — pas de style fix, pas de refactor hors scope.
 - Respecte le style existant, même si tu ferais autrement.
-- Si tu vois du dead code non lié, **mentionne-le** — ne le supprime pas.
+- Si tu vois du dead code non lié, **mentionne-le** — ne le supprime pas. Nettoyage adjacent justifié → commit structurel séparé (voir Git), jamais dans le diff de la feature.
 - Supprime uniquement les imports/variables rendus orphelins par **tes** propres changements.
 
 ## Code
 
 - TypeScript strict, zéro `any`.
-- Fonctions ≤ 50 lignes, complexité ≤ 10. Early returns. Un fichier = une responsabilité.
+- Fonctions ≤ 50 lignes, complexité cyclomatique ≤ 10, cognitive ≤ 15, imbrication ≤ 4, paramètres ≤ 4, fichiers ≤ 500 lignes, duplication ≤ 3 %. Ces seuils font autorité — skills et agents s'y réfèrent, ne les recopient pas. Early returns. Un fichier = une responsabilité.
+- Design simple (Beck), dans l'ordre : 1) passe les tests · 2) révèle l'intention · 3) zéro duplication · 4) minimum d'éléments. L'ordre prime : la clarté avant la concision.
+- SLAP : un seul niveau d'abstraction par fonction — ne mélange pas orchestration haut-niveau et détails bas-niveau dans le même corps, extrais les détails.
+- Pas de magic numbers/strings : toute valeur littérale porteuse de sens → constante nommée.
 - Pas de code mort. Pas de TODO sans issue.
 - Pas de commentaires sauf : business logic complexe, JSDoc pour API publiques, workarounds temporaires. Avant d'écrire un commentaire : "je peux rendre le code plus clair à la place ?" Si oui → pas de commentaire.
-- Pas de features non demandées. Pas d'abstractions pour du code à usage unique.
+- Pas de features non demandées. Pas d'abstractions pour du code à usage unique. Rule of Three (Fowler) : on tolère 2 duplications, on extrait à la 3e — jamais d'abstraction avant.
 - Pas de gestion d'erreurs pour des scénarios impossibles. Ne valide qu'aux frontières du système (input utilisateur, APIs externes).
 - Si tu as écrit 200 lignes là où 50 suffisaient, réécris.
 
@@ -53,10 +56,12 @@ Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revu
 - DDD pour les projets Level 2+ : Entity vs Value Object, Aggregate Root = invariants + frontière transactionnelle, Repository, bounded contexts.
 - Layering : Presentation → Application → Domain → Infrastructure. Dépendance vers l'intérieur uniquement. Le Domain n'a aucune dépendance.
 - Patterns seulement quand la complexité le justifie. Start simple, refactor vers un pattern quand le besoin est prouvé.
+- Forte cohésion, faible couplage : un module regroupe ce qui change ensemble et minimise ses dépendances externes — c'est le critère de découpage par défaut.
 - Anti-patterns à REJETER : god object, modèle anémique, couplage fort, dépendances circulaires, optimisation prématurée (mesurer d'abord), golden hammer.
 
 ## Naming
 
+- **Langage ubiquitaire (DDD)** : les noms viennent du domaine métier, un terme = un concept, alignés sur le vocabulaire business. Un nom qui ne révèle pas l'intention est un défaut (`DataManager`, `handleData`, `data2` → proscrits).
 - Fichiers : PascalCase.tsx (composants), use-kebab-case.ts (hooks), kebab-case.ts (utils)
 - Variables : SCREAMING_SNAKE (constantes), camelCase (fonctions), PascalCase (classes/types)
 
@@ -65,6 +70,7 @@ Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revu
 - Commits conventionnels : feat(scope): description, fix, docs, refactor, test, chore, perf
 - JAMAIS d'attribution Claude/AI dans les commits (pas de Co-Authored-By, pas de "Generated with")
 - Commits atomiques. Jamais de force push sur main (bloqué aussi par hook).
+- **Two Hats (Tidy First)** : séparer les changements structurels (refactor, comportement inchangé) des changements comportementaux (feat/fix) — commits distincts. Refactor + feature dans le même diff = review impossible.
 - **Config globale versionnée** : `~/.claude/` est un symlink vers le repo `~/claude-config` (`claude/`). Dès que je modifie la config Claude globale (CLAUDE.md, settings.json, agents, commands, skills), commit + push dans `~/claude-config` pour que la config reste toujours à jour.
 
 ## Sécurité _(enforced — non négociable)_

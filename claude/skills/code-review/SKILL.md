@@ -53,8 +53,7 @@ Before reading any code, gather context that shapes the review:
 - [ ] Auth/authz checks in place
 
 ### Code Quality (BLOCKING if severe)
-- [ ] Functions ≤ 50 lines
-- [ ] Complexity ≤ 10
+- [ ] Respecte les seuils de `~/.claude/CLAUDE.md` § Code (taille fonction, complexité, imbrication, params)
 - [ ] No `any` types in TypeScript
 - [ ] No obvious code duplication
 

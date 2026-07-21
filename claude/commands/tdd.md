@@ -19,6 +19,12 @@ Un mauvais test est couplé à l'implémentation : il mocke des collaborateurs i
 
 ---
 
+## Code existant non testé — characterization test d'abord (Feathers)
+
+Avant de modifier du code sans test : écris d'abord un **characterization test** qui capture le comportement **actuel** (même s'il te paraît faux) — c'est ton filet. Tu ne modifies qu'une fois le comportement figé. Le TDD ci-dessous suppose du greenfield ; ceci couvre le cas réel le plus fréquent : toucher du legacy.
+
+---
+
 ## Anti-pattern à bannir : Horizontal Slicing
 
 **NE PAS écrire tous les tests d'abord, puis tout le code.**

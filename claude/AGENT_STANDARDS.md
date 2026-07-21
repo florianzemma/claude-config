@@ -26,6 +26,4 @@ Un agent ne dispatche pas d'autres agents : il termine par un rapport structuré
 
 ## Niveaux de projet
 
-- **Level 1** (simple) : landing, blog → lint + déploiement managé seulement
-- **Level 2** (medium) : SaaS, app interne → + error tracking + 70% coverage
-- **Level 3** (complex) : fintech, healthtech → full stack + 80% + E2E
+Classification (Level 1/2/3), coverage et sécurité par niveau : **source unique dans `agents/architect.md`**. Ne pas redéfinir ici.

@@ -6,6 +6,8 @@ model: sonnet
 
 # Code Quality Standards
 
+> Les **seuils font autorité dans `~/.claude/CLAUDE.md` § Code** — ce document en donne le *pourquoi* et le mapping linter. Niveaux 1/2/3 et coverage : source unique dans `agents/architect.md`. En cas de divergence, ces fichiers font foi.
+
 ## Why These Rules?
 
 These aren't arbitrary—each prevents specific production issues we've encountered.
