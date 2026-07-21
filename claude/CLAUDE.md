@@ -20,6 +20,7 @@ Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revu
 - Énonce tes hypothèses explicitement. Si tu en fais une grosse, signale-la.
 - Si une approche plus simple existe, dis-le. Pousse en arrière si c'est justifié.
 - Si tu bloques ou es confus, nomme le blocage — ne hallucine pas une solution.
+- Avant d'affirmer qu'un comportement existe déjà (« c'est déjà fait », « rien à faire ») : trace **tous** les chemins toi-même — ne conclus pas sur le résumé d'un seul subagent qui n'a vu qu'un chemin. Le code lu ≠ ce qui tourne (branche/version déployée). **Si ta conclusion contredit une observation directe de l'utilisateur sur l'app, son observation fait foi** : ré-investigue, ne défends pas ta lecture.
 
 ## Gestion du contexte
 
