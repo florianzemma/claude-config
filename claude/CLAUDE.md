@@ -62,7 +62,7 @@ Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revu
 
 ## Naming
 
-- **Langage ubiquitaire (DDD)** : les noms viennent du domaine métier, un terme = un concept, alignés sur le vocabulaire business. Un nom qui ne révèle pas l'intention est un défaut (`DataManager`, `handleData`, `data2` → proscrits).
+- **Langage ubiquitaire (DDD)** : les noms viennent du domaine métier, un terme = un concept, alignés sur le vocabulaire business. Un nom qui ne révèle pas l'intention est un défaut (`DataManager`, `handleData`, `data2`, identifiants d'une lettre type `(c) =>` → proscrits ; `_` si volontairement ignoré). Le style existant ne justifie pas de propager un nom hérité non-parlant.
 - Fichiers : PascalCase.tsx (composants), use-kebab-case.ts (hooks), kebab-case.ts (utils)
 - Variables : SCREAMING_SNAKE (constantes), camelCase (fonctions), PascalCase (classes/types)
 
