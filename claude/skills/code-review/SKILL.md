@@ -26,10 +26,18 @@ nice_to_have:
 
 # Axe Spec — est-ce le code qu'on demandait ?
 spec:
-  missing:      # exigence du ticket absente ou partielle — cite l'AC
+  missing:      # exigence absente ou partielle — cite la source
   scope_creep:  # comportement présent dans le diff que personne n'a demandé
-  wrong:        # implémenté, mais ne fait pas ce que le ticket décrit
+  wrong:        # implémenté, mais ne fait pas ce que la source décrit
 ```
+
+## Sévérités
+
+- **critical** : sécurité, bug bloquant → merge interdit
+- **major** : standard violé, bug important → à corriger avant merge
+- **minor** : amélioration, optimisation → non bloquant
+
+`must_fix` = critical + major. `concerns` = à discuter. `nice_to_have` = minor.
 
 ## Les deux axes ne se mélangent pas
 
@@ -38,9 +46,11 @@ Les quatre premières clés répondent à « le code est-il bien écrit ? ». `s
 - Respecte tous les standards mais implémente autre chose que le ticket → Standards OK, **Spec KO**.
 - Fait exactement ce que le ticket demande en violant les conventions → Spec OK, **Standards KO**.
 
-Ne fusionne pas les deux listes et ne les re-priorise pas l'une contre l'autre : un axe propre masquerait l'autre. Chaque entrée `spec` cite la ligne du ticket (AC, description) qui la fonde — sans citation, c'est une opinion, pas un finding.
+Ne fusionne pas les deux listes et ne les re-priorise pas l'une contre l'autre : un axe propre masquerait l'autre.
 
-Si le Step 0 n'a trouvé aucun ticket, écris `spec: pas de ticket disponible`. Ne devine pas l'intention à partir du diff : le diff ne peut pas se contredire lui-même.
+**Source de l'axe Spec**, dans cet ordre : le ticket récupéré au Step 0, sinon `PLAN.md`, sinon la demande telle qu'elle a été énoncée. Chaque entrée `spec` cite la ligne de cette source (AC, étape du plan, phrase de la demande) qui la fonde — sans citation, c'est une opinion, pas un finding.
+
+Si aucune des trois sources n'existe, écris `spec: pas de source disponible`. Ne devine pas l'intention à partir du diff : le diff ne peut pas se contredire lui-même.
 
 ## Step 0 — Context before reviewing
 
