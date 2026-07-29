@@ -11,6 +11,7 @@ model: opus
 Structure all reviews as:
 
 ```yaml
+# Axe Standards — le code est-il bien écrit ?
 praise:
   - What's done well (encourage good patterns)
 
@@ -22,7 +23,24 @@ must_fix:
 
 nice_to_have:
   - Improvements that could be made but aren't blocking
+
+# Axe Spec — est-ce le code qu'on demandait ?
+spec:
+  missing:      # exigence du ticket absente ou partielle — cite l'AC
+  scope_creep:  # comportement présent dans le diff que personne n'a demandé
+  wrong:        # implémenté, mais ne fait pas ce que le ticket décrit
 ```
+
+## Les deux axes ne se mélangent pas
+
+Les quatre premières clés répondent à « le code est-il bien écrit ? ». `spec` répond à « est-ce le bon code ? ». Un diff peut passer l'un et échouer l'autre :
+
+- Respecte tous les standards mais implémente autre chose que le ticket → Standards OK, **Spec KO**.
+- Fait exactement ce que le ticket demande en violant les conventions → Spec OK, **Standards KO**.
+
+Ne fusionne pas les deux listes et ne les re-priorise pas l'une contre l'autre : un axe propre masquerait l'autre. Chaque entrée `spec` cite la ligne du ticket (AC, description) qui la fonde — sans citation, c'est une opinion, pas un finding.
+
+Si le Step 0 n'a trouvé aucun ticket, écris `spec: pas de ticket disponible`. Ne devine pas l'intention à partir du diff : le diff ne peut pas se contredire lui-même.
 
 ## Step 0 — Context before reviewing
 

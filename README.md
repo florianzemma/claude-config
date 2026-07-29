@@ -112,7 +112,6 @@ Définis dans `settings.json`, exécutés par le harness — déterministes, con
 | `PreToolUse(Read)` | Bloque la lecture de `.env*`, `*.pem`, `*.key`, `id_rsa`, `secrets.*`, `.npmrc`, `.netrc` (`.env.example` toléré) |
 | `PreToolUse(Write\|Edit)` | Bloque l'écriture sur `.env*`, lockfiles, `.git/`, `node_modules/` |
 | `PostToolUse(Write\|Edit)` | Prettier auto si présent dans le projet |
-| `PostToolBatch` | `tsc --noEmit` bloquant si projet TypeScript |
 | `PreCompact` | Backup git status + PLAN.md dans `~/.claude/backups/` |
 | `SessionStart` | Injecte git status + PLAN.md en cours |
 | `Notification` | notify-send / notification macOS |
