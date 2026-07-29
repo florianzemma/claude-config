@@ -1,10 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "fileCheckpointingEnabled": true,
-  "statusLine": {
-    "type": "command",
-    "command": "bash ~/.claude/statusline-command.sh"
-  },
   "permissions": {
     "allow": [
       "Bash(npm test*)",
@@ -95,8 +90,8 @@
         "hooks": [
           {
             "type": "command",
-            "async": true,
-            "command": "BACKUP_DIR=\"$HOME/.claude/backups\"\nmkdir -p \"$BACKUP_DIR\"\nTIMESTAMP=$(date +%Y%m%d_%H%M%S)\nROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo \"unknown\")\nPROJECT=$(basename \"$ROOT\")\nFILE=\"$BACKUP_DIR/${PROJECT}_${TIMESTAMP}.md\"\n\necho \"# Compact backup — $PROJECT — $TIMESTAMP\" > \"$FILE\"\necho \"\" >> \"$FILE\"\necho \"## Git status\" >> \"$FILE\"\ngit -C \"$ROOT\" status --short 2>/dev/null >> \"$FILE\" || echo \"(no git)\" >> \"$FILE\"\necho \"\" >> \"$FILE\"\necho \"## PLAN.md\" >> \"$FILE\"\ncat \"$ROOT/PLAN.md\" 2>/dev/null >> \"$FILE\" || echo \"(no PLAN.md)\" >> \"$FILE\"\n\n# Garder seulement les 20 derniers backups\nls -t \"$BACKUP_DIR\"/${PROJECT}_*.md 2>/dev/null | tail -n +21 | xargs rm -f 2>/dev/null || true"
+            "command": "BACKUP_DIR=\"$HOME/.claude/backups\"\nmkdir -p \"$BACKUP_DIR\"\nTIMESTAMP=$(date +%Y%m%d_%H%M%S)\nROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo \"unknown\")\nPROJECT=$(basename \"$ROOT\")\nFILE=\"$BACKUP_DIR/${PROJECT}_${TIMESTAMP}.md\"\n\necho \"# Compact backup — $PROJECT — $TIMESTAMP\" > \"$FILE\"\necho \"\" >> \"$FILE\"\necho \"## Git status\" >> \"$FILE\"\ngit -C \"$ROOT\" status --short 2>/dev/null >> \"$FILE\" || echo \"(no git)\" >> \"$FILE\"\necho \"\" >> \"$FILE\"\necho \"## PLAN.md\" >> \"$FILE\"\ncat \"$ROOT/PLAN.md\" 2>/dev/null >> \"$FILE\" || echo \"(no PLAN.md)\" >> \"$FILE\"\n\n# Garder seulement les 20 derniers backups\nls -t \"$BACKUP_DIR\"/${PROJECT}_*.md 2>/dev/null | tail -n +21 | xargs rm -f 2>/dev/null || true",
+            "async": true
           }
         ]
       }
@@ -123,5 +118,11 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "fileCheckpointingEnabled": true,
+  "agentPushNotifEnabled": true
 }
