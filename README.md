@@ -81,7 +81,7 @@ Pour la recherche/lecture massive : subagent built-in `Explore`.
 | `/prime` | Re-prime le contexte après /clear |
 | `/worklog-jira` | Worklogs Jira du jour depuis les commits (invocation manuelle uniquement) |
 
-Les commands à effets de bord externes (`/commit`, `/create-pr`, `/fix-issue`, `/worklog-jira`, skill `refinement`) sont marquées `disable-model-invocation: true` : seul l'utilisateur peut les déclencher, jamais le modèle de sa propre initiative.
+Les commands à effets de bord externes (`/commit`, `/create-pr`, `/fix-issue`, `/worklog-jira`, skill `refinement`) sont marquées `disable-model-invocation: true` : seul l'utilisateur peut les déclencher, jamais le modèle de sa propre initiative. Les skills `grill-me` et `grill-with-docs` le sont aussi, pour une autre raison : une interview ne se déclenche que sur demande.
 
 ## Skills
 
@@ -90,6 +90,10 @@ Les commands à effets de bord externes (`/commit`, `/create-pr`, `/fix-issue`, 
 | `verify` | — | **Auto-invoquée** avant de déclarer une tâche terminée : tests + typecheck + exercer le comportement réel, verdict avec preuves |
 | `retro` | — | **Auto-invoquée** en fin de tâche avec corrections : transforme chaque friction en règle CLAUDE.md ou hook (compounding engineering) |
 | `brainstorming` | opus | Design et spec avant d'implémenter |
+| `grill-me` | — | Interview relentless qui affine un plan ou une décision, une question à la fois — invocation manuelle uniquement |
+| `grill-with-docs` | — | Idem `grill-me`, mais écrit le glossaire et les ADR au fil de la session — invocation manuelle uniquement |
+| `grilling` | — | Moteur d'interview partagé par `grill-me` et `grill-with-docs` |
+| `domain-modeling` | — | Langage ubiquitaire (DDD) : challenge les termes flous, maintient `CONTEXT.md` et `docs/adr/` |
 | `code-review` | opus | Revue staff-engineer + contexte Jira + commentaires inline GitLab |
 | `code-quality` | sonnet | Dette technique, patterns, seuils de complexité |
 | `db-migration` | — | **Auto-invoquée** dès qu'un schema.prisma ou une migration est touché : expand/migrate/contract, zéro perte de données |
