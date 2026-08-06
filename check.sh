@@ -59,6 +59,9 @@ for s in $(grep -oE '`(verify|retro|brainstorming|code-review|code-quality|db-mi
   [ -d "claude/skills/$s" ] || err "skill $s listée dans CLAUDE.md mais claude/skills/$s/ absent"
 done
 
+# 10. les hooks bloquent réellement (comportement, pas syntaxe)
+python3 test-hooks.py || err "hooks : comportement de blocage cassé (voir test-hooks.py)"
+
 if [ "$FAIL" = "0" ]; then
   echo "OK — config valide"
 else

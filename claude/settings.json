@@ -1,10 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "fileCheckpointingEnabled": true,
-  "statusLine": {
-    "type": "command",
-    "command": "bash ~/.claude/statusline-command.sh"
-  },
   "permissions": {
     "allow": [
       "Bash(npm test*)",
@@ -55,7 +50,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "CMD=\"$CLAUDE_TOOL_INPUT_command\"\nBLOCKED=0\nREASON=\"\"\n\n# Commandes destructives interdites\nif echo \"$CMD\" | grep -qE 'rm\\s+-rf|DROP\\s+TABLE|TRUNCATE\\s+TABLE|curl\\s+.*\\|\\s*bash|curl\\s+.*\\|\\s*sh|git\\s+reset\\s+--hard'; then\n  BLOCKED=1; REASON=\"commande destructive\"\nfi\n\n# Force-push interdit sans --force-with-lease ; jamais vers main/master\nif echo \"$CMD\" | grep -qE 'git\\s+push' ; then\n  if echo \"$CMD\" | grep -qE '(--force([^-]|$)|\\s-f(\\s|$))' && ! echo \"$CMD\" | grep -q 'force-with-lease'; then\n    BLOCKED=1; REASON=\"force-push sans --force-with-lease\"\n  fi\n  if echo \"$CMD\" | grep -qE 'git\\s+push\\s+[^ ]+\\s+(main|master)(\\s|$|:)'; then\n    BLOCKED=1; REASON=\"push direct vers main/master — passe par /create-pr\"\n  fi\nfi\n\n# Lecture de fichiers de secrets via shell interdite (.env.example/.sample/.template tolérés)\nif echo \"$CMD\" | grep -qE '(^|[|&; ])(cat|bat|less|more|head|tail|nl|xxd|od|strings|grep|rg|ack|awk|sed)([[:space:]]|$)'; then\n  if echo \"$CMD\" | grep -qE '\\.env([^.[:alnum:]]|$|\\.(local|production|prod|development|dev|staging|test))'; then BLOCKED=1; REASON=\"lecture de secrets\"; fi\n  if echo \"$CMD\" | grep -qE '(\\.pem|\\.key|id_rsa|id_ed25519|\\.p12|\\.pfx|\\.npmrc|\\.netrc|secrets\\.[a-z]+)([^.[:alnum:]]|$)'; then BLOCKED=1; REASON=\"lecture de secrets\"; fi\nfi\n\nif [ \"$BLOCKED\" = \"1\" ]; then\n  echo \"BLOQUÉ ($REASON) : $CMD\" >&2\n  exit 2\nfi"
+            "command": "command -v jq >/dev/null 2>&1 || { echo \"BLOQUE : hook de securite inoperant, jq introuvable\" >&2; exit 2; }\nCMD=$(jq -r '.tool_input.command // empty')\nBLOCKED=0\nREASON=\"\"\n\n# Commandes destructives interdites\nif echo \"$CMD\" | grep -qE 'rm\\s+-rf|DROP\\s+TABLE|TRUNCATE\\s+TABLE|curl\\s+.*\\|\\s*bash|curl\\s+.*\\|\\s*sh|git\\s+reset\\s+--hard'; then\n  BLOCKED=1; REASON=\"commande destructive\"\nfi\n\n# Force-push interdit sans --force-with-lease ; jamais vers main/master\nif echo \"$CMD\" | grep -qE 'git\\s+push' ; then\n  if echo \"$CMD\" | grep -qE '(--force([^-]|$)|\\s-f(\\s|$))' && ! echo \"$CMD\" | grep -q 'force-with-lease'; then\n    BLOCKED=1; REASON=\"force-push sans --force-with-lease\"\n  fi\n  if echo \"$CMD\" | grep -qE 'git\\s+push\\s+[^ ]+\\s+(main|master)(\\s|$|:)'; then\n    BLOCKED=1; REASON=\"push direct vers main/master — passe par /create-pr\"\n  fi\nfi\n\n# Lecture de fichiers de secrets via shell interdite (.env.example/.sample/.template tolérés)\nif echo \"$CMD\" | grep -qE '(^|[|&; ])(cat|bat|less|more|head|tail|nl|xxd|od|strings|grep|rg|ack|awk|sed)([[:space:]]|$)'; then\n  if echo \"$CMD\" | grep -qE '\\.env([^.[:alnum:]]|$|\\.(local|production|prod|development|dev|staging|test))'; then BLOCKED=1; REASON=\"lecture de secrets\"; fi\n  if echo \"$CMD\" | grep -qE '(\\.pem|\\.key|id_rsa|id_ed25519|\\.p12|\\.pfx|\\.npmrc|\\.netrc|secrets\\.[a-z]+)([^.[:alnum:]]|$)'; then BLOCKED=1; REASON=\"lecture de secrets\"; fi\nfi\n\nif [ \"$BLOCKED\" = \"1\" ]; then\n  echo \"BLOQUÉ ($REASON) : $CMD\" >&2\n  exit 2\nfi"
           }
         ]
       },
@@ -64,7 +59,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=\"${CLAUDE_TOOL_INPUT_file_path:-$CLAUDE_TOOL_INPUT_path}\"\nif [ -z \"$FILE\" ]; then exit 0; fi\nBASE=$(basename \"$FILE\")\ncase \"$BASE\" in\n  .env.example|.env.sample|.env.template|.env.dist) exit 0 ;;\nesac\ncase \"$BASE\" in\n  .env|.env.*|*.pem|*.key|id_rsa|id_dsa|id_ecdsa|id_ed25519|*.p12|*.pfx|secrets.*|.npmrc|.netrc)\n    echo \"BLOQUÉ : lecture de fichier de secrets interdite — $FILE (utiliser .env.example)\" >&2\n    exit 2\n    ;;\nesac"
+            "command": "command -v jq >/dev/null 2>&1 || { echo \"BLOQUE : hook de securite inoperant, jq introuvable\" >&2; exit 2; }\nFILE=$(jq -r '.tool_input.file_path // .tool_input.path // empty')\nif [ -z \"$FILE\" ]; then exit 0; fi\nBASE=$(basename \"$FILE\")\ncase \"$BASE\" in\n  .env.example|.env.sample|.env.template|.env.dist) exit 0 ;;\nesac\ncase \"$BASE\" in\n  .env|.env.*|*.pem|*.key|id_rsa|id_dsa|id_ecdsa|id_ed25519|*.p12|*.pfx|secrets.*|.npmrc|.netrc)\n    echo \"BLOQUÉ : lecture de fichier de secrets interdite — $FILE (utiliser .env.example)\" >&2\n    exit 2\n    ;;\nesac"
           }
         ]
       },
@@ -73,7 +68,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=\"${CLAUDE_TOOL_INPUT_file_path:-$CLAUDE_TOOL_INPUT_path}\"\nif [ -z \"$FILE\" ]; then exit 0; fi\nBASE=$(basename \"$FILE\")\ncase \"$BASE\" in\n  .env|.env.*)\n    case \"$BASE\" in .env.example|.env.sample|.env.template|.env.dist) exit 0 ;; esac\n    echo \"BLOQUÉ : écriture sur fichier .env interdite — $FILE\" >&2\n    exit 2\n    ;;\n  package-lock.json|pnpm-lock.yaml|yarn.lock)\n    echo \"BLOQUÉ : écriture sur lockfile interdite — modifier via le package manager uniquement\" >&2\n    exit 2\n    ;;\nesac\ncase \"$FILE\" in\n  */.git/*|.git/*)\n    echo \"BLOQUÉ : écriture dans .git interdite — $FILE\" >&2\n    exit 2\n    ;;\n  */node_modules/*|node_modules/*)\n    echo \"BLOQUÉ : écriture dans node_modules interdite — $FILE\" >&2\n    exit 2\n    ;;\nesac"
+            "command": "command -v jq >/dev/null 2>&1 || { echo \"BLOQUE : hook de securite inoperant, jq introuvable\" >&2; exit 2; }\nFILE=$(jq -r '.tool_input.file_path // .tool_input.path // empty')\nif [ -z \"$FILE\" ]; then exit 0; fi\nBASE=$(basename \"$FILE\")\ncase \"$BASE\" in\n  .env|.env.*)\n    case \"$BASE\" in .env.example|.env.sample|.env.template|.env.dist) exit 0 ;; esac\n    echo \"BLOQUÉ : écriture sur fichier .env interdite — $FILE\" >&2\n    exit 2\n    ;;\n  package-lock.json|pnpm-lock.yaml|yarn.lock)\n    echo \"BLOQUÉ : écriture sur lockfile interdite — modifier via le package manager uniquement\" >&2\n    exit 2\n    ;;\nesac\ncase \"$FILE\" in\n  */.git/*|.git/*)\n    echo \"BLOQUÉ : écriture dans .git interdite — $FILE\" >&2\n    exit 2\n    ;;\n  */node_modules/*|node_modules/*)\n    echo \"BLOQUÉ : écriture dans node_modules interdite — $FILE\" >&2\n    exit 2\n    ;;\nesac"
           }
         ]
       }
@@ -84,7 +79,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "FILE=\"${CLAUDE_TOOL_INPUT_file_path:-$CLAUDE_TOOL_INPUT_path}\"\nif [ -z \"$FILE\" ]; then exit 0; fi\ncase \"$FILE\" in\n  *.ts|*.tsx|*.js|*.jsx|*.json|*.css|*.md)\n    ROOT=$(git rev-parse --show-toplevel 2>/dev/null)\n    if [ -n \"$ROOT\" ] && [ -f \"$ROOT/node_modules/.bin/prettier\" ]; then\n      npx prettier --write \"$FILE\" 2>/dev/null || true\n    fi\n    ;;\nesac"
+            "command": "command -v jq >/dev/null 2>&1 || exit 0\nFILE=$(jq -r '.tool_input.file_path // .tool_input.path // empty')\nif [ -z \"$FILE\" ]; then exit 0; fi\ncase \"$FILE\" in\n  *.ts|*.tsx|*.js|*.jsx|*.json|*.css|*.md)\n    ROOT=$(git rev-parse --show-toplevel 2>/dev/null)\n    if [ -n \"$ROOT\" ] && [ -f \"$ROOT/node_modules/.bin/prettier\" ]; then\n      npx prettier --write \"$FILE\" 2>/dev/null || true\n    fi\n    ;;\nesac"
           }
         ]
       }
@@ -95,8 +90,8 @@
         "hooks": [
           {
             "type": "command",
-            "async": true,
-            "command": "BACKUP_DIR=\"$HOME/.claude/backups\"\nmkdir -p \"$BACKUP_DIR\"\nTIMESTAMP=$(date +%Y%m%d_%H%M%S)\nROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo \"unknown\")\nPROJECT=$(basename \"$ROOT\")\nFILE=\"$BACKUP_DIR/${PROJECT}_${TIMESTAMP}.md\"\n\necho \"# Compact backup — $PROJECT — $TIMESTAMP\" > \"$FILE\"\necho \"\" >> \"$FILE\"\necho \"## Git status\" >> \"$FILE\"\ngit -C \"$ROOT\" status --short 2>/dev/null >> \"$FILE\" || echo \"(no git)\" >> \"$FILE\"\necho \"\" >> \"$FILE\"\necho \"## PLAN.md\" >> \"$FILE\"\ncat \"$ROOT/PLAN.md\" 2>/dev/null >> \"$FILE\" || echo \"(no PLAN.md)\" >> \"$FILE\"\n\n# Garder seulement les 20 derniers backups\nls -t \"$BACKUP_DIR\"/${PROJECT}_*.md 2>/dev/null | tail -n +21 | xargs rm -f 2>/dev/null || true"
+            "command": "BACKUP_DIR=\"$HOME/.claude/backups\"\nmkdir -p \"$BACKUP_DIR\"\nTIMESTAMP=$(date +%Y%m%d_%H%M%S)\nROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo \"unknown\")\nPROJECT=$(basename \"$ROOT\")\nFILE=\"$BACKUP_DIR/${PROJECT}_${TIMESTAMP}.md\"\n\necho \"# Compact backup — $PROJECT — $TIMESTAMP\" > \"$FILE\"\necho \"\" >> \"$FILE\"\necho \"## Git status\" >> \"$FILE\"\ngit -C \"$ROOT\" status --short 2>/dev/null >> \"$FILE\" || echo \"(no git)\" >> \"$FILE\"\necho \"\" >> \"$FILE\"\necho \"## PLAN.md\" >> \"$FILE\"\ncat \"$ROOT/PLAN.md\" 2>/dev/null >> \"$FILE\" || echo \"(no PLAN.md)\" >> \"$FILE\"\n\n# Garder seulement les 20 derniers backups\nls -t \"$BACKUP_DIR\"/${PROJECT}_*.md 2>/dev/null | tail -n +21 | xargs rm -f 2>/dev/null || true",
+            "async": true
           }
         ]
       }
@@ -123,5 +118,11 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "fileCheckpointingEnabled": true,
+  "agentPushNotifEnabled": true
 }
