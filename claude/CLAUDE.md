@@ -41,7 +41,7 @@ Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revu
 ## Code
 
 - TypeScript strict, zéro `any`.
-- Fonctions ≤ 50 lignes, complexité cyclomatique ≤ 10, cognitive ≤ 15, imbrication ≤ 4, paramètres ≤ 4, fichiers ≤ 500 lignes, duplication ≤ 3 %. Ces seuils font autorité — skills et agents s'y réfèrent, ne les recopient pas. Early returns. Un fichier = une responsabilité.
+- Fonctions ≤ 50 lignes — le **corps logique** uniquement : le JSX d'un composant React ne compte pas. Un composant se juge sur la complexité cyclomatique/cognitive et le nombre de responsabilités, jamais sur sa longueur. Découper du JSX plat en sous-composants à usage unique pour tenir un quota est un anti-pattern (cf. « pas d'abstractions pour du code à usage unique »). Signaux de découpage réels : plusieurs responsabilités dans le composant, logique métier mêlée au rendu (→ extraire en hook), bloc JSX réellement réutilisé (Rule of Three). Complexité cyclomatique ≤ 10, cognitive ≤ 15, imbrication ≤ 4, paramètres ≤ 4, fichiers ≤ 500 lignes, duplication ≤ 3 %. Ces seuils font autorité — skills et agents s'y réfèrent, ne les recopient pas. Early returns. Un fichier = une responsabilité.
 - Design simple (Beck), dans l'ordre : 1) passe les tests · 2) révèle l'intention · 3) zéro duplication · 4) minimum d'éléments. L'ordre prime : la clarté avant la concision.
 - SLAP : un seul niveau d'abstraction par fonction — ne mélange pas orchestration haut-niveau et détails bas-niveau dans le même corps, extrais les détails.
 - Pas de magic numbers/strings : toute valeur littérale porteuse de sens → constante nommée.

@@ -17,7 +17,7 @@ These aren't arbitrary—each prevents specific production issues we've encounte
 - **Cyclomatic complexity ≤ 10** — More paths = more bugs, harder testing
 - **Cognitive complexity ≤ 15** — If it's hard to read, it's hard to maintain
 - **Nesting depth ≤ 4** — Deep nesting hides bugs and makes debugging painful
-- **Functions ≤ 50 lines** — Long functions do too many things
+- **Functions ≤ 50 lines** — Long functions do too many things. Counts the **logic body** only: a React component's JSX is declarative markup, not logic, and is exempt. Judge components on cyclomatic/cognitive complexity and number of responsibilities, never on raw length — splitting flat JSX into single-use subcomponents to satisfy a line quota is an anti-pattern
 - **Files ≤ 500 lines** — Big files = unclear responsibilities
 - **Parameters ≤ 4** — More params usually means the function needs refactoring
 
@@ -45,7 +45,7 @@ These thresholds are tool-agnostic — enforce them with whatever linter the pro
 Minimum lint rules to map:
 
 - complexity ≤ 10
-- max function length ≤ 50 lines
+- max function length ≤ 50 lines (logic body; exclude JSX — e.g. ESLint `max-lines-per-function` off or raised for `*.tsx` components)
 - max nesting depth ≤ 4
 - no implicit `any` / explicit types on public APIs
 - cognitive complexity ≤ 15
