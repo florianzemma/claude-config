@@ -30,13 +30,14 @@ claude-config/
 │   ├── statusline-command.sh
 │   └── settings.json          # Permissions + hooks (versionné, sans secret)
 ├── check.sh                   # Lint de la config (hooks, modèles, références) — tourne en CI
+├── test-hooks.py               # Test comportemental des hooks (le blocage marche vraiment, pas juste la syntaxe)
 ├── install.sh
 └── README.md
 ```
 
 ## Qualité de la config
 
-`./check.sh` (exécuté en GitHub Action sur chaque push/PR) valide : JSON des settings, syntaxe bash de chaque hook, alias de modèles uniquement (jamais de snapshots datés), champs frontmatter valides, absence de marqueurs de conflit git, et que chaque agent/command/skill référencé dans CLAUDE.md existe réellement. Chaque catégorie de bug déjà rencontrée dans cette config a son check.
+`./check.sh` (exécuté en GitHub Action sur chaque push/PR) valide : JSON des settings, syntaxe bash de chaque hook, alias de modèles uniquement (jamais de snapshots datés), champs frontmatter valides, absence de marqueurs de conflit git, et que chaque agent/command/skill référencé dans CLAUDE.md existe réellement. Il lance aussi `test-hooks.py`, qui simule le JSON envoyé par Claude Code sur stdin et vérifie que chaque hook `PreToolUse` bloque/laisse passer réellement — un lint de syntaxe bash ne voit pas un hook qui lit une variable d'environnement inexistante et laisse tout passer silencieusement (bug réel déjà rencontré). Chaque catégorie de bug déjà rencontrée dans cette config a son check.
 
 ## Philosophie d'orchestration
 
