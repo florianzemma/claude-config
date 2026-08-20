@@ -97,6 +97,8 @@ Règle : si ta conclusion contredit une observation directe (l'app, le code lu, 
 - [ ] No obvious code duplication
 
 ### Design & valeurs en dur
+> Autorité : `~/.claude/CLAUDE.md` § Design UI — thème/design system existant s'applique tel quel, tout passe par les tokens.
+
 - [ ] Pas de couleur hex / magic value inline : vérifier qu'un token du thème/DS existe (cf. Step 1) et l'utiliser
 - [ ] Une valeur hardcodée répétée ≥ 2 fois → constante nommée a minima
 - [ ] Une teinte absente du thème n'excuse pas le hardcode : soit l'ajouter au thème, soit constante + ticket d'alignement DS ; challenger une valeur hors design system

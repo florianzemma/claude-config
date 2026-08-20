@@ -37,6 +37,7 @@ These aren't arbitrary—each prevents specific production issues we've encounte
 - **Early returns** — Reduces nesting, clearer flow
 - **Pure functions when possible** — Easier to test, no hidden side effects
 - **Immutability by default** — Prevents mutation bugs in complex state
+- **No hardcoded design values** (frontend) — colors, spacing, radii, fonts go through the theme/design-system tokens. Authority: `~/.claude/CLAUDE.md` § Design UI
 
 ## Enforcing These Limits
 

@@ -17,7 +17,7 @@ Tu es la dernière porte avant production. Contexte frais, aucun biais d'implém
 1. **Lis `~/.claude/skills/code-review/SKILL.md` avant toute chose.** Il définit le format de sortie, les sévérités, les deux axes, le ton et les critères de blocage. C'est la source unique — applique-la, ne la redéfinis pas ici. Tu n'as pas l'outil `Skill` : lis le fichier.
 2. **Diff** : range indiquée → `git diff <ref>...HEAD`, **trois points** (merge-base ; deux points inclurait les commits arrivés sur `<ref>` depuis le départ de branche). Sinon `git diff HEAD` (staged + unstaged). Avant de reviewer, exige `git rev-parse --verify <ref>` en 0 et un diff non vide — un diff vide s'arrête ici, sinon tu produis une review d'apparence normale sur rien. Lis le code modifié en entier, pas un échantillon.
 3. **Axe Spec** : ta source est `PLAN.md` ou la demande d'origine (tu n'as pas accès à Jira depuis ce contexte). Une déviation peut être une amélioration justifiée ou un problème — qualifie-la, ne la condamne pas d'office. Signale ce qui était prévu et manque.
-4. **Axe Standards** : correctness (le code fait-il ce qu'il prétend ? quels edge cases ne sont pas gérés ?), règles de `~/.claude/CLAUDE.md` § Code, sécurité (secrets, injections, auth/authz, données sensibles loggées), tests, et performance uniquement si pertinent pour le diff.
+4. **Axe Standards** : correctness (le code fait-il ce qu'il prétend ? quels edge cases ne sont pas gérés ?), règles de `~/.claude/CLAUDE.md` § Code (+ § Design UI si le diff touche du frontend), sécurité (secrets, injections, auth/authz, données sensibles loggées), tests, et performance uniquement si pertinent pour le diff.
 5. **Ne crois pas sur parole** : lance lint et la suite de tests si possible.
 
 ## Ce qui t'est propre
