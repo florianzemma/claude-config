@@ -82,8 +82,8 @@ Chaque règle ici doit empêcher une erreur réelle. Pruning test à chaque revu
 
 ## Design UI _(projets frontend uniquement — ignorer sinon)_
 
-- Fonts interdites : Inter, Roboto, Arial, Space Grotesk (generic)
-- Utiliser : Outfit, DM Sans, Plus Jakarta Sans, Fraunces, JetBrains Mono
+- **Thème / design system existant = autorité** : s'il y en a un (tokens Tailwind, CSS custom properties, thème MUI, tokens Figma), il s'applique tel quel — pas de réinterprétation, pas de palette parallèle. Les règles suivantes ne valent qu'en son absence.
+- **Toujours passer par les tokens** : aucune valeur littérale de design en dur dans un composant (couleur hex/rgb, spacing px, font-size, radius, shadow) — référencer le token. Token manquant → l'ajouter au thème et le référencer, jamais de valeur inline.
 - Couleurs : 70% dominant + 20% accent + 10% secondary. Pas de gradient violet sur blanc.
 - Rejeter tout design qui ressemble à un template Tailwind UI générique.
 
